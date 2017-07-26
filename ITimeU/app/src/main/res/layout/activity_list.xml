@@ -1,35 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.itti7.itimeu.ListActivity">
 
-    <GridLayout
-        android:id="@+id/title2_grid_layout"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <TextView
+
+        <GridLayout
+            android:id="@+id/title2_grid_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="40dp"
-            android:gravity="center_horizontal"
-            android:text="list"
-            android:textAllCaps="true"
-            android:textSize="32sp"
-            android:textColor="@color/colorAccent" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/date_txt_view"
-            android:layout_width="match_parent"
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="40dp"
+                android:gravity="center_horizontal"
+                android:text="list"
+                android:textAllCaps="true"
+                android:textColor="@color/colorAccent"
+                android:textSize="32sp" />
+
+            <TextView
+                android:id="@+id/date_txt_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:gravity="center_horizontal"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp" />
+        </GridLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:gravity="center_horizontal"
-            android:textAllCaps="true"
-            android:textSize="20sp"
-            android:textColor="@color/colorPrimaryDark" />
-    </GridLayout>
-</RelativeLayout>
+            android:layout_margin="32dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            app:fabSize="normal"
+            android:src="@drawable/ic_add_white"/>
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
