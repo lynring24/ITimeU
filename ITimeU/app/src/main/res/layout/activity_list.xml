@@ -12,7 +12,7 @@
 
 
         <GridLayout
-            android:id="@+id/title2_grid_layout"
+            android:id="@+id/title_grid_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -38,6 +38,20 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="20sp" />
         </GridLayout>
+
+        <ScrollView
+            android:layout_below="@id/title_grid_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                
+            </GridLayout>
+
+        </ScrollView>
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
