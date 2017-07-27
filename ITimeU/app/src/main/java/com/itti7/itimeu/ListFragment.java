@@ -1,11 +1,12 @@
 package com.itti7.itimeu;
 
+import android.support.v4.app.Fragment;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,16 +18,22 @@ import java.util.Date;
  * Created by hyemin on 17. 7. 26.
  */
 
-public class ListActivity extends AppCompatActivity {
+public class ListFragment extends Fragment {
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-        TextView textView = (TextView) findViewById(R.id.date_txt_view);
+        return inflater.inflate(R.layout.fragment_list, container, false);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        TextView textView = getView().findViewById(R.id.date_txt_view);
         textView.setText(getDate());
 
-        final FloatingActionButton addFab = (FloatingActionButton) this.findViewById(R.id.add_fab_btn);
+        final FloatingActionButton addFab = getActivity().findViewById(R.id.add_fab_btn);
         addFab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -46,9 +53,9 @@ public class ListActivity extends AppCompatActivity {
 
 
     private void showAddDialog(){
-        LayoutInflater dialog = LayoutInflater.from(this);
+        LayoutInflater dialog = LayoutInflater.from(getActivity());
         final View dialogLayout = dialog.inflate(R.layout.add_dialog, null);
-        final Dialog addDialog = new Dialog(this);
+        final Dialog addDialog = new Dialog(getActivity());
 
         addDialog.setContentView(dialogLayout);
         addDialog.show();
@@ -61,7 +68,7 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "OK", Toast.LENGTH_SHORT).show();
             }
         });
 
