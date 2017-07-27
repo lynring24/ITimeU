@@ -93,6 +93,8 @@ public class TimerActivity extends AppCompatActivity {
                 stateBttn.setText(R.string.stop);
             }
             else{
+                progressBarValue=0;
+                timeText.setText(R.string.time);
                 stateBttn.setText(R.string.start);
             }
         }
