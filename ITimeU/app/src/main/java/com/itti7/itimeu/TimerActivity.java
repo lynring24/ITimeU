@@ -1,23 +1,63 @@
 package com.itti7.itimeu;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class TimerActivity extends AppCompatActivity {
+import org.w3c.dom.Text;
 
+public class TimerActivity extends AppCompatActivity {
+    private TextView timeText;
+    private ProgressBar progressBar;
+    private Button stateBttn;
+
+    final boolean STATE_PLAY=true;
+    final boolean STATE_STOP=false;
+    private boolean state=STATE_STOP;
+
+    Handler handler;
+    int progressBarValue = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        /*Toolbar init*/
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.menu_toolbar);
         setSupportActionBar(myToolbar);
+
+        /*progressBar button init*/
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        stateBttn = (Button)findViewById(R.id.state_bttn_view);
+        stateBttn.setOnClickListener(stateChecker);
+        timeText = (TextView)findViewById(R.id.time_txt_view);
+        handler = new Handler()
+        {
+            public void handleMessage(android.os.Message msg)
+            {
+                if(state)
+                {
+                    progressBarValue++;
+                }
+                progressBar.setProgress(progressBarValue);
+                timeText.setText(String.valueOf(progressBarValue/60)+":"+String.valueOf(progressBarValue%60));
+
+                handler.sendEmptyMessageDelayed(0, 100);
+            }
+        };
+
+        handler.sendEmptyMessage(0);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -45,10 +85,17 @@ public class TimerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //액션바 숨기기
-    private void hideActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null)
-            actionBar.hide();
-    }
+    Button.OnClickListener stateChecker =new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            state=!state;
+            if(state==STATE_PLAY){
+                stateBttn.setText(R.string.stop);
+            }
+            else{
+                stateBttn.setText(R.string.start);
+            }
+        }
+    };
+
 }
