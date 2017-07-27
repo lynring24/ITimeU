@@ -3,4 +3,7 @@
     <string name="list">List</string>
     <string name="setting">Setting</string>
     <string name="statistics">Statistics</string>
+    <string name="time">00:25</string>
+    <string name="start">start</string>
+    <string name="stop">stop</string>
 </resources>
