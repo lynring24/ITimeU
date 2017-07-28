@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -140,8 +142,11 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
-    // insert a To do item in the list
-    private void insertItem() {
+    /** insert a To do item in the list
+     *
+     * @return success to insert or not
+     */
+    private boolean insertItem() {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String nameString = mNameEditText.getText().toString().trim();
@@ -149,6 +154,14 @@ public class ListActivity extends AppCompatActivity {
         String dateString = mDate;
         int status = mStatus;
 
+        //Check whether there is an empty space.
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+        if(nameString.equals("")) {
+            mNameEditText.startAnimation(shake);
+            return false;
+        }
+
+        // put item value
         ContentValues values = new ContentValues();
 
         values.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
@@ -156,15 +169,18 @@ public class ListActivity extends AppCompatActivity {
         values.put(ItemEntry.COLUMN_ITEM_DATE, dateString);
         values.put(ItemEntry.COLUMN_ITEM_STATUS, status);
 
+        // get row id of inserted item
         long newRowId = db.insert(ItemEntry.TABLE_NAME, null, values);
 
         // Show a toast message depending on whether or not the insertion was successful
         if (newRowId == -1) {
             // If the row ID is -1, then there was an error with insertion.
             Toast.makeText(this, "Error with saving item", Toast.LENGTH_SHORT).show();
+            return false;
         } else {
             // Otherwise, the insertion was successful and we can display a toast with the row ID.
             Toast.makeText(this, "Item saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
+            return true;
         }
     }
 
@@ -191,10 +207,12 @@ public class ListActivity extends AppCompatActivity {
                 mQuantityEditText = dialogLayout.findViewById(R.id.quantity_edit_txt);
                 mDate = getDate();
 
-                insertItem();
-                displayDatabaseInfo();
-                addDialog.dismiss();
-                dialogLayout.setVisibility(View.INVISIBLE);
+                // success to insert item
+                if(insertItem()==true) {
+                    displayDatabaseInfo();
+                    addDialog.dismiss();
+                    dialogLayout.setVisibility(View.INVISIBLE);
+                }
                 //Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_SHORT).show();
             }
         });
