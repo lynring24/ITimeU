@@ -26,6 +26,7 @@ public class ListActivity extends AppCompatActivity {
         TextView textView = (TextView) findViewById(R.id.date_txt_view);
         textView.setText(getDate());
 
+        //when user click add FloatingActionButton for add a item in the list.
         final FloatingActionButton addFab = (FloatingActionButton) this.findViewById(R.id.add_fab_btn);
         addFab.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -44,9 +45,13 @@ public class ListActivity extends AppCompatActivity {
         return today;
     }
 
-
+    /**
+     * This function open the dialog window to add the item for TdDo list.
+     */
     private void showAddDialog(){
         LayoutInflater dialog = LayoutInflater.from(this);
+
+        //assign Dialog
         final View dialogLayout = dialog.inflate(R.layout.add_dialog, null);
         final Dialog addDialog = new Dialog(this);
 
