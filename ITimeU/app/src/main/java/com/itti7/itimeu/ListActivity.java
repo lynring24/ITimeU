@@ -157,6 +157,15 @@ public class ListActivity extends AppCompatActivity {
         values.put(ItemEntry.COLUMN_ITEM_STATUS, status);
 
         long newRowId = db.insert(ItemEntry.TABLE_NAME, null, values);
+
+        // Show a toast message depending on whether or not the insertion was successful
+        if (newRowId == -1) {
+            // If the row ID is -1, then there was an error with insertion.
+            Toast.makeText(this, "Error with saving item", Toast.LENGTH_SHORT).show();
+        } else {
+            // Otherwise, the insertion was successful and we can display a toast with the row ID.
+            Toast.makeText(this, "Item saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
