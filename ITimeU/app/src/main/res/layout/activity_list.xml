@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.itti7.itimeu.ListActivity">
 
     <RelativeLayout
@@ -40,15 +40,21 @@
         </GridLayout>
 
         <ScrollView
-            android:layout_below="@id/title_grid_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_below="@id/title_grid_layout">
 
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="16dp"
                 android:orientation="vertical">
-                
+
+                <TextView
+                    android:id="@+id/item_txt_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
             </GridLayout>
 
         </ScrollView>
@@ -57,10 +63,10 @@
             android:id="@+id/add_fab_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="32dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            app:fabSize="normal"
-            android:src="@drawable/ic_add_white"/>
+            android:layout_margin="32dp"
+            android:src="@drawable/ic_add_white"
+            app:fabSize="normal" />
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

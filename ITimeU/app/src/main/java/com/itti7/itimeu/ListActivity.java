@@ -46,9 +46,9 @@ public class ListActivity extends AppCompatActivity {
 
         //when user click add FloatingActionButton for add a item in the list.
         final FloatingActionButton addFab = (FloatingActionButton) this.findViewById(R.id.add_fab_btn);
-        addFab.setOnClickListener(new View.OnClickListener(){
+        addFab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 showAddDialog();
             }
         });
@@ -71,19 +71,68 @@ public class ListActivity extends AppCompatActivity {
         // and pass the context, which is the current activity.
         ItemDbHelper mDbHelper = new ItemDbHelper(this);
 
-
         // Create and/or open a database to read from it
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        // Perform this raw SQL query "SELECT * FROM pets"
-        // to get a Cursor that contains all rows from the list table.
-        Cursor cursor = db.rawQuery("SELECT * FROM " + ItemEntry.TABLE_NAME, null);
+        String[] projection = {
+                ItemEntry._ID,
+                ItemEntry.COLUMN_ITEM_NAME,
+                ItemEntry.COLUMN_ITEM_QUANTITY,
+                ItemEntry.COLUMN_ITEM_DATE,
+                ItemEntry.COLUMN_ITEM_STATUS
+        };
+
+        Cursor cursor = db.query(
+                ItemEntry.TABLE_NAME,   // The table to query
+                projection,            // The columns to return
+                null,                  // The columns for the WHERE clause
+                null,                  // The values for the WHERE clause
+                null,                  // Don't group the rows
+                null,                  // Don't filter by row groups
+                null);                   // The sort order
+
+        TextView displayView = (TextView) findViewById(R.id.item_txt_view);
 
         try {
-            // Display the number of rows in the Cursor (which reflects the number of rows in the
-            // pets table in the database).
-            TextView displayView = (TextView) findViewById(R.id.item_txt_view);
-            displayView.setText("Number of rows in list database table: " + cursor.getCount());
+            // Create a header in the Text View that looks like this:
+            //
+            // The pets table contains <number of rows in Cursor> list.
+            // _id - name - quantity - date - status
+            //
+            // In the while loop below, iterate through the rows of the cursor and display
+            // the information from each column in this order.
+            displayView.setText("The list table contains  " + cursor.getCount() + "items.\n\n");
+            displayView.append(ItemEntry._ID + " - " +
+                    ItemEntry.COLUMN_ITEM_NAME + " - " +
+                    ItemEntry.COLUMN_ITEM_QUANTITY + " - " +
+                    ItemEntry.COLUMN_ITEM_DATE + " - " +
+                    ItemEntry.COLUMN_ITEM_STATUS + "\n");
+
+            // Figure out the index of each column
+            int idColumnIndex = cursor.getColumnIndex(ItemEntry._ID);
+            int nameColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_NAME);
+            int quantityColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_QUANTITY);
+            int dateColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DATE);
+            int statusColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_STATUS);
+
+            // Iterate through all the returned rows the cursor
+            while (cursor.moveToNext()){
+                // Use that index to extract the String or Int value of the word
+                // at the current row the cursor is on.
+                int currentID = cursor.getInt(idColumnIndex);
+                String currentName = cursor.getString(nameColumnIndex);
+                String currentQuantity = cursor.getString(quantityColumnIndex);
+                String currentDate = cursor.getString(dateColumnIndex);
+                int currentStatus = cursor.getInt(statusColumnIndex);
+
+                // Display the values from each column of the current row in the cursor in the TextView
+                displayView.append(("\n" + currentID + " - " +
+                        currentName + " - " +
+                        currentQuantity + " - " +
+                        currentDate + " - " +
+                        currentStatus));
+            }
+
         } finally {
             // Always close the cursor when you're done reading from it. This releases all its
             // resources and makes it invalid.
@@ -91,17 +140,8 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * It is a function of today's date.
-     * @return  Return the current month and day.
-     */
-    public String getDate(){
-        String today = new SimpleDateFormat("yyyy.MM.dd").format(new Date());
-        return today;
-    }
-
     // insert a To do item in the list
-    private void insertItem(){
+    private void insertItem() {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String nameString = mNameEditText.getText().toString().trim();
@@ -122,7 +162,7 @@ public class ListActivity extends AppCompatActivity {
     /**
      * This function open the dialog window to add the item for TdDo list.
      */
-    private void showAddDialog(){
+    private void showAddDialog() {
         LayoutInflater dialog = LayoutInflater.from(this);
 
         //assign Dialog
@@ -135,11 +175,9 @@ public class ListActivity extends AppCompatActivity {
         Button mOkButton = dialogLayout.findViewById(R.id.add_ok_btn);
         Button mCancelButton = dialogLayout.findViewById(R.id.add_cancel_btn);
 
-        mOkButton.setOnClickListener(new View.OnClickListener()
-        {
+        mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 mNameEditText = dialogLayout.findViewById(R.id.name_edit_txt);
                 mQuantityEditText = dialogLayout.findViewById(R.id.quantity_edit_txt);
                 mDate = getDate();
@@ -152,13 +190,22 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        mCancelButton.setOnClickListener(new View.OnClickListener()
-        {
+        mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 addDialog.cancel();
             }
         });
     }
+
+    /**
+     * It is a function of today's date.
+     *
+     * @return Return the current month and day.
+     */
+    public String getDate() {
+        String today = new SimpleDateFormat("yyyy.MM.dd").format(new Date());
+        return today;
+    }
+
 }
