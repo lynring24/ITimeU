@@ -29,11 +29,12 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return new ListFragment();
+        if (position == 0) return new TimerFragment();
+        else return new ListFragment();
     }
 
     @Override
     public int getCount() {
-        return 1;
+        return 2;
     }
 }
