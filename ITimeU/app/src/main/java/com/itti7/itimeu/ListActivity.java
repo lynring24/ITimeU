@@ -14,6 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +57,13 @@ public class ListActivity extends AppCompatActivity {
         });
 
         mDbHelper = new ItemDbHelper(this);
+
+        // Find the ListView which will be populated with the item data
+        ListView petListView = (ListView) findViewById(R.id.item_list_view);
+
+        // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
+        View emptyView = findViewById(R.id.empty_relative_view);
+        petListView.setEmptyView(emptyView);
     }
 
     @Override
@@ -93,56 +101,19 @@ public class ListActivity extends AppCompatActivity {
                 null,                  // Don't filter by row groups
                 null);                   // The sort order
 
-        TextView displayView = (TextView) findViewById(R.id.item_txt_view);
 
-        try {
-            // Create a header in the Text View that looks like this:
-            //
-            // The pets table contains <number of rows in Cursor> list.
-            // _id - name - quantity - date - status
-            //
-            // In the while loop below, iterate through the rows of the cursor and display
-            // the information from each column in this order.
-            displayView.setText("The list table contains  " + cursor.getCount() + "items.\n\n");
-            displayView.append(ItemEntry._ID + " - " +
-                    ItemEntry.COLUMN_ITEM_NAME + " - " +
-                    ItemEntry.COLUMN_ITEM_QUANTITY + " - " +
-                    ItemEntry.COLUMN_ITEM_DATE + " - " +
-                    ItemEntry.COLUMN_ITEM_STATUS + "\n");
+        // Find the ListView which will be populated with the pet data
+        ListView itemListView = (ListView) findViewById(R.id.item_list_view);
 
-            // Figure out the index of each column
-            int idColumnIndex = cursor.getColumnIndex(ItemEntry._ID);
-            int nameColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_NAME);
-            int quantityColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_QUANTITY);
-            int dateColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DATE);
-            int statusColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_STATUS);
+        // Setup an Adapter to create a list item for each row of item data in the Cursor.
+        ItemCursorAdapter adapter = new ItemCursorAdapter(this, cursor);
 
-            // Iterate through all the returned rows the cursor
-            while (cursor.moveToNext()){
-                // Use that index to extract the String or Int value of the word
-                // at the current row the cursor is on.
-                int currentID = cursor.getInt(idColumnIndex);
-                String currentName = cursor.getString(nameColumnIndex);
-                String currentQuantity = cursor.getString(quantityColumnIndex);
-                String currentDate = cursor.getString(dateColumnIndex);
-                int currentStatus = cursor.getInt(statusColumnIndex);
-
-                // Display the values from each column of the current row in the cursor in the TextView
-                displayView.append(("\n" + currentID + " - " +
-                        currentName + " - " +
-                        currentQuantity + " - " +
-                        currentDate + " - " +
-                        currentStatus));
-            }
-
-        } finally {
-            // Always close the cursor when you're done reading from it. This releases all its
-            // resources and makes it invalid.
-            cursor.close();
-        }
+        // Attach the adapter to the ListView.
+        itemListView.setAdapter(adapter);
     }
 
-    /** insert a To do item in the list
+    /**
+     * insert a To do item in the list
      *
      * @return success to insert or not
      */
@@ -156,7 +127,7 @@ public class ListActivity extends AppCompatActivity {
 
         //Check whether there is an empty space.
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-        if(nameString.equals("")) {
+        if (nameString.equals("")) {
             mNameEditText.startAnimation(shake);
             return false;
         }
@@ -208,7 +179,7 @@ public class ListActivity extends AppCompatActivity {
                 mDate = getDate();
 
                 // success to insert item
-                if(insertItem()==true) {
+                if (insertItem() == true) {
                     displayDatabaseInfo();
                     addDialog.dismiss();
                     dialogLayout.setVisibility(View.INVISIBLE);
