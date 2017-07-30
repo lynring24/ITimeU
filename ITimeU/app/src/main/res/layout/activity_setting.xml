@@ -20,7 +20,7 @@
         android:id="@+id/work_seek"
         android:layout_width="285dp"
         android:layout_height="wrap_content"
-        android:max="100"
+        android:max="120"
         android:progress="25"
         android:secondaryProgress="30" />
 
