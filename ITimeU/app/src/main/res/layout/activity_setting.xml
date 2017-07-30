@@ -12,6 +12,14 @@
         android:layout_height="wrap_content"
         android:text="Work session duration"/>
 
+    <SeekBar
+        android:id="@+id/seek"
+        android:layout_width="237dp"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="25"
+        android:secondaryProgress="30" />
+
     <EditText
         android:id="@+id/work_time"
         android:layout_width="wrap_content"
