@@ -129,12 +129,39 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="13dp"
         android:text="Work sessions before a long break"/>
 
-    <EditText
-        android:id="@+id/session_number"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="4"
-        android:inputType="textEmailAddress"/>
+        android:layout_marginTop="5dp" >
+
+        <SeekBar
+            android:id="@+id/session_number_seek"
+            android:layout_width="285dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:max="10"
+            android:progress="4"/>
+
+        <EditText
+            android:id="@+id/session_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="minutes"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="#000000" />
+
 </LinearLayout>
