@@ -32,9 +32,7 @@
         android:id="@+id/work_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:text="25"
-        android:inputType="textEmailAddress"/>
+        android:text="25"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -67,15 +65,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:max="60"
-            android:progress="5"
-            android:secondaryProgress="30" />
+            android:progress="5"/>
 
         <EditText
             android:id="@+id/break_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5"
-            android:inputType="textEmailAddress"/>
+            android:text="5" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -93,14 +89,37 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="13dp"
         android:text="Long break duration"/>
 
-    <EditText
-        android:id="@+id/long_break_time"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="20"
-        android:inputType="textEmailAddress"/>
+        android:layout_marginTop="5dp" >
+
+        <SeekBar
+            android:id="@+id/long_break_seek"
+            android:layout_width="285dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:max="120"
+            android:progress="20"
+            android:secondaryProgress="25" />
+
+        <EditText
+            android:id="@+id/long_break_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:text="minutes"/>
+
+    </LinearLayout>
 
     <View
         android:layout_width="fill_parent"
