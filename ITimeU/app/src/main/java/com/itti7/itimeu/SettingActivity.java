@@ -32,21 +32,44 @@ public class SettingActivity extends AppCompatActivity {
                 doAfterTrack(seekBar);
             }
         });
+
+        breaksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                printSelected(seekBar, progress);
+            }
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            public void onStopTrackingTouch(SeekBar seekBar)  {
+                doAfterTrack(seekBar);
+            }
+        });
     }
 
     public void printSelected(SeekBar bar, int value) {
+        EditText et;
         switch (bar.getId()) {
             case R.id.work_seek:
-                EditText et = (EditText) findViewById(R.id.work_time);
+                et = (EditText) findViewById(R.id.work_time);
                 et.setText(String.valueOf(value));
+                break;
+            case R.id.break_seek:
+                et = (EditText) findViewById(R.id.break_time);
+                et.setText(String.valueOf(value));
+                break;
         }
     }
 
     public void doAfterTrack(SeekBar bar) {
+        EditText et;
         switch (bar.getId()) {
             case R.id.work_seek:
-                EditText et = (EditText) findViewById(R.id.work_time);
+                et = (EditText) findViewById(R.id.work_time);
                 et.setText(et.getText());
+                break;
+            case R.id.break_seek:
+                et = (EditText) findViewById(R.id.break_time);
+                et.setText(et.getText());
+                break;
         }
     }
 
