@@ -8,8 +8,7 @@ import android.widget.SeekBar;
 public class SettingActivity extends AppCompatActivity {
 
     private SeekBar worksb, breaksb, longBreaksb, sessionNumsb;
-    private int workTime = 25;
-    private int breakTime = 5;
+    private EditText worket, breaket, longBreaket, sessionNumet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +20,10 @@ public class SettingActivity extends AppCompatActivity {
         longBreaksb = (SeekBar) findViewById(R.id.long_break_seek);
         sessionNumsb = (SeekBar) findViewById(R.id.session_number_seek);
 
-        worksb.setProgress(workTime);
-        breaksb.setProgress(breakTime);
+        worket = (EditText) findViewById(R.id.work_time);
+        breaket = (EditText) findViewById(R.id.break_time);
+        longBreaket = (EditText) findViewById(R.id.long_break_time);
+        sessionNumet = (EditText) findViewById(R.id.session_number);
 
         worksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -70,46 +71,32 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     public void printSelected(SeekBar bar, int value) {
-        EditText et;
-        switch (bar.getId()) {
-            case R.id.work_seek:
-                et = (EditText) findViewById(R.id.work_time);
-                et.setText(String.valueOf(value));
-                break;
-            case R.id.break_seek:
-                et = (EditText) findViewById(R.id.break_time);
-                et.setText(String.valueOf(value));
-                break;
-            case R.id.long_break_seek:
-                et = (EditText) findViewById(R.id.long_break_time);
-                et.setText(String.valueOf(value));
-                break;
-            case R.id.session_number_seek:
-                et = (EditText) findViewById(R.id.session_number);
-                et.setText(String.valueOf(value));
-                break;
+        if (bar.equals(worksb)) {
+            worket.setText(String.valueOf(value));
+        }
+        else if (bar.equals((breaksb))) {
+            breaket.setText(String.valueOf(value));
+        }
+        else if (bar.equals(longBreaksb)) {
+            longBreaket.setText(String.valueOf(value));
+        }
+        else if (bar.equals(sessionNumsb)) {
+            sessionNumet.setText(String.valueOf(value));
         }
     }
 
     public void doAfterTrack(SeekBar bar) {
-        EditText et;
-        switch (bar.getId()) {
-            case R.id.work_seek:
-                et = (EditText) findViewById(R.id.work_time);
-                et.setText(et.getText());
-                break;
-            case R.id.break_seek:
-                et = (EditText) findViewById(R.id.break_time);
-                et.setText(et.getText());
-                break;
-            case R.id.long_break_seek:
-                et = (EditText) findViewById(R.id.long_break_time);
-                et.setText(et.getText());
-                break;
-            case R.id.session_number_seek:
-                et = (EditText) findViewById(R.id.session_number);
-                et.setText(et.getText());
-                break;
+        if (bar.equals(worksb)) {
+            worket.setText(worket.getText());
+        }
+        else if (bar.equals(breaksb)) {
+            breaket.setText(breaket.getText());
+        }
+        else if (bar.equals(longBreaksb)) {
+            longBreaket.setText(longBreaket.getText());
+        }
+        else if (bar.equals(sessionNumsb)) {
+            sessionNumet.setText(sessionNumet.getText());
         }
     }
 
