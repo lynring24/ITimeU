@@ -18,6 +18,7 @@ public class SettingActivity extends AppCompatActivity {
 
         worksb = (SeekBar) findViewById(R.id.work_seek);
         breaksb = (SeekBar) findViewById(R.id.break_seek);
+        longBreaksb = (SeekBar) findViewById(R.id.long_break_seek);
 
         worksb.setProgress(workTime);
         breaksb.setProgress(breakTime);
@@ -43,6 +44,17 @@ public class SettingActivity extends AppCompatActivity {
                 doAfterTrack(seekBar);
             }
         });
+
+        longBreaksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                printSelected(seekBar, progress);
+            }
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            public void onStopTrackingTouch(SeekBar seekBar)  {
+                doAfterTrack(seekBar);
+            }
+        });
     }
 
     public void printSelected(SeekBar bar, int value) {
@@ -54,6 +66,10 @@ public class SettingActivity extends AppCompatActivity {
                 break;
             case R.id.break_seek:
                 et = (EditText) findViewById(R.id.break_time);
+                et.setText(String.valueOf(value));
+                break;
+            case R.id.long_break_seek:
+                et = (EditText) findViewById(R.id.long_break_time);
                 et.setText(String.valueOf(value));
                 break;
         }
@@ -68,6 +84,10 @@ public class SettingActivity extends AppCompatActivity {
                 break;
             case R.id.break_seek:
                 et = (EditText) findViewById(R.id.break_time);
+                et.setText(et.getText());
+                break;
+            case R.id.long_break_seek:
+                et = (EditText) findViewById(R.id.long_break_time);
                 et.setText(et.getText());
                 break;
         }
