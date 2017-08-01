@@ -1,10 +1,6 @@
 package com.itti7.itimeu;
 
-import android.animation.ObjectAnimator;
-import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,11 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-public class TimerActivity extends AppCompatActivity {
+public class TimerFragment extends AppCompatActivity {
     private TextView timeText;
     private ProgressBar progressBar;
     private Button stateBttn;
@@ -32,7 +25,7 @@ public class TimerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timer);
+        setContentView(R.layout.fragment_timer);
         /*Toolbar init*/
         Toolbar myToolbar = (Toolbar) findViewById(R.id.menu_toolbar);
         setSupportActionBar(myToolbar);
