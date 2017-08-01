@@ -2,13 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".TimerActivity">
+    tools:context=".MainActivity">
 
    <!-- put menu into overflow menu-->
-    <item
-        android:id="@+id/action_list"
-        android:title="@string/list"
-        app:showAsAction="never" />
     <item
         android:id="@+id/action_setting"
         android:title="@string/setting"
