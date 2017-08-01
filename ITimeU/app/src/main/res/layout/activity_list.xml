@@ -1,96 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
     tools:context="com.itti7.itimeu.ListActivity">
 
-    <RelativeLayout
+
+    <GridLayout
+        android:id="@+id/title_grid_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-
-        <GridLayout
-            android:id="@+id/title_grid_layout"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="40dp"
+            android:gravity="center_horizontal"
+            android:text="list"
+            android:textAllCaps="true"
+            android:textColor="@color/colorAccent"
+            android:textSize="32sp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginTop="40dp"
-                android:gravity="center_horizontal"
-                android:text="list"
-                android:textAllCaps="true"
-                android:textColor="@color/colorAccent"
-                android:textSize="32sp" />
-
-            <TextView
-                android:id="@+id/date_txt_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:gravity="center_horizontal"
-                android:textAllCaps="true"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp" />
-        </GridLayout>
-
-        <ListView
-            android:id="@+id/item_list_view"
+        <TextView
+            android:id="@+id/date_txt_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/title_grid_layout">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_horizontal"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp" />
+    </GridLayout>
 
-        </ListView>
+    <ListView
+        android:id="@+id/item_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/title_grid_layout">
 
-        <!-- Empty view for the list -->
-        <RelativeLayout
-            android:id="@+id/empty_relative_view"
+    </ListView>
+
+    <!-- Empty view for the list -->
+    <RelativeLayout
+        android:id="@+id/empty_relative_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <ImageView
+            android:id="@+id/empty_shelter_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true">
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/empty_background" />
 
-            <ImageView
-                android:id="@+id/empty_shelter_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/empty_background" />
-
-            <TextView
-                android:id="@+id/empty_title_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/empty_shelter_image"
-                android:layout_centerHorizontal="true"
-                android:paddingTop="16dp"
-                android:text="The list is empty"
-                android:textAppearance="?android:textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/empty_subtitle_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/empty_title_text"
-                android:layout_centerHorizontal="true"
-                android:paddingTop="8dp"
-                android:text="Add the to-do list to this"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textColor="#A2AAB0" />
-        </RelativeLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/add_fab_btn"
+        <TextView
+            android:id="@+id/empty_title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_margin="32dp"
-            android:src="@drawable/ic_add_white"
-            app:fabSize="normal" />
+            android:layout_below="@+id/empty_shelter_image"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="16dp"
+            android:text="The list is empty"
+            android:textAppearance="?android:textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/empty_subtitle_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/empty_title_text"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="8dp"
+            android:text="Add the to-do list to this"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="#A2AAB0" />
     </RelativeLayout>
-</android.support.design.widget.CoordinatorLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_fab_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="32dp"
+        android:src="@drawable/ic_add_white"
+        app:fabSize="normal" />
+</RelativeLayout>
