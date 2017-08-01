@@ -33,6 +33,8 @@ public class ItemDbHelper extends SQLiteOpenHelper {
                 + ItemEntry.COLUMN_ITEM_NAME + " TEXT NOT NULL, "
                 + ItemEntry.COLUMN_ITEM_QUANTITY + " TEXT, "
                 + ItemEntry.COLUMN_ITEM_DATE + " TEXT, "
+                + ItemEntry.COLUMN_ITEM_TOTAL_UNIT + " INTEGER NOT NULL DEFAULT 1, "
+                + ItemEntry.COLUMN_ITEM_UNIT + " INTEGER NOT NULL DEFAULT 0, "
                 + ItemEntry.COLUMN_ITEM_STATUS + " INTEGER NOT NULL DEFAULT 0);";
 
         db.execSQL(SQL_CREATE_LIST_TABLE);

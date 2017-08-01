@@ -20,6 +20,8 @@ public final class ItemContract {
         public final static String COLUMN_ITEM_NAME = "name";
         public final static String COLUMN_ITEM_QUANTITY = "quantity";
         public final static String COLUMN_ITEM_DATE = "date";
+        public final static String COLUMN_ITEM_TOTAL_UNIT = "totalUnit";
+        public final static String COLUMN_ITEM_UNIT = "unit";
         public final static String COLUMN_ITEM_STATUS = "status";
 
         public final static int TODO = 0;
