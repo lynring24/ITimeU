@@ -7,6 +7,15 @@
     android:orientation="vertical"
     tools:context="com.itti7.itimeu.MainActivity">
 
+
+    <fragment
+        android:id="@+id/timer_container"
+        android:name="com.itti7.itimeu.TimerFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        tools:layout="@layout/activity_timer" />
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/menu_toolbar"
         android:layout_width="match_parent"
@@ -16,14 +25,6 @@
 
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
-    <fragment
-        android:id="@+id/timer_container"
-        android:name="com.itti7.itimeu.TimerFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="8"
-        tools:layout="@layout/activity_timer" />
     <!--android:layout_height="?attr/actionBarSize"-->
     <!--android:elevation="4dp"-->
 
