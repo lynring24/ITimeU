@@ -52,7 +52,7 @@
             android:src="@drawable/ic_unit_minus_false" />
 
         <TextView
-            android:id="@+id/unit_txt_view"
+            android:id="@+id/get_total_unit_txt_view"
             android:layout_columnWeight="2"
             android:layout_gravity="fill"
             android:gravity="center"
