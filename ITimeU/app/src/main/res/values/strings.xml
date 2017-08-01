@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">I Time U</string>
-    <string name="list">List</string>
     <string name="setting">Setting</string>
     <string name="statistics">Statistics</string>
     <string name="time">00:25</string>
