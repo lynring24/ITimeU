@@ -7,29 +7,50 @@
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnCount="2"
+        android:columnCount="4"
         android:orientation="horizontal"
         android:rowCount="2"
         android:useDefaultMargins="false">
 
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_gravity="fill"
-            android:layout_rowSpan="2"
-            android:src="@color/colorAccent" />
-
         <TextView
             android:id="@+id/name_txt_view"
-            android:layout_gravity="fill"
-            android:padding="8dp"
+            android:layout_columnSpan="2"
+            android:layout_gravity="center|bottom"
+            android:paddingTop="8dp"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="#2B3D4D" />
 
+        <GridLayout
+            android:layout_columnSpan="2"
+            android:layout_gravity="center_vertical"
+            android:layout_rowSpan="2">
+
+            <TextView
+                android:id="@+id/unit_txt_view"
+                android:layout_gravity="fill"
+                android:padding="8dp"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/colorAccent" />
+
+            <TextView
+                android:layout_gravity="center"
+                android:text=" / "
+                android:textAppearance="?android:textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/total_unit_txt_view"
+                android:layout_gravity="fill"
+                android:padding="8dp"
+                android:textAppearance="?android:textAppearanceMedium" />
+        </GridLayout>
+
         <TextView
             android:id="@+id/quantity_txt_view"
-            android:layout_gravity="fill"
-            android:padding="8dp"
+            android:layout_columnSpan="2"
+            android:layout_gravity="center"
+            android:paddingBottom="8dp"
             android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="#AEB6BD" />
+            android:textColor="@color/colorPrimaryDark" />
+
     </GridLayout>
 </LinearLayout>
