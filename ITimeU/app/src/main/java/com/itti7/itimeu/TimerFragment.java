@@ -40,11 +40,12 @@ public class TimerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View timerView = inflater.inflate(R.layout.activity_timer, container, false);
 
-
         /*progressBar button init*/
         mProgressBar = (ProgressBar)timerView.findViewById(R.id.progressBar);
         mStateBttn = (Button)timerView.findViewById(R.id.state_bttn_view);
         mStateBttn.setOnClickListener(stateChecker);
+
+        /*Time Text Initialize */
         mTimeText = (TextView)timerView.findViewById(R.id.time_txt_view);
         int time = Integer.parseInt(getString(R.string.time).split(":")[1]);
         mProgressBar.setMax(time);
@@ -53,6 +54,7 @@ public class TimerFragment extends Fragment {
             public void onTick(long millisUntilFinished) {
                 String hour = String.format("%02d",(millisUntilFinished / (1000*60*60)) );
                 String min = String.format("%02d",(millisUntilFinished / (1000*60)) );
+
                 mTimeText.setText(hour+":"+min);
                 /*mTimeText.setText("seconds remaining: " + millisUntilFinished / 1000); //TesterCode*/
             }
@@ -61,7 +63,6 @@ public class TimerFragment extends Fragment {
             public void onFinish() {
                         /*alarm or vibration*/
                 mTimeText.setText("done!");
-                Toast.makeText(getContext(),"done!",Toast.LENGTH_SHORT).show();
             }
         };
         handler = new Handler()
