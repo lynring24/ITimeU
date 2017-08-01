@@ -38,7 +38,7 @@ public final class ItemContract {
      * looking at item data. content://com.itti7.itimeu/staff/ will fail,
      * as the ContentProvider hasn't been given any information on what to do with "staff".
      */
-    public static final String PATH_ITIMEU = "ITIMEU";
+    public static final String PATH_ITIMEU = "itimeu";
 
     /**
      * Inner class that defines constant values for the pets database table.
