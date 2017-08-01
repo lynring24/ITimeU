@@ -1,9 +1,14 @@
 package com.itti7.itimeu;
 
 import android.app.Dialog;
+import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -28,23 +34,59 @@ import com.itti7.itimeu.data.ItemDbHelper;
  * Displays list of pets that were entered and stored in the app.
  */
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<Cursor> {
+
+    /**
+     * Identifier for the item data loader
+     */
+    private static final int ITEM_LOADER = 0;
+
+    /**
+     * Adapter for the ListView
+     */
+    ItemCursorAdapter mCursorAdapter;
+
+    /**
+     * Content URI for the existing item (null if it's a new item)
+     */
+    private Uri mCurrentItemUri;
 
     private ItemDbHelper mDbHelper;
 
     //edit text for add item
+    /**
+     * EditText field to enter the To do item's name
+     */
     private EditText mNameEditText;
+
+    /**
+     * EditText field to enter the To do item's quantity
+     */
     private EditText mQuantityEditText;
+
+    /**
+     * TextView field to enter the To do item's Total unit
+     */
     private TextView mTotalUnitTextView;
+
+    /**
+     * Date when the item is created
+     */
     private String mDate;
-    private int mStatus = 0;
+
+    /**
+     * status of item. The possible valid values are in the ItemContract.java file:
+     * {@link ItemEntry#STATUS_TODO},
+     * {@link ItemEntry#STATUS_DO},
+     * {@link ItemEntry#STATUS_DONE}.
+     */
+    private int mStatus = ItemEntry.STATUS_TODO;
 
     //dialog var
     private int mTotalUnitNumber = 0;
     private ImageButton mUnitPlusImageButton;
     private ImageButton mUnitMinusImageButton;
-    private Button mOkButton;
-    private Button mCancelButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,11 +109,35 @@ public class ListActivity extends AppCompatActivity {
         mDbHelper = new ItemDbHelper(this);
 
         // Find the ListView which will be populated with the item data
-        ListView petListView = (ListView) findViewById(R.id.item_list_view);
+        ListView itemListView = (ListView) findViewById(R.id.item_list_view);
 
         // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
         View emptyView = findViewById(R.id.empty_relative_view);
-        petListView.setEmptyView(emptyView);
+        itemListView.setEmptyView(emptyView);
+
+        // Setup an Adapter to create a list item for each row of item data in the Cursor.
+        // There is no item data yet (until the loader finishes) so pass in null for the Cursor.
+        mCursorAdapter = new ItemCursorAdapter(this, null);
+        itemListView.setAdapter(mCursorAdapter);
+
+        // Setup the item click listener
+        itemListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                //TODO: create modify/delete dialog list
+                // Form the content URI that represents the specific item that was long clicked on,
+                // by appending the "id" (passed as input to this method) onto the
+                // {@link ItemEntry#CONTENT_URI}.
+                // For example, the URI would be "content://com.itti7.itimeu/itimeu/2"
+                // if the pet with ID 2 was long clicked on.
+                mCurrentItemUri = ContentUris.withAppendedId(ItemEntry.CONTENT_URI, id);
+
+                return true;
+            }
+        });
+
+        // Kick off the loader
+        getLoaderManager().initLoader(ITEM_LOADER, null, this);
     }
 
     @Override
@@ -81,9 +147,9 @@ public class ListActivity extends AppCompatActivity {
     }
 
     /**
-     * Temporary helper method to display information in the onscreen TextCiew about the state of
-     * the list database
+     * Show database list
      */
+
     private void displayDatabaseInfo() {
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
@@ -92,6 +158,8 @@ public class ListActivity extends AppCompatActivity {
         // Create and/or open a database to read from it
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
         String[] projection = {
                 ItemEntry._ID,
                 ItemEntry.COLUMN_ITEM_NAME,
@@ -102,6 +170,7 @@ public class ListActivity extends AppCompatActivity {
                 ItemEntry.COLUMN_ITEM_STATUS
         };
 
+        // Perform a query on the list table
         Cursor cursor = db.query(
                 ItemEntry.TABLE_NAME,   // The table to query
                 projection,            // The columns to return
@@ -167,7 +236,36 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        // Define a projection that specifies the columns from the table we care about.
+        String[] projection = {
+                ItemEntry._ID,
+                ItemEntry.COLUMN_ITEM_NAME,
+                ItemEntry.COLUMN_ITEM_QUANTITY,
+                ItemEntry.COLUMN_ITEM_TOTAL_UNIT
+        };
 
+        // This loader will execute the ContentProvider's query method on a background thread
+        return new CursorLoader(this,   // Parent activity context
+                ItemEntry.CONTENT_URI,   // Provider content URI to query
+                projection,             // Columns to include in the resulting Cursor
+                null,                   // No selection clause
+                null,                   // No selection arguments
+                null);                  // Default sort order
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        // Update {@link PetCursorAdapter} with this new cursor containing updated pet data
+        mCursorAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        // Callback called when the data needs to be deleted
+        mCursorAdapter.swapCursor(null);
+    }
     /**
      * It is a function of today's date.
      *
@@ -178,8 +276,11 @@ public class ListActivity extends AppCompatActivity {
         return today;
     }
 
+
+
+
     /**
-     * Dialog main function
+     * Edit Dialog main function
      * <p>
      * This function open the dialog window to add the item for TdDo list.
      */
@@ -187,7 +288,7 @@ public class ListActivity extends AppCompatActivity {
         LayoutInflater dialog = LayoutInflater.from(this);
 
         // call Dialog
-        final View dialogLayout = dialog.inflate(R.layout.add_dialog, null);
+        final View dialogLayout = dialog.inflate(R.layout.editor_dialog, null);
         final Dialog addDialog = new Dialog(this);
 
         addDialog.setContentView(dialogLayout);
@@ -196,7 +297,6 @@ public class ListActivity extends AppCompatActivity {
         getUnitNumber(dialogLayout);
 
         submit(dialogLayout, addDialog);
-
     }
 
     /**
@@ -207,8 +307,8 @@ public class ListActivity extends AppCompatActivity {
      */
     private void submit(final View dialogLayout, final Dialog addDialog) {
         // OK or Cancel Button
-        mOkButton = dialogLayout.findViewById(R.id.add_ok_btn);
-        mCancelButton = dialogLayout.findViewById(R.id.add_cancel_btn);
+        Button mOkButton = dialogLayout.findViewById(R.id.add_ok_btn);
+        Button mCancelButton = dialogLayout.findViewById(R.id.add_cancel_btn);
 
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,7 +318,7 @@ public class ListActivity extends AppCompatActivity {
                 mDate = getDate();
 
                 // success to insert item
-                if (insertItem() == true) {
+                if (insertItem()) {
                     displayDatabaseInfo();
                     addDialog.dismiss();
                     dialogLayout.setVisibility(View.INVISIBLE);
