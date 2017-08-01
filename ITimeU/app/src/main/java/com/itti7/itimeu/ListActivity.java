@@ -35,12 +35,12 @@ public class ListActivity extends AppCompatActivity {
     //edit text for add item
     private EditText mNameEditText;
     private EditText mQuantityEditText;
-    private TextView mUnitTextView;
+    private TextView mTotalUnitTextView;
     private String mDate;
     private int mStatus = 0;
 
     //dialog var
-    private int mUnitNumber = 0;
+    private int mTotalUnitNumber = 0;
     private ImageButton mUnitPlusImageButton;
     private ImageButton mUnitMinusImageButton;
     private Button mOkButton;
@@ -97,6 +97,8 @@ public class ListActivity extends AppCompatActivity {
                 ItemEntry.COLUMN_ITEM_NAME,
                 ItemEntry.COLUMN_ITEM_QUANTITY,
                 ItemEntry.COLUMN_ITEM_DATE,
+                ItemEntry.COLUMN_ITEM_TOTAL_UNIT,
+                ItemEntry.COLUMN_ITEM_UNIT,
                 ItemEntry.COLUMN_ITEM_STATUS
         };
 
@@ -132,6 +134,7 @@ public class ListActivity extends AppCompatActivity {
         String quantityString = mQuantityEditText.getText().toString().trim();
         String dateString = mDate;
         int status = mStatus;
+        int totalUnit = mTotalUnitNumber;
 
         //Check whether there is an empty space.
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
@@ -147,6 +150,7 @@ public class ListActivity extends AppCompatActivity {
         values.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantityString);
         values.put(ItemEntry.COLUMN_ITEM_DATE, dateString);
         values.put(ItemEntry.COLUMN_ITEM_STATUS, status);
+        values.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, totalUnit);
 
         // get row id of inserted item
         long newRowId = db.insert(ItemEntry.TABLE_NAME, null, values);
@@ -176,7 +180,7 @@ public class ListActivity extends AppCompatActivity {
 
     /**
      * Dialog main function
-     *
+     * <p>
      * This function open the dialog window to add the item for TdDo list.
      */
     private void showAddDialog() {
@@ -198,10 +202,10 @@ public class ListActivity extends AppCompatActivity {
     /**
      * Dialog submit function
      *
-     * @param dialogLayout  dialog Layout
-     * @param addDialog     dialog
+     * @param dialogLayout dialog Layout
+     * @param addDialog    dialog
      */
-    private void submit(final View dialogLayout,final Dialog addDialog){
+    private void submit(final View dialogLayout, final Dialog addDialog) {
         // OK or Cancel Button
         mOkButton = dialogLayout.findViewById(R.id.add_ok_btn);
         mCancelButton = dialogLayout.findViewById(R.id.add_cancel_btn);
@@ -233,42 +237,42 @@ public class ListActivity extends AppCompatActivity {
 
     /**
      * Dialog function
-     *
+     * <p>
      * this function change unit number in unit text view according to plus/minus image button.
      * minimum number: 1 / maximum number: 20
      *
      * @param dialogLayout add dialog layout
      */
-    private void getUnitNumber(View dialogLayout){
+    private void getUnitNumber(View dialogLayout) {
         // Unit plus, minus image button
         mUnitPlusImageButton = dialogLayout.findViewById(R.id.unit_plus_btn);
         mUnitMinusImageButton = dialogLayout.findViewById(R.id.unit_minus_btn);
 
         // get number from unit textview
         // and whether to activate buttons according to numeric range
-        mUnitTextView = dialogLayout.findViewById(R.id.unit_txt_view);
-        mUnitNumber = Integer.parseInt(mUnitTextView.getText().toString());
+        mTotalUnitTextView = dialogLayout.findViewById(R.id.get_total_unit_txt_view);
+        mTotalUnitNumber = Integer.parseInt(mTotalUnitTextView.getText().toString());
 
         // increase unit number
-        mUnitPlusImageButton.setOnClickListener(new View.OnClickListener(){
+        mUnitPlusImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mUnitNumber<20){
+                if (mTotalUnitNumber < 20) {
                     mUnitPlusImageButton.setImageResource(R.drawable.ic_unit_plus_true);
-                    mUnitNumber++;
-                    mUnitTextView.setText(""+mUnitNumber);
+                    mTotalUnitNumber++;
+                    mTotalUnitTextView.setText("" + mTotalUnitNumber);
                 }
                 getUnitImageButtonSrc();
             }
         });
 
         // decrease unit number
-        mUnitMinusImageButton.setOnClickListener(new View.OnClickListener(){
+        mUnitMinusImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mUnitNumber>1){
-                    mUnitNumber--;
-                    mUnitTextView.setText(""+mUnitNumber);
+                if (mTotalUnitNumber > 1) {
+                    mTotalUnitNumber--;
+                    mTotalUnitTextView.setText("" + mTotalUnitNumber);
                 }
                 getUnitImageButtonSrc();
             }
@@ -277,19 +281,17 @@ public class ListActivity extends AppCompatActivity {
 
     /**
      * Dialog function
-     *
+     * <p>
      * This function change plus/minus imageButton src according to Unit number range
      */
-    private void getUnitImageButtonSrc(){
-        if(mUnitNumber<=1) {
+    private void getUnitImageButtonSrc() {
+        if (mTotalUnitNumber <= 1) {
             mUnitMinusImageButton.setImageResource(R.drawable.ic_unit_minus_false);
             mUnitPlusImageButton.setImageResource(R.drawable.ic_unit_plus_true);
-        }
-        else if(mUnitNumber<20) {
+        } else if (mTotalUnitNumber < 20) {
             mUnitMinusImageButton.setImageResource(R.drawable.ic_unit_minus_true);
             mUnitPlusImageButton.setImageResource(R.drawable.ic_unit_plus_true);
-        }
-        else {
+        } else {
             mUnitMinusImageButton.setImageResource(R.drawable.ic_unit_minus_true);
             mUnitPlusImageButton.setImageResource(R.drawable.ic_unit_plus_false);
         }
