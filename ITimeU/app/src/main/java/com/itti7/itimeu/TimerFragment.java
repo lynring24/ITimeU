@@ -46,15 +46,15 @@ public class TimerFragment extends Fragment {
         mStateBttn = (Button)timerView.findViewById(R.id.state_bttn_view);
         mStateBttn.setOnClickListener(stateChecker);
         mTimeText = (TextView)timerView.findViewById(R.id.time_txt_view);
-
-//        int time = Integer.parseInt(getString(R.string.time).split(":")[1]);
-        mCalcTimer = new CountDownTimer(2*1000*60,1000) {
+        int time = Integer.parseInt(getString(R.string.time).split(":")[1]);
+        mProgressBar.setMax(time);
+        mCalcTimer = new CountDownTimer(time*1000*60,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                /*String hour = String.format("%02d",(millisUntilFinished / (1000*60*60)) );
+                String hour = String.format("%02d",(millisUntilFinished / (1000*60*60)) );
                 String min = String.format("%02d",(millisUntilFinished / (1000*60)) );
-                mTimeText.setText(hour+":"+min);*/
-                mTimeText.setText("seconds remaining: " + millisUntilFinished / 1000); //TesterCode
+                mTimeText.setText(hour+":"+min);
+                /*mTimeText.setText("seconds remaining: " + millisUntilFinished / 1000); //TesterCode*/
             }
 
             @Override
@@ -73,7 +73,7 @@ public class TimerFragment extends Fragment {
                     progressBarValue++;
                 }
                 mProgressBar.setProgress(progressBarValue);
-                handler.sendEmptyMessageDelayed(0, 1000); //increase by sec
+                handler.sendEmptyMessageDelayed(0, 1000*60); //increase by min
             }
         };
 
