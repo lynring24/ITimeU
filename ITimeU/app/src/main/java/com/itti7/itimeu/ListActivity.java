@@ -7,13 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,8 +35,16 @@ public class ListActivity extends AppCompatActivity {
     //edit text for add item
     private EditText mNameEditText;
     private EditText mQuantityEditText;
+    private TextView mUnitTextView;
     private String mDate;
     private int mStatus = 0;
+
+    //dialog var
+    private int mUnitNumber = 0;
+    private ImageButton mUnitPlusImageButton;
+    private ImageButton mUnitMinusImageButton;
+    private Button mOkButton;
+    private Button mCancelButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,21 +163,48 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
+
     /**
+     * It is a function of today's date.
+     *
+     * @return Return the current month and day.
+     */
+    public String getDate() {
+        String today = new SimpleDateFormat("yyyy.MM.dd").format(new Date());
+        return today;
+    }
+
+    /**
+     * Dialog main function
+     *
      * This function open the dialog window to add the item for TdDo list.
      */
     private void showAddDialog() {
         LayoutInflater dialog = LayoutInflater.from(this);
 
-        //assign Dialog
+        // call Dialog
         final View dialogLayout = dialog.inflate(R.layout.add_dialog, null);
         final Dialog addDialog = new Dialog(this);
 
         addDialog.setContentView(dialogLayout);
         addDialog.show();
 
-        Button mOkButton = dialogLayout.findViewById(R.id.add_ok_btn);
-        Button mCancelButton = dialogLayout.findViewById(R.id.add_cancel_btn);
+        getUnitNumber(dialogLayout);
+
+        submit(dialogLayout, addDialog);
+
+    }
+
+    /**
+     * Dialog submit function
+     *
+     * @param dialogLayout  dialog Layout
+     * @param addDialog     dialog
+     */
+    private void submit(final View dialogLayout,final Dialog addDialog){
+        // OK or Cancel Button
+        mOkButton = dialogLayout.findViewById(R.id.add_ok_btn);
+        mCancelButton = dialogLayout.findViewById(R.id.add_cancel_btn);
 
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,13 +232,67 @@ public class ListActivity extends AppCompatActivity {
     }
 
     /**
-     * It is a function of today's date.
+     * Dialog function
      *
-     * @return Return the current month and day.
+     * this function change unit number in unit text view according to plus/minus image button.
+     * minimum number: 1 / maximum number: 20
+     *
+     * @param dialogLayout add dialog layout
      */
-    public String getDate() {
-        String today = new SimpleDateFormat("yyyy.MM.dd").format(new Date());
-        return today;
+    private void getUnitNumber(View dialogLayout){
+        // Unit plus, minus image button
+        mUnitPlusImageButton = dialogLayout.findViewById(R.id.unit_plus_btn);
+        mUnitMinusImageButton = dialogLayout.findViewById(R.id.unit_minus_btn);
+
+        // get number from unit textview
+        // and whether to activate buttons according to numeric range
+        mUnitTextView = dialogLayout.findViewById(R.id.unit_txt_view);
+        mUnitNumber = Integer.parseInt(mUnitTextView.getText().toString());
+
+        // increase unit number
+        mUnitPlusImageButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if(mUnitNumber<20){
+                    mUnitPlusImageButton.setImageResource(R.drawable.ic_unit_plus_true);
+                    mUnitNumber++;
+                    mUnitTextView.setText(""+mUnitNumber);
+                }
+                getUnitImageButtonSrc();
+            }
+        });
+
+        // decrease unit number
+        mUnitMinusImageButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                if(mUnitNumber>1){
+                    mUnitNumber--;
+                    mUnitTextView.setText(""+mUnitNumber);
+                }
+                getUnitImageButtonSrc();
+            }
+        });
+    }
+
+    /**
+     * Dialog function
+     *
+     * This function change plus/minus imageButton src according to Unit number range
+     */
+    private void getUnitImageButtonSrc(){
+        if(mUnitNumber<=1) {
+            mUnitMinusImageButton.setImageResource(R.drawable.ic_unit_minus_false);
+            mUnitPlusImageButton.setImageResource(R.drawable.ic_unit_plus_true);
+        }
+        else if(mUnitNumber<20) {
+            mUnitMinusImageButton.setImageResource(R.drawable.ic_unit_minus_true);
+            mUnitPlusImageButton.setImageResource(R.drawable.ic_unit_plus_true);
+        }
+        else {
+            mUnitMinusImageButton.setImageResource(R.drawable.ic_unit_minus_true);
+            mUnitPlusImageButton.setImageResource(R.drawable.ic_unit_plus_false);
+        }
     }
 
 }
