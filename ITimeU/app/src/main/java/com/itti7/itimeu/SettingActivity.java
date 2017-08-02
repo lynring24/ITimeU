@@ -7,25 +7,25 @@ import android.widget.SeekBar;
 
 public class SettingActivity extends AppCompatActivity {
 
-    private SeekBar worksb, breaksb, longBreaksb, sessionNumsb;
-    private EditText worket, breaket, longBreaket, sessionNumet;
+    private SeekBar mworksb, mbreaksb, mlongBreaksb, msessionNumsb; //시크바
+    private EditText mworket, mbreaket, mlongBreaket, msessionNumet; //에디트텍스트 뷰
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
-        worksb = (SeekBar) findViewById(R.id.work_seek);
-        breaksb = (SeekBar) findViewById(R.id.break_seek);
-        longBreaksb = (SeekBar) findViewById(R.id.long_break_seek);
-        sessionNumsb = (SeekBar) findViewById(R.id.session_number_seek);
+        mworksb = (SeekBar) findViewById(R.id.work_seek);
+        mbreaksb = (SeekBar) findViewById(R.id.break_seek);
+        mlongBreaksb = (SeekBar) findViewById(R.id.long_break_seek);
+        msessionNumsb = (SeekBar) findViewById(R.id.session_number_seek);
 
-        worket = (EditText) findViewById(R.id.work_time);
-        breaket = (EditText) findViewById(R.id.break_time);
-        longBreaket = (EditText) findViewById(R.id.long_break_time);
-        sessionNumet = (EditText) findViewById(R.id.session_number);
+        mworket = (EditText) findViewById(R.id.work_time);
+        mbreaket = (EditText) findViewById(R.id.break_time);
+        mlongBreaket = (EditText) findViewById(R.id.long_break_time);
+        msessionNumet = (EditText) findViewById(R.id.session_number);
 
-        worksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mworksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 printSelected(seekBar, progress);
             }
@@ -36,7 +36,7 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
-        breaksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mbreaksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 printSelected(seekBar, progress);
             }
@@ -47,7 +47,7 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
-        longBreaksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mlongBreaksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 printSelected(seekBar, progress);
             }
@@ -58,7 +58,7 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
-        sessionNumsb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        msessionNumsb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 printSelected(seekBar, progress);
             }
@@ -71,32 +71,32 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     public void printSelected(SeekBar bar, int value) {
-        if (bar.equals(worksb)) {
-            worket.setText(String.valueOf(value));
+        if (bar.equals(mworksb)) {
+            mworket.setText(String.valueOf(value));
         }
-        else if (bar.equals((breaksb))) {
-            breaket.setText(String.valueOf(value));
+        else if (bar.equals((mbreaksb))) {
+            mbreaket.setText(String.valueOf(value));
         }
-        else if (bar.equals(longBreaksb)) {
-            longBreaket.setText(String.valueOf(value));
+        else if (bar.equals(mlongBreaksb)) {
+            mlongBreaket.setText(String.valueOf(value));
         }
-        else if (bar.equals(sessionNumsb)) {
-            sessionNumet.setText(String.valueOf(value));
+        else if (bar.equals(msessionNumsb)) {
+            msessionNumet.setText(String.valueOf(value));
         }
     }
 
     public void doAfterTrack(SeekBar bar) {
-        if (bar.equals(worksb)) {
-            worket.setText(worket.getText());
+        if (bar.equals(mworksb)) {
+            mworket.setText(mworket.getText());
         }
-        else if (bar.equals(breaksb)) {
-            breaket.setText(breaket.getText());
+        else if (bar.equals(mbreaksb)) {
+            mbreaket.setText(mbreaket.getText());
         }
-        else if (bar.equals(longBreaksb)) {
-            longBreaket.setText(longBreaket.getText());
+        else if (bar.equals(mlongBreaksb)) {
+            mlongBreaket.setText(mlongBreaket.getText());
         }
-        else if (bar.equals(sessionNumsb)) {
-            sessionNumet.setText(sessionNumet.getText());
+        else if (bar.equals(msessionNumsb)) {
+            msessionNumet.setText(msessionNumet.getText());
         }
     }
 
