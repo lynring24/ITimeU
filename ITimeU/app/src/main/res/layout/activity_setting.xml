@@ -10,35 +10,39 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="13dp"
-        android:text="Work session duration"/>
+        android:layout_marginTop="10dp"
+        android:text="Work session duration" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" >
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp">
 
-    <SeekBar
-        android:id="@+id/work_seek"
-        android:layout_width="285dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:max="120"
-        android:progress="25"
-        android:secondaryProgress="30" />
+        <SeekBar
+            android:id="@+id/work_seek"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="7.5"
+            android:max="120"
+            android:progress="25" />
 
-    <EditText
-        android:id="@+id/work_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="25"/>
+        <EditText
+            android:id="@+id/work_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="25" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:text="minutes"/>
+            android:layout_marginLeft="5dp"
+            android:layout_weight="2"
+            android:text="minutes" />
 
     </LinearLayout>
 
@@ -50,14 +54,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="13dp"
-        android:text="Break duration"/>
+        android:layout_marginTop="10dp"
+        android:text="Break duration" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" >
+        android:layout_marginTop="5dp">
 
         <SeekBar
             android:id="@+id/break_seek"
@@ -65,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:max="60"
-            android:progress="5"/>
+            android:progress="5" />
 
         <EditText
             android:id="@+id/break_time"
@@ -76,8 +80,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:text="minutes"/>
+            android:layout_marginLeft="5dp"
+            android:text="minutes" />
 
     </LinearLayout>
 
@@ -89,14 +93,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="13dp"
-        android:text="Long break duration"/>
+        android:layout_marginTop="10dp"
+        android:text="Long break duration" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" >
+        android:layout_marginTop="5dp">
 
         <SeekBar
             android:id="@+id/long_break_seek"
@@ -116,8 +120,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:text="minutes"/>
+            android:layout_marginLeft="5dp"
+            android:text="minutes" />
 
     </LinearLayout>
 
@@ -129,14 +133,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="13dp"
-        android:text="Work sessions before a long break"/>
+        android:layout_marginTop="10dp"
+        android:text="Work sessions before a long break" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" >
+        android:layout_marginTop="5dp">
 
         <SeekBar
             android:id="@+id/session_number_seek"
@@ -144,18 +148,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:max="10"
-            android:progress="4"/>
+            android:progress="4" />
 
         <EditText
             android:id="@+id/session_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="4"/>
+            android:text="4" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="minutes"/>
+            android:layout_marginLeft="5dp"
+            android:text="minutes" />
 
     </LinearLayout>
 
