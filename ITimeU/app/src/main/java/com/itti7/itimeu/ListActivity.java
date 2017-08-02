@@ -5,12 +5,14 @@ import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -120,11 +122,13 @@ public class ListActivity extends AppCompatActivity implements
         mCursorAdapter = new ItemCursorAdapter(this, null);
         itemListView.setAdapter(mCursorAdapter);
 
-        // Setup the item click listener
-        itemListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        // Setup the item long click listener
+        itemListView.setOnItemLongClickListener(new AdapterView
+                .OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 //TODO: create modify/delete dialog list
+
                 // Form the content URI that represents the specific item that was long clicked on,
                 // by appending the "id" (passed as input to this method) onto the
                 // {@link ItemEntry#CONTENT_URI}.
@@ -132,12 +136,39 @@ public class ListActivity extends AppCompatActivity implements
                 // if the pet with ID 2 was long clicked on.
                 mCurrentItemUri = ContentUris.withAppendedId(ItemEntry.CONTENT_URI, id);
 
+                createDialog();
                 return true;
             }
         });
 
         // Kick off the loader
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
+    }
+
+    /**
+     * This function create dialog list to modify/delete the item.
+     */
+    public void createDialog(){
+        final CharSequence[] items = {"Modify", "Delete"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int index) {
+                //Toast.makeText(getApplicationContext(), items[index], Toast.LENGTH_LONG).show();
+                // when click modify
+                if(index==0){
+
+                }
+                // when click delete
+                else {
+
+                }
+            } });
+
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
     }
 
     @Override
