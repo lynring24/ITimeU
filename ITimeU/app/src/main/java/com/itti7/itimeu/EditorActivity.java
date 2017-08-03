@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.app.LoaderManager;
 import android.content.Loader;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -139,6 +140,7 @@ public class EditorActivity extends AppCompatActivity implements
         Button okButton = (Button) findViewById(R.id.add_ok_btn);
         Button cancelButton = (Button) findViewById(R.id.add_cancel_btn);
 
+        //click ok button
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,10 +149,27 @@ public class EditorActivity extends AppCompatActivity implements
             }
         });
 
+        //click cancel button
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if (mItemHasChanged) {
+                    // if there are unsaved changes, setup a dialog to warn the user.
+                    // Create a click listener to handle the user confirming that
+                    // changes should be discarded.
+                    DialogInterface.OnClickListener discardButtonClickListener =
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // User clicked "Discard" button, navigate to parent activity.
+                                    finish();
+                                }
+                            };
+
+                    // Show a dialog that notifies the user they have unsaved changes
+                    showUnsavedChangesDialog(discardButtonClickListener);
+                }
+                else finish();
             }
         });
     }
