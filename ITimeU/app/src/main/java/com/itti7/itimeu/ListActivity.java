@@ -17,9 +17,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.itti7.itimeu.data.ItemContract.ItemEntry;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Displays list of pets that were entered and stored in the app.
@@ -36,6 +40,11 @@ public class ListActivity extends AppCompatActivity implements
     ListView itemListView;
 
     /**
+     * Date when the item is created
+     */
+    private String mDate = getDate();
+
+    /**
      * Adapter for the ListView
      */
     ItemCursorAdapter mCursorAdapter;
@@ -44,6 +53,11 @@ public class ListActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+        // show today's date
+        TextView textView = (TextView) findViewById(R.id.date_txt_view);
+        textView.setText(mDate);
+
 
         //when user click add FloatingActionButton for add a item in the list.
         final FloatingActionButton addFab = (FloatingActionButton) this.findViewById(R.id.add_fab_btn);
@@ -197,4 +211,13 @@ public class ListActivity extends AppCompatActivity implements
         mCursorAdapter.swapCursor(null);
     }
 
+    /**
+     * It is a function of today's date.
+     *
+     * @return Return the current month and day.
+     */
+    public String getDate() {
+        String today = new SimpleDateFormat("yyyy.MM.dd").format(new Date());
+        return today;
+    }
 }
