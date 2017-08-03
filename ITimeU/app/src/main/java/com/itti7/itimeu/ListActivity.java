@@ -68,29 +68,14 @@ public class ListActivity extends AppCompatActivity implements
         mCursorAdapter = new ItemCursorAdapter(this, null);
         itemListView.setAdapter(mCursorAdapter);
 
-        /*// Setup the item long click listener
-        itemListView.setOnItemLongClickListener(new AdapterView
-                .OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(ListActivity.this, EditorActivity.class);
-
-                Uri currentItemUri = ContentUris.withAppendedId(ItemEntry.CONTENT_URI, id);
-
-                intent.setData(currentItemUri);
-
-                startActivity(intent);
-
-                return true;
-            }
-        });*/
-
+        // Touch and hold the item to display the context menu (modify/delete).
         registerForContextMenu(itemListView);
 
         // Kick off the loader
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
     }
 
+    /** create context menu for modification or deletion */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 
@@ -99,6 +84,7 @@ public class ListActivity extends AppCompatActivity implements
         super.onCreateContextMenu(menu, v, menuInfo);
     }
 
+    /** show menu list */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info =
@@ -173,8 +159,11 @@ public class ListActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
-    private void deleteItem(int index) {
-        Uri currentItemUri = ContentUris.withAppendedId(ItemEntry.CONTENT_URI, index);
+    /** Delete the item of the ID obtained by parameter.
+     * @param id    item's id
+     * */
+    private void deleteItem(int id) {
+        Uri currentItemUri = ContentUris.withAppendedId(ItemEntry.CONTENT_URI, id);
 
         // Only perform the delete if this is an existing pet.
         if (currentItemUri != null) {
