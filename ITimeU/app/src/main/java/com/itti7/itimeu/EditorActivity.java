@@ -22,36 +22,58 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.itti7.itimeu.data.ItemContract;
+import com.itti7.itimeu.data.ItemContract.ItemEntry;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+
+/**
+ * Allows user to create a new item or edit an existing one.
+ */
 public class EditorActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
+    /** Identifier for the item data loader */
     private static final int EXISTING_ITEM_LOADER = 0;
 
+    /** Content URI for the existing item (null if it's a new item) */
     private Uri mCurrentItemUri;
 
+    /** EditText field to enter the item's name */
     private EditText mNameEditText;
 
+    /** EditText field to enter the item's quantity */
     private EditText mQuantityEditText;
 
+    /** TextView field to enter the item's total unit */
     private TextView mTotalUnitTextView;
 
+    /** ImageButton to increase total unit number */
     private ImageButton mUnitPlusImageButton;
 
+    /** ImageButton to decrease total unit number */
     private ImageButton mUnitMinusImageButton;
 
+    /** Total unit convert integer value */
     private int mTotalUnitNumber;
 
+    /** Creation date */
     private String mDate;
 
-    private int mStatus = ItemContract.ItemEntry.STATUS_TODO;
+    /**
+     * Status of the item. The possible valid values are in the ItemContract.java file:
+     * {@link ItemEntry#STATUS_TODO}, {@link ItemEntry#STATUS_DO}, {@link ItemEntry#STATUS_DONE}
+     * */
+    private int mStatus = ItemEntry.STATUS_TODO;
 
+    /** Boolean flag that keeps track of whether the item has been edited (true) or not (false) */
     private boolean mItemHasChanged = false;
 
+    /**
+     * OnTouchListener that listens for any user touches on a View, implying that they are modifying
+     * the view, and we change the mItemHasChanged boolean to true.
+     */
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -65,20 +87,27 @@ public class EditorActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
+        // Examine the intent that was used to launch this activity,
+        // in order to figure out if we're creating a new item or editing an existing one.
         Intent intent = getIntent();
         mCurrentItemUri = intent.getData();
 
+        // If the intent DOES NOT contain a item content URI, then we know that we are
+        // creating a new item.
         TextView titleTextView = (TextView) findViewById(R.id.editor_title_txt_view);
         if (mCurrentItemUri == null) {
+            // This is a new item, so change the title in TextView "ADD"
             titleTextView.setText(R.string.editor_title_add);
-
-            invalidateOptionsMenu();
         } else {
+            // Otherwise this is an existing item, so change the title in TextView "EDIT"
             titleTextView.setText(R.string.editor_title_edit);
 
+            // Initialize a loader to read the item data from the database
+            // and display the current values in the editor
             getLoaderManager().initLoader(EXISTING_ITEM_LOADER, null, this);
         }
 
+        // Find all relevant views that we will need to read user input from
         mNameEditText = (EditText) findViewById(R.id.name_edit_txt);
         mQuantityEditText = (EditText) findViewById(R.id.quantity_edit_txt);
         mTotalUnitTextView = (TextView) findViewById(R.id.get_total_unit_txt_view);
@@ -88,48 +117,75 @@ public class EditorActivity extends AppCompatActivity implements
         mUnitMinusImageButton = (ImageButton) findViewById(R.id.unit_minus_btn);
         mUnitPlusImageButton = (ImageButton) findViewById(R.id.unit_plus_btn);
 
+        // Setup OnTouchListeners on all the input fields, so we can determine if the user
+        // has touched or modified them. This will let us know if there are unsaved changes
+        // or not, if the user tries to leave the editor without saving.
         mNameEditText.setOnTouchListener(mTouchListener);
         mQuantityEditText.setOnTouchListener(mTouchListener);
         mUnitMinusImageButton.setOnTouchListener(mTouchListener);
         mUnitPlusImageButton.setOnTouchListener(mTouchListener);
 
-        getUnitNumber();
+        // change total unit number
+        getTotalUnitNumber();
+
+        // click ok
         submit();
     }
 
     /**
      * Get user input from editor and save item into database.
      */
-    private boolean savaItem() {
+    private boolean saveItem() {
+        // Read from input fields
+        // Use trim to eliminate leading or trailing white space
         String nameString = mNameEditText.getText().toString().trim();
         String quantityString = mQuantityEditText.getText().toString().trim();
 
-        //Check whether there is an empty space.
+        // Check whether name edit text is empty.
+        // if name is empty return false, else save the item than return true
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
         if (TextUtils.isEmpty(nameString)) {
             mNameEditText.startAnimation(shake);
             Toast.makeText(this, "input name", Toast.LENGTH_SHORT).show();
             return false;
         } else {
+            // Create a ContentValues object where column names are the keys,
+            // and item attributes from the editor are the values.
             ContentValues values = new ContentValues();
-            values.put(ItemContract.ItemEntry.COLUMN_ITEM_NAME, nameString);
-            values.put(ItemContract.ItemEntry.COLUMN_ITEM_QUANTITY, quantityString);
-            values.put(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
+            values.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
+            values.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantityString);
+            values.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
+            values.put(ItemEntry.COLUMN_ITEM_STATUS, mStatus);
+            values.put(ItemEntry.COLUMN_ITEM_DATE, mDate);
 
+            // Determine if this is a new or existing item by checking
+            // if mCurrentItemUri is null or not
             if (mCurrentItemUri == null) {
-                Uri newUri = getContentResolver().insert(ItemContract.ItemEntry.CONTENT_URI, values);
+                // This is a NEW item, so insert a new item into the provider,
+                // returning the content URI for the new item.
+                Uri newUri = getContentResolver().insert(ItemEntry.CONTENT_URI, values);
 
+                // Show a toast message depending on whether or not the insertion was successful.
                 if (newUri == null) {
+                    // If the new content URI is null, then there was an error with insertion.
                     Toast.makeText(this, "fail to create item", Toast.LENGTH_SHORT).show();
                 } else {
+                    // Otherwise, the insertion was successful and we can display a toast.
                     Toast.makeText(this, "success to create item", Toast.LENGTH_SHORT).show();
                 }
             } else {
+                // Otherwise this is an EXISTING item, so update the item with content URI: mCurrentItemUri
+                // and pass in the new ContentValues. Pass in null for the selection and selection args
+                // because mCurrentPetUri will already identify the correct row in the database that
+                // we want to modify.
                 int rowsAffected = getContentResolver().update(mCurrentItemUri, values, null, null);
 
+                // Show a toast message depending on whether or not the update was successful.
                 if (rowsAffected == 0) {
+                    // If no rows were affected, then there was an error with the update.
                     Toast.makeText(this, "fail to update item data", Toast.LENGTH_SHORT).show();
                 } else {
+                    // Otherwise, the update was successful and we can display a toast.
                     Toast.makeText(this, "success to update item data", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -137,6 +193,9 @@ public class EditorActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Save or cancel items.
+     */
     private void submit() {
         Button okButton = (Button) findViewById(R.id.add_ok_btn);
         Button cancelButton = (Button) findViewById(R.id.add_cancel_btn);
@@ -146,7 +205,7 @@ public class EditorActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 // success to insert item
-                if (savaItem()) finish();
+                if (saveItem()) finish();
             }
         });
 
@@ -202,14 +261,16 @@ public class EditorActivity extends AppCompatActivity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        // Since the editor shows all item attributes, define a projection that contains
+        // all columns from the item table
         String[] projection = {
-                ItemContract.ItemEntry._ID,
-                ItemContract.ItemEntry.COLUMN_ITEM_NAME,
-                ItemContract.ItemEntry.COLUMN_ITEM_QUANTITY,
-                ItemContract.ItemEntry.COLUMN_ITEM_DATE,
-                ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT,
-                ItemContract.ItemEntry.COLUMN_ITEM_UNIT,
-                ItemContract.ItemEntry.COLUMN_ITEM_STATUS
+                ItemEntry._ID,
+                ItemEntry.COLUMN_ITEM_NAME,
+                ItemEntry.COLUMN_ITEM_QUANTITY,
+                ItemEntry.COLUMN_ITEM_DATE,
+                ItemEntry.COLUMN_ITEM_TOTAL_UNIT,
+                ItemEntry.COLUMN_ITEM_UNIT,
+                ItemEntry.COLUMN_ITEM_STATUS
         };
 
         // This loader will execute the ContentProvider's query method on a background thread
@@ -229,12 +290,12 @@ public class EditorActivity extends AppCompatActivity implements
         }
 
         if (cursor.moveToFirst()) {
-            int nameColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME);
-            int quantityColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_QUANTITY);
-            int unitColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT);
-            int totalUnitColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT);
-            int statusColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS);
-            int dateColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE);
+            int nameColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_NAME);
+            int quantityColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_QUANTITY);
+            int unitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_UNIT);
+            int totalUnitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_TOTAL_UNIT);
+            int statusColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_STATUS);
+            int dateColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DATE);
 
             String name = cursor.getString(nameColumnIndex);
             String quantity = cursor.getString(quantityColumnIndex);
@@ -248,7 +309,7 @@ public class EditorActivity extends AppCompatActivity implements
             mTotalUnitNumber = totalUnit;
             mTotalUnitTextView.setText(Integer.toString(totalUnit));
 
-            getUnitNumber();
+            getTotalUnitNumber();
         }
     }
 
@@ -303,7 +364,7 @@ public class EditorActivity extends AppCompatActivity implements
      * minimum number: 1 / maximum number: 20
      * ut
      */
-    private void getUnitNumber() {
+    private void getTotalUnitNumber() {
         getUnitImageButtonSrc();
         // increase unit number
         mUnitPlusImageButton.setOnClickListener(new View.OnClickListener() {
