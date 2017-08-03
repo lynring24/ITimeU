@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/product_entry"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="8dp"
         android:columnCount="4"
         android:orientation="horizontal"
         android:rowCount="2"
@@ -27,21 +31,21 @@
 
             <TextView
                 android:id="@+id/unit_txt_view"
-                android:layout_gravity="fill"
+                android:gravity="fill"
                 android:padding="8dp"
-                android:textAppearance="?android:textAppearanceMedium"
+                android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="@color/colorAccent" />
 
             <TextView
                 android:layout_gravity="center"
                 android:text=" / "
-                android:textAppearance="?android:textAppearanceMedium" />
+                android:textAppearance="?android:textAppearanceLarge" />
 
             <TextView
                 android:id="@+id/total_unit_txt_view"
                 android:layout_gravity="fill"
                 android:padding="8dp"
-                android:textAppearance="?android:textAppearanceMedium" />
+                android:textAppearance="?android:textAppearanceLarge" />
         </GridLayout>
 
         <TextView
@@ -53,4 +57,4 @@
             android:textColor="@color/colorPrimaryDark" />
 
     </GridLayout>
-</LinearLayout>
+</android.support.v7.widget.CardView>
