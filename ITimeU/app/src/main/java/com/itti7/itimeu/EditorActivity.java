@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.app.LoaderManager;
 import android.content.Loader;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -84,6 +83,7 @@ public class EditorActivity extends AppCompatActivity implements
         mQuantityEditText = (EditText) findViewById(R.id.quantity_edit_txt);
         mTotalUnitTextView = (TextView) findViewById(R.id.get_total_unit_txt_view);
         mDate = getDate();
+        mTotalUnitNumber = Integer.parseInt(mTotalUnitTextView.getText().toString().trim());
 
         mUnitMinusImageButton = (ImageButton) findViewById(R.id.unit_minus_btn);
         mUnitPlusImageButton = (ImageButton) findViewById(R.id.unit_plus_btn);
@@ -93,6 +93,7 @@ public class EditorActivity extends AppCompatActivity implements
         mUnitMinusImageButton.setOnTouchListener(mTouchListener);
         mUnitPlusImageButton.setOnTouchListener(mTouchListener);
 
+        getUnitNumber();
         submit();
     }
 
@@ -285,50 +286,6 @@ public class EditorActivity extends AppCompatActivity implements
         // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-    }
-
-    /**
-     * Prompt the user to confirm that they want to delete this pet.
-     */
-    private void showDeleteConfirmationDialog() {
-        // Create an AlertDialog.Builder and set the message, and click listeners
-        // for the postivie and negative buttons on the dialog.
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("do you want to delete");
-        builder.setPositiveButton("delete", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked the "Delete" button, so delete the pet.
-                deleteItem();
-            }
-        });
-        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked the "Cancel" button, so dismiss the dialog
-                // and continue editing the pet.
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
-            }
-        });
-
-        // Create and show the AlertDialog
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
-
-    private void deleteItem() {
-        if (mCurrentItemUri != null) {
-            int rowsDeleted = getContentResolver().delete(mCurrentItemUri, null, null);
-
-            if (rowsDeleted == 0) {
-                Toast.makeText(this, "fail to delete",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "success to delete",
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
-        finish();
     }
 
     /**
