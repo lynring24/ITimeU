@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">I Time U</string>
+    <string name="editor_title_add">add</string>
+    <string name="editor_title_edit">edit</string>
 </resources>

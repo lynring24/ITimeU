@@ -1,15 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.itti7.itimeu.EditorActivity">
 
     <TextView
+        android:id="@+id/editor_title_txt_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="40dp"
         android:gravity="center_horizontal"
-        android:text="add"
         android:textAllCaps="true"
         android:textColor="@color/colorAccent"
         android:textSize="24sp" />

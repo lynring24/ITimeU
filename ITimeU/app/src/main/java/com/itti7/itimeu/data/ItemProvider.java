@@ -198,10 +198,6 @@ public class ItemProvider extends ContentProvider {
             // Check that the weight is greater than or equal to 0 kg
             Integer totalUnit = values.getAsInteger(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT);
             Integer unit = values.getAsInteger(ItemContract.ItemEntry.COLUMN_ITEM_UNIT);
-            if (totalUnit<unit) {
-                throw new IllegalArgumentException
-                        ("Done unit number is bigger than total unit number.");
-            }
         }
 
         // If there are no values to update, then don't try to update the database

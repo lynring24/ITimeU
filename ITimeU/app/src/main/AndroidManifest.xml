@@ -16,10 +16,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
             android:name=".data.ItemProvider"
             android:authorities="com.itti7.itimeu"
             android:exported="false" />
+
+        <activity android:name=".EditorActivity"></activity>
     </application>
 
 </manifest>
