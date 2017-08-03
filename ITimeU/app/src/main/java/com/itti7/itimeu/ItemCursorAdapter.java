@@ -61,7 +61,7 @@ public class ItemCursorAdapter extends CursorAdapter {
         TextView totalUnitTextView = view.findViewById(R.id.total_unit_txt_view);
         TextView unitTextView = view.findViewById(R.id.unit_txt_view);
 
-        // Find the columns of pet attributes that we're interested in
+        // Find the columns of item attributes that we're interested in
         int nameColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME);
         int quantityColumnIdex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_QUANTITY);
         int totalUnitColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT);
