@@ -26,6 +26,7 @@ import com.itti7.itimeu.data.ItemContract.ItemEntry;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 
 /**
@@ -57,6 +58,9 @@ public class EditorActivity extends AppCompatActivity implements
 
     /** Total unit convert integer value */
     private int mTotalUnitNumber;
+
+    /** Total unit convert string value */
+    private String mTotalUnitString;
 
     /** Creation date */
     private String mDate;
@@ -146,7 +150,7 @@ public class EditorActivity extends AppCompatActivity implements
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
         if (TextUtils.isEmpty(nameString)) {
             mNameEditText.startAnimation(shake);
-            Toast.makeText(this, "input name", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.input_name_toast), Toast.LENGTH_SHORT).show();
             return false;
         } else {
             // Create a ContentValues object where column names are the keys,
@@ -168,10 +172,10 @@ public class EditorActivity extends AppCompatActivity implements
                 // Show a toast message depending on whether or not the insertion was successful.
                 if (newUri == null) {
                     // If the new content URI is null, then there was an error with insertion.
-                    Toast.makeText(this, "fail to create item", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.create_item_fail), Toast.LENGTH_SHORT).show();
                 } else {
                     // Otherwise, the insertion was successful and we can display a toast.
-                    Toast.makeText(this, "success to create item", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.create_item_success), Toast.LENGTH_SHORT).show();
                 }
             } else {
                 // Otherwise this is an EXISTING item, so update the item with content URI: mCurrentItemUri
@@ -183,10 +187,10 @@ public class EditorActivity extends AppCompatActivity implements
                 // Show a toast message depending on whether or not the update was successful.
                 if (rowsAffected == 0) {
                     // If no rows were affected, then there was an error with the update.
-                    Toast.makeText(this, "fail to update item data", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.update_item_fail), Toast.LENGTH_SHORT).show();
                 } else {
                     // Otherwise, the update was successful and we can display a toast.
-                    Toast.makeText(this, "success to update item data", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.update_item_success), Toast.LENGTH_SHORT).show();
                 }
             }
             return true;
@@ -292,22 +296,24 @@ public class EditorActivity extends AppCompatActivity implements
         if (cursor.moveToFirst()) {
             int nameColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_NAME);
             int quantityColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_QUANTITY);
-            int unitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_UNIT);
+            //int unitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_UNIT);
             int totalUnitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_TOTAL_UNIT);
-            int statusColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_STATUS);
-            int dateColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DATE);
+            //int statusColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_STATUS);
+            //int dateColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DATE);
 
             String name = cursor.getString(nameColumnIndex);
             String quantity = cursor.getString(quantityColumnIndex);
-            String date = cursor.getString(dateColumnIndex);
-            int unit = cursor.getInt(unitColumnIndex);
+            //String date = cursor.getString(dateColumnIndex);
+            //int unit = cursor.getInt(unitColumnIndex);
             int totalUnit = cursor.getInt(totalUnitColumnIndex);
-            int status = cursor.getInt(statusColumnIndex);
+            //int status = cursor.getInt(statusColumnIndex);
+
+            mTotalUnitString = Integer.toString(totalUnit);
 
             mNameEditText.setText(name);
             mQuantityEditText.setText(quantity);
             mTotalUnitNumber = totalUnit;
-            mTotalUnitTextView.setText(Integer.toString(totalUnit));
+            mTotalUnitTextView.setText(mTotalUnitString);
 
             getTotalUnitNumber();
         }
@@ -317,7 +323,7 @@ public class EditorActivity extends AppCompatActivity implements
     public void onLoaderReset(Loader<Cursor> loader) {
         mNameEditText.setText("");
         mQuantityEditText.setText("");
-        mTotalUnitTextView.setText("1");
+        mTotalUnitTextView.setText(getString(R.string.reset_total_unit));
     }
 
     /**
@@ -332,9 +338,9 @@ public class EditorActivity extends AppCompatActivity implements
         // Create an AlertDialog.Builder and set the message, and click listeners
         // for the postivie and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Unsaved change");
-        builder.setPositiveButton("discard", discardButtonClickListener);
-        builder.setNegativeButton("keep editing", new DialogInterface.OnClickListener() {
+        builder.setMessage(getString(R.string.unsaved_change_msg));
+        builder.setPositiveButton(getString(R.string.discard_btn), discardButtonClickListener);
+        builder.setNegativeButton(getString(R.string.keep_editing_btn), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Keep editing" button, so dismiss the dialog
                 // and continue editing the pet.
@@ -355,8 +361,7 @@ public class EditorActivity extends AppCompatActivity implements
      * @return Return the current month and day.
      */
     public String getDate() {
-        String today = new SimpleDateFormat("yyyy.MM.dd").format(new Date());
-        return today;
+        return new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(new Date());
     }
 
     /**
@@ -373,7 +378,8 @@ public class EditorActivity extends AppCompatActivity implements
                 if (mTotalUnitNumber < 20) {
                     mUnitPlusImageButton.setImageResource(R.drawable.ic_unit_plus_true);
                     mTotalUnitNumber++;
-                    mTotalUnitTextView.setText("" + mTotalUnitNumber);
+                    mTotalUnitString = Integer.toString(mTotalUnitNumber);
+                    mTotalUnitTextView.setText(mTotalUnitString);
                 }
                 getUnitImageButtonSrc();
             }
@@ -385,7 +391,8 @@ public class EditorActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 if (mTotalUnitNumber > 1) {
                     mTotalUnitNumber--;
-                    mTotalUnitTextView.setText("" + mTotalUnitNumber);
+                    mTotalUnitString = Integer.toString(mTotalUnitNumber);
+                    mTotalUnitTextView.setText(mTotalUnitString);
                 }
                 getUnitImageButtonSrc();
             }
