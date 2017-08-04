@@ -11,10 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:columnCount="4"
+        android:columnCount="6"
         android:orientation="horizontal"
         android:rowCount="2"
         android:useDefaultMargins="false">
+
+        <ImageView
+            android:layout_columnSpan="2"
+            android:layout_rowSpan="2"
+            android:layout_gravity="fill"
+            android:src="@drawable/ic_start_btn"/>
 
         <TextView
             android:id="@+id/name_txt_view"
