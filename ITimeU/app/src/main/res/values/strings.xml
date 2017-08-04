@@ -37,4 +37,19 @@
     <!-- Delete item -->
     <string name="delete_item_fail">Fail to delete</string>
     <string name="delete_item_success">Success to delete</string>
+
+    <!-- activity_editor.xml -->
+    <string name="input_name_hint">name</string>
+    <string name="input_quantity_hint">quantity</string>
+    <string name="unit_txt_view_editor">unit</string>
+    <string name="default_total_unit_editor">1</string>
+    <string name="ok_btn">ok</string>
+
+    <!-- list_item.xml -->
+    <string name="unit_divider">/</string>
+
+    <!-- activity_list.xml -->
+    <string name="list_title">list</string>
+    <string name="empty_title_str">The list is empty</string>
+    <string name="empty_subtitle_str">Add the to-do list item</string>
 </resources>
