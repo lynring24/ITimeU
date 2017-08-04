@@ -24,6 +24,7 @@ import com.itti7.itimeu.data.ItemContract.ItemEntry;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Displays list of pets that were entered and stored in the app.
@@ -151,14 +152,14 @@ public class ListActivity extends AppCompatActivity implements
         // Create an AlertDialog.Builder and set the message, and click listeners
         // for the postivie and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Do you want to delete this item?");
-        builder.setPositiveButton("delete", new DialogInterface.OnClickListener() {
+        builder.setMessage(getString(R.string.delete_confirm_msg));
+        builder.setPositiveButton(getString(R.string.delete_btn), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Delete" button, so delete the pet.
                 deleteItem(index);
             }
         });
-        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Cancel" button, so dismiss the dialog
                 // and continue editing the pet.
@@ -189,11 +190,11 @@ public class ListActivity extends AppCompatActivity implements
             // Show a toast message depending on whether or not the delete was successful.
             if (rowsDeleted == 0) {
                 // If no rows were deleted, then there was an error with the delete.
-                Toast.makeText(this, "fail to delete",
+                Toast.makeText(this, getString(R.string.delete_item_fail),
                         Toast.LENGTH_SHORT).show();
             } else {
                 // Otherwise, the delete was successful and we can display a toast.
-                Toast.makeText(this, "success to delete",
+                Toast.makeText(this, getString(R.string.delete_item_success),
                         Toast.LENGTH_SHORT).show();
             }
         }
@@ -217,7 +218,7 @@ public class ListActivity extends AppCompatActivity implements
      * @return Return the current month and day.
      */
     public String getDate() {
-        String today = new SimpleDateFormat("yyyy.MM.dd").format(new Date());
+        String today = new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(new Date());
         return today;
     }
 }
