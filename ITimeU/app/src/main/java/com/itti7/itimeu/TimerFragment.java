@@ -52,15 +52,15 @@ public class TimerFragment extends Fragment {
 
         /*Time Text Initialize */
         mTimeText = (TextView)timerView.findViewById(R.id.time_txt_view);
-        /*int time = Integer.parseInt(getString(R.string.time).split(":")[1]);*/
-        int time = 2;
+        int time = Integer.parseInt(getString(R.string.time).split(":")[1]);
+        /*int time = 2;*/
         mCalcTimer = new CountDownTimer(time*1000*60,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-/*                String hour = String.format("%02d",(millisUntilFinished / (1000*60*60)) );
-                String min = String.format("%02d",(millisUntilFinished / (1000*60))+1 );
-                mTimeText.setText(hour+":"+min);*/
-                mTimeText.setText("seconds remaining: " + millisUntilFinished / 1000); //TesterCode
+                String hour = String.format("%02d",(millisUntilFinished / (1000*60*60)) );
+                String min = String.format("%02d",(millisUntilFinished) / (1000*60) );
+                mTimeText.setText(hour+":"+min);
+//                mTimeText.setText("seconds remaining: " + millisUntilFinished / 1000); //TesterCode
             }
 
             @Override
