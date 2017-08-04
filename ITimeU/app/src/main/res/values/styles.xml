@@ -7,5 +7,8 @@
         <item name="colorPrimaryDark">#9e9e9e</item>
         <item name="colorAccent">@color/accent</item>
     </style>
-
+    <!-- bottom navigation bar style -->
+    <style name="ThemeOverlay.Shrine.BottomNavigation" parent="">
+        <item name="colorPrimary">@color/primary</item>
+    </style>
 </resources>

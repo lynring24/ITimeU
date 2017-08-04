@@ -16,17 +16,15 @@
         android:layout_weight="8"
         tools:layout="@layout/activity_timer" />
 
-    <android.support.v7.widget.Toolbar
+    <!-- Add this view -->
+    <android.support.design.widget.BottomNavigationView
         android:id="@+id/menu_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="?attr/colorPrimary"
-
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-    <!--android:layout_height="?attr/actionBarSize"-->
-    <!--android:elevation="4dp"-->
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#ffffff"
+        android:theme="@style/ThemeOverlay.Shrine.BottomNavigation"
+        app:menu="@menu/menu"/>
 
 
 </LinearLayout>
