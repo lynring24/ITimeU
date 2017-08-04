@@ -17,7 +17,7 @@ import com.itti7.itimeu.data.ItemContract;
  * how to create list items for each row of item data in the {@link Cursor}.
  */
 
-public class ItemCursorAdapter extends CursorAdapter {
+class ItemCursorAdapter extends CursorAdapter {
 
     /**
      * Constructs a new {@link ItemCursorAdapter}.
@@ -25,7 +25,7 @@ public class ItemCursorAdapter extends CursorAdapter {
      * @param context The context
      * @param c       The cursor from which to get the data.
      */
-    public ItemCursorAdapter(Context context, Cursor c) {
+    ItemCursorAdapter(Context context, Cursor c) {
         super(context, c, 0 /* flags */);
     }
 
@@ -73,10 +73,13 @@ public class ItemCursorAdapter extends CursorAdapter {
         int itemTotalUnit = cursor.getInt(totalUnitColumnIndex);
         int itemUnit = cursor.getInt(unitColumnIndex);
 
+        String itemTotalUnitString = Integer.toString(itemTotalUnit);
+        String itemUnitString = Integer.toString(itemUnit);
+
         // Update the TextViews with the attributes for the current item
         nameTextView.setText(itemName);
         quantityTextView.setText(itemQuantity);
-        totalUnitTextView.setText(""+itemTotalUnit);
-        unitTextView.setText(""+itemUnit);
+        totalUnitTextView.setText(itemTotalUnitString);
+        unitTextView.setText(itemUnitString);
     }
 }
