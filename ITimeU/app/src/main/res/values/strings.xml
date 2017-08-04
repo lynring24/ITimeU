@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">I Time U</string>
-    <string name="setting">Setting</string>
-    <string name="statistics">Statistics</string>
+    <string name="setting">setting</string>
+    <string name="statistics">statistics</string>
+    <string name="about">about</string>
     <string name="time">00:25</string>
     <string name="start">start</string>
     <string name="stop">stop</string>

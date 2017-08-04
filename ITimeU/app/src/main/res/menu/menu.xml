@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity">
-
-   <!-- put menu into overflow menu-->
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_setting"
-        android:title="@string/setting"
-        app:showAsAction="never" />
+        android:id="@+id/category_about"
+        android:enabled="true"
+        android:title="@string/about"
+        android:icon="@drawable/about"
+        app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/action_statistics"
+        android:id="@+id/category_statistics"
+        android:enabled="true"
         android:title="@string/statistics"
-        app:showAsAction="never" />
-
+        android:icon="@drawable/statistics"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/category_setting"
+        android:enabled="true"
+        android:title="@string/setting"
+        android:icon="@drawable/setting"
+        app:showAsAction="ifRoom"/>
 </menu>
 
