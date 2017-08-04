@@ -260,7 +260,7 @@
             android:layout_weight="8.5"
             android:layout_height="wrap_content"
             android:layout_marginLeft="13dp"
-            android:text="vibrate when session ends" />
+            android:text="turn on the screen" />
 
         <CheckBox
             android:id="@+id/screen_check"
