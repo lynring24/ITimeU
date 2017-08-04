@@ -1,5 +1,29 @@
 <resources>
     <string name="app_name">I Time U</string>
+
+    <!-- EditorActivity.java -->
+
+    <!-- editor view's title -->
     <string name="editor_title_add">add</string>
     <string name="editor_title_edit">edit</string>
+
+    <!-- If name edit view is blank then -->
+    <string name="input_name_toast">You should input your name</string>
+
+    <!-- Create item -->
+    <string name="create_item_fail">Fail to create item</string>
+    <string name="create_item_success">Success to create item</string>
+
+    <!-- Update item-->
+    <string name="update_item_fail">Fail to update item</string>
+    <string name="update_item_success">Success to update item</string>
+
+    <!-- Reset total unit TextView's text-->
+    <string name="reset_total_unit">1</string>
+
+    <!-- Alert unsaved change message-->
+    <string name="unsaved_change_msg">Unsaved change</string>
+    <!-- discard or keep editing -->
+    <string name="discard_btn">Discard</string>
+    <string name="keep_editing_btn">Keep editing</string>
 </resources>
