@@ -25,7 +25,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:hint="name" />
+        android:hint="@string/input_name_hint" />
 
     <EditText
         android:id="@+id/quantity_edit_txt"
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:hint="quantity" />
+        android:hint="@string/input_quantity_hint" />
 
     <GridLayout
         android:layout_width="match_parent"
@@ -45,7 +45,7 @@
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:gravity="center"
-            android:text="unit"
+            android:text="@string/unit_txt_view_editor"
             android:textSize="18sp" />
 
         <ImageButton
@@ -60,7 +60,7 @@
             android:layout_columnWeight="2"
             android:layout_gravity="fill"
             android:gravity="center"
-            android:text="1"
+            android:text="@string/default_total_unit_editor"
             android:textSize="16sp" />
 
 
@@ -83,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/colorPrimaryDark"
-            android:text="cancel"
+            android:text="@string/cancel_btn"
             android:textColor="#ffffff" />
 
         <Button
@@ -91,7 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/colorAccent"
-            android:text="ok"
+            android:text="@string/ok_btn"
             android:textColor="#ffffff" />
     </GridLayout>
 </LinearLayout>
