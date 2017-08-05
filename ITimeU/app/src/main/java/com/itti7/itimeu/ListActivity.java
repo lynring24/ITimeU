@@ -7,11 +7,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.itti7.itimeu.data.ItemContract.ItemEntry;
+import com.itti7.itimeu.data.ItemDbHelper;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.SimpleDateFormat;
@@ -47,7 +50,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
     TextView mDateTextView;
 
     // Simple date format
-    public static final String DATE_FROMAT = "yyyy.MM.dd";
+    public static final String DATE_FORMAT = "yyyy.MM.dd";
 
     // List's date
     private Date mListDate;
@@ -55,7 +58,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
     // Date convert to String
     private String mDate;
 
-    /**
+     /**
      * Adapter for the ListView
      */
     ItemCursorAdapter mCursorAdapter;
@@ -105,8 +108,8 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ListActivity.this, EditorActivity.class);
+                intent.putExtra("date", mDate);
                 startActivity(intent);
-
             }
         });
 
@@ -117,15 +120,14 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
         View emptyView = findViewById(R.id.empty_relative_view);
         itemListView.setEmptyView(emptyView);
 
-        // Setup an Adapter to create a list item for each row of item data in the Cursor.
-        // There is no item data yet (until the loader finishes) so pass in null for the Cursor.
         mCursorAdapter = new ItemCursorAdapter(this, null);
         itemListView.setAdapter(mCursorAdapter);
 
+        //displayListByDate();
         // Touch and hold the item to display the context menu (modify/delete).
         registerForContextMenu(itemListView);
 
-        // Kick off the loader
+        //Kick off the loader
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
     }
 
@@ -179,12 +181,14 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
                 ItemEntry.COLUMN_ITEM_TOTAL_UNIT,
                 ItemEntry.COLUMN_ITEM_UNIT};
 
+        String[] date = { mDate };
+
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
                 ItemEntry.CONTENT_URI,   // Provider content URI to query
                 projection,             // Columns to include in the resulting Cursor
-                null,                   // No selection clause
-                null,                   // No selection arguments
+                "date = ?",                   // No selection clause
+                date,                   // No selection arguments
                 null);                  // Default sort order
     }
 
@@ -247,7 +251,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        // Update {@link PetCursorAdapter} with this new cursor containing updated pet data
+        // Update {@link ITemCursorAdapter} with this new cursor containing updated item data
         mCursorAdapter.swapCursor(data);
     }
 
@@ -263,7 +267,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
      * @return Return the current month and day.
      */
     public String getDate(Date date) {
-        return new SimpleDateFormat(DATE_FROMAT, Locale.KOREA).format(date);
+        return new SimpleDateFormat(DATE_FORMAT, Locale.KOREA).format(date);
     }
 
     /**
@@ -283,6 +287,12 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
 
         calendar.set(year, month, day);
         mListDate = calendar.getTime();
-        mDateTextView.setText(getDate(mListDate));
+        mDate = getDate(mListDate);
+        mDateTextView.setText(mDate);
+
+        getLoaderManager().restartLoader(0, null, this);
+        mCursorAdapter.notifyDataSetChanged();
+
+        Log.v("ListActivity", "mDate: " + mDate);
     }
 }
