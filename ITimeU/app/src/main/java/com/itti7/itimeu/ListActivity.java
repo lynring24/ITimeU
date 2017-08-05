@@ -21,8 +21,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.itti7.itimeu.data.ItemContract.ItemEntry;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -30,7 +32,7 @@ import java.util.Locale;
  * Displays list of pets that were entered and stored in the app.
  */
 
-public class ListActivity extends AppCompatActivity implements
+public class ListActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
@@ -38,17 +40,28 @@ public class ListActivity extends AppCompatActivity implements
      */
     private static final int ITEM_LOADER = 0;
 
+    // ListView
     ListView itemListView;
 
-    /**
-     * Date when the item is created
-     */
-    private String mDate = getDate();
+    // Show date text
+    TextView mDateTextView;
+
+    // Simple date format
+    public static final String DATE_FROMAT = "yyyy.MM.dd";
+
+    // List's date
+    private Date mListDate;
+
+    // Date convert to String
+    private String mDate;
 
     /**
      * Adapter for the ListView
      */
     ItemCursorAdapter mCursorAdapter;
+
+    // Date year, month, day;
+    private int year, month, day;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +69,38 @@ public class ListActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_list);
 
         // show today's date
-        TextView textView = (TextView) findViewById(R.id.date_txt_view);
-        textView.setText(mDate);
+        mListDate = new Date();
+        mDate = getDate(mListDate);
+        mDateTextView = (TextView) findViewById(R.id.date_txt_view);
+        mDateTextView.setText(mDate);
 
+        // If click date TextView
+        mDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Date date;
+                if (mDate != null) {
+                    date = mListDate;
+                } else {
+                    date = new Date();
+                }
+
+                // Setting calender -> list's date
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog
+                        = DatePickerDialog.newInstance(ListActivity.this, year, month, day);
+                datePickerDialog.show(getFragmentManager(), "DateFragment");
+            }
+        });
 
         //when user click add FloatingActionButton for add a item in the list.
-        final FloatingActionButton addFab = (FloatingActionButton) this.findViewById(R.id.add_fab_btn);
+        final FloatingActionButton addFab
+                = (FloatingActionButton) this.findViewById(R.id.add_fab_btn);
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +129,9 @@ public class ListActivity extends AppCompatActivity implements
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
     }
 
-    /** create context menu for modification or deletion */
+    /**
+     * create context menu for modification or deletion
+     */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 
@@ -99,7 +140,9 @@ public class ListActivity extends AppCompatActivity implements
         super.onCreateContextMenu(menu, v, menuInfo);
     }
 
-    /** show menu list */
+    /**
+     * show menu list
+     */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info =
@@ -174,9 +217,11 @@ public class ListActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
-    /** Delete the item of the ID obtained by parameter.
-     * @param id    item's id
-     * */
+    /**
+     * Delete the item of the ID obtained by parameter.
+     *
+     * @param id item's id
+     */
     private void deleteItem(int id) {
         Uri currentItemUri = ContentUris.withAppendedId(ItemEntry.CONTENT_URI, id);
 
@@ -217,8 +262,27 @@ public class ListActivity extends AppCompatActivity implements
      *
      * @return Return the current month and day.
      */
-    public String getDate() {
-        String today = new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(new Date());
-        return today;
+    public String getDate(Date date) {
+        return new SimpleDateFormat(DATE_FROMAT, Locale.KOREA).format(date);
+    }
+
+    /**
+     *
+     * @param view              DatePickerDialog
+     * @param selectedYear      Year selected by the user
+     * @param selectedMonth     Month selected by the user
+     * @param selectedDay       Date selected by the user
+     */
+    @Override
+    public void onDateSet(DatePickerDialog view, int selectedYear, int selectedMonth, int selectedDay) {
+        Calendar calendar = Calendar.getInstance();
+
+        year = selectedYear;
+        month = selectedMonth;
+        day = selectedDay;
+
+        calendar.set(year, month, day);
+        mListDate = calendar.getTime();
+        mDateTextView.setText(getDate(mListDate));
     }
 }
