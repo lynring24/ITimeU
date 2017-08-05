@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -92,6 +93,7 @@ public class EditorActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_editor);
 
         // Examine the intent that was used to launch this activity,
+        // Examine the intent that was used to launch this activity,
         // in order to figure out if we're creating a new item or editing an existing one.
         Intent intent = getIntent();
         mCurrentItemUri = intent.getData();
@@ -115,7 +117,7 @@ public class EditorActivity extends AppCompatActivity implements
         mNameEditText = (EditText) findViewById(R.id.name_edit_txt);
         mQuantityEditText = (EditText) findViewById(R.id.quantity_edit_txt);
         mTotalUnitTextView = (TextView) findViewById(R.id.get_total_unit_txt_view);
-        mDate = getDate();
+        mDate = intent.getStringExtra("date");
         mTotalUnitNumber = Integer.parseInt(mTotalUnitTextView.getText().toString().trim());
 
         mUnitMinusImageButton = (ImageButton) findViewById(R.id.unit_minus_btn);
@@ -155,19 +157,24 @@ public class EditorActivity extends AppCompatActivity implements
         } else {
             // Create a ContentValues object where column names are the keys,
             // and item attributes from the editor are the values.
-            ContentValues values = new ContentValues();
-            values.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
-            values.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantityString);
-            values.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
-            values.put(ItemEntry.COLUMN_ITEM_STATUS, mStatus);
-            values.put(ItemEntry.COLUMN_ITEM_DATE, mDate);
+            ContentValues createValues = new ContentValues();
+            createValues.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
+            createValues.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantityString);
+            createValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
+            createValues.put(ItemEntry.COLUMN_ITEM_STATUS, mStatus);
+            createValues.put(ItemEntry.COLUMN_ITEM_DATE, mDate);
+
+            ContentValues editValues = new ContentValues();
+            editValues.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
+            editValues.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantityString);
+            editValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
 
             // Determine if this is a new or existing item by checking
             // if mCurrentItemUri is null or not
             if (mCurrentItemUri == null) {
                 // This is a NEW item, so insert a new item into the provider,
                 // returning the content URI for the new item.
-                Uri newUri = getContentResolver().insert(ItemEntry.CONTENT_URI, values);
+                Uri newUri = getContentResolver().insert(ItemEntry.CONTENT_URI, createValues);
 
                 // Show a toast message depending on whether or not the insertion was successful.
                 if (newUri == null) {
@@ -182,7 +189,7 @@ public class EditorActivity extends AppCompatActivity implements
                 // and pass in the new ContentValues. Pass in null for the selection and selection args
                 // because mCurrentPetUri will already identify the correct row in the database that
                 // we want to modify.
-                int rowsAffected = getContentResolver().update(mCurrentItemUri, values, null, null);
+                int rowsAffected = getContentResolver().update(mCurrentItemUri, editValues, null, null);
 
                 // Show a toast message depending on whether or not the update was successful.
                 if (rowsAffected == 0) {
@@ -277,12 +284,13 @@ public class EditorActivity extends AppCompatActivity implements
                 ItemEntry.COLUMN_ITEM_STATUS
         };
 
+        String[] date = {mDate};
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
                 mCurrentItemUri,         // Query the content URI for the current item
                 projection,             // Columns to include in the resulting Cursor
-                null,                   // No selection clause
-                null,                   // No selection arguments
+                "date = ?",                   // No selection clause
+                date,                   // No selection arguments
                 null);                  // Default sort order
     }
 
@@ -353,15 +361,6 @@ public class EditorActivity extends AppCompatActivity implements
         // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-    }
-
-    /**
-     * It is a function of today's date.
-     *
-     * @return Return the current month and day.
-     */
-    public String getDate() {
-        return new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(new Date());
     }
 
     /**
