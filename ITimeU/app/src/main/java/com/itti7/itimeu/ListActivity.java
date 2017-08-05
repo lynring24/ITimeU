@@ -7,13 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.itti7.itimeu.data.ItemContract.ItemEntry;
-import com.itti7.itimeu.data.ItemDbHelper;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.SimpleDateFormat;
@@ -185,10 +182,10 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
-                ItemEntry.CONTENT_URI,   // Provider content URI to query
+                ItemEntry.CONTENT_URI,  // Provider content URI to query
                 projection,             // Columns to include in the resulting Cursor
-                "date = ?",                   // No selection clause
-                date,                   // No selection arguments
+                "date = ?",             // Date selection clause
+                date,                   // Date selection arguments
                 null);                  // Default sort order
     }
 
@@ -197,7 +194,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
      */
     private void showDeleteConfirmationDialog(final int index) {
         // Create an AlertDialog.Builder and set the message, and click listeners
-        // for the postivie and negative buttons on the dialog.
+        // for the positive and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.delete_confirm_msg));
         builder.setPositiveButton(getString(R.string.delete_btn), new DialogInterface.OnClickListener() {
@@ -281,18 +278,18 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
     public void onDateSet(DatePickerDialog view, int selectedYear, int selectedMonth, int selectedDay) {
         Calendar calendar = Calendar.getInstance();
 
+        // Assign Selected Date in DatePickerDialog
         year = selectedYear;
         month = selectedMonth;
         day = selectedDay;
 
+        // Set Date in List
         calendar.set(year, month, day);
         mListDate = calendar.getTime();
         mDate = getDate(mListDate);
         mDateTextView.setText(mDate);
 
+        // Update List Date
         getLoaderManager().restartLoader(0, null, this);
-        mCursorAdapter.notifyDataSetChanged();
-
-        Log.v("ListActivity", "mDate: " + mDate);
     }
 }

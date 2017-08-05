@@ -12,7 +12,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -24,11 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.itti7.itimeu.data.ItemContract.ItemEntry;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 
 /**
  * Allows user to create a new item or edit an existing one.
@@ -155,23 +149,17 @@ public class EditorActivity extends AppCompatActivity implements
             Toast.makeText(this, getString(R.string.input_name_toast), Toast.LENGTH_SHORT).show();
             return false;
         } else {
-            // Create a ContentValues object where column names are the keys,
-            // and item attributes from the editor are the values.
-            ContentValues createValues = new ContentValues();
-            createValues.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
-            createValues.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantityString);
-            createValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
-            createValues.put(ItemEntry.COLUMN_ITEM_STATUS, mStatus);
-            createValues.put(ItemEntry.COLUMN_ITEM_DATE, mDate);
-
-            ContentValues editValues = new ContentValues();
-            editValues.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
-            editValues.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantityString);
-            editValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
-
             // Determine if this is a new or existing item by checking
             // if mCurrentItemUri is null or not
             if (mCurrentItemUri == null) {
+                // Create  a ContentValues object for a new Item
+                ContentValues createValues = new ContentValues();
+                createValues.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
+                createValues.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantityString);
+                createValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
+                createValues.put(ItemEntry.COLUMN_ITEM_STATUS, mStatus);
+                createValues.put(ItemEntry.COLUMN_ITEM_DATE, mDate);
+
                 // This is a NEW item, so insert a new item into the provider,
                 // returning the content URI for the new item.
                 Uri newUri = getContentResolver().insert(ItemEntry.CONTENT_URI, createValues);
@@ -185,6 +173,12 @@ public class EditorActivity extends AppCompatActivity implements
                     Toast.makeText(this, getString(R.string.create_item_success), Toast.LENGTH_SHORT).show();
                 }
             } else {
+                // Create a ContentValues object for a existing item
+                ContentValues editValues = new ContentValues();
+                editValues.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
+                editValues.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantityString);
+                editValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
+
                 // Otherwise this is an EXISTING item, so update the item with content URI: mCurrentItemUri
                 // and pass in the new ContentValues. Pass in null for the selection and selection args
                 // because mCurrentPetUri will already identify the correct row in the database that
@@ -344,7 +338,7 @@ public class EditorActivity extends AppCompatActivity implements
     private void showUnsavedChangesDialog(
             DialogInterface.OnClickListener discardButtonClickListener) {
         // Create an AlertDialog.Builder and set the message, and click listeners
-        // for the postivie and negative buttons on the dialog.
+        // for the positive and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.unsaved_change_msg));
         builder.setPositiveButton(getString(R.string.discard_btn), discardButtonClickListener);
