@@ -39,7 +39,6 @@ public class TimerFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,17 +51,17 @@ public class TimerFragment extends Fragment {
 
         /*Time Text Initialize */
         mTimeText = (TextView)timerView.findViewById(R.id.time_txt_view);
-        int time = Integer.parseInt(getString(R.string.time).split(":")[1]);
-        /*int time = 2;*/
+        final int time = Integer.parseInt(getString(R.string.time).split(":")[1]);
+
         mCalcTimer = new CountDownTimer(time*1000*60,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 String hour = String.format("%02d",(millisUntilFinished / (1000*60*60)) );
                 String min = String.format("%02d",(millisUntilFinished) / (1000*60) );
-                mTimeText.setText(hour+":"+min);
-//                mTimeText.setText("seconds remaining: " + millisUntilFinished / 1000); //TesterCode
+                String sec = String.format("%02d",(millisUntilFinished/1000) %60);
+                mTimeText.setText(hour+":"+min+":"+sec);
+//              mTimeText.setText("seconds remaining: " + millisUntilFinished / 1000); //TesterCode
             }
-
             @Override
             public void onFinish() {
                         /*alarm or vibration*/
@@ -76,10 +75,10 @@ public class TimerFragment extends Fragment {
             {
                 if(state)
                 {
-                    progressBarValue++;
+                    progressBarValue+=1; // match to sec
                 }
                 mProgressBar.setProgress(progressBarValue);
-                handler.sendEmptyMessageDelayed(0, 1000); //increase by min
+                handler.sendEmptyMessageDelayed(0, 1000); //increase by sec
             }
         };
 
