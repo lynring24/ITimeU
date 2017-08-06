@@ -16,6 +16,8 @@ import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +46,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
     ListView itemListView;
 
     // Show date text
-    TextView mDateTextView;
+    Button mDateButton;
 
     // Simple date format
     public static final String DATE_FORMAT = "yyyy.MM.dd";
@@ -71,11 +73,11 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
         // show today's date
         mListDate = new Date();
         mDate = getDate(mListDate);
-        mDateTextView = (TextView) findViewById(R.id.date_txt_view);
-        mDateTextView.setText(mDate);
+        mDateButton = (Button) findViewById(R.id.date_btn);
+        mDateButton.setText(mDate);
 
         // If click date TextView
-        mDateTextView.setOnClickListener(new View.OnClickListener() {
+        mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Date date;
@@ -287,7 +289,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
         calendar.set(year, month, day);
         mListDate = calendar.getTime();
         mDate = getDate(mListDate);
-        mDateTextView.setText(mDate);
+        mDateButton.setText(mDate);
 
         // Update List Date
         getLoaderManager().restartLoader(0, null, this);
