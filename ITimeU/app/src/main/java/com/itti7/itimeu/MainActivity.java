@@ -1,5 +1,6 @@
 package com.itti7.itimeu;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -33,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
                             return true;
                         }
                         if (id == R.id.category_statistics) {
-            /*Intent passTo  = new Intent(getApplicationContext(),StatisticsActivity);
-                * startActivity(passTo);*/
+           Intent passTo  = new Intent(getApplicationContext(),StatisticsActivity.class);
+                 startActivity(passTo);
                             return true;
                         }
                         if (id == R.id.category_setting) {
@@ -45,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
-        if (savedInstanceState == null) {
+       /* if (savedInstanceState == null) {
             bottomNavigation.setSelectedItemId(R.id.category_statistics);
-        }
+        }*/
     }
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
