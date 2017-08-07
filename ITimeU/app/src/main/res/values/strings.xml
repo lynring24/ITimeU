@@ -49,7 +49,6 @@
     <string name="unit_divider">/</string>
 
     <!-- activity_list.xml -->
-    <string name="list_title">list</string>
     <string name="empty_title_str">The list is empty</string>
     <string name="empty_subtitle_str">Add the to-do list item</string>
 </resources>

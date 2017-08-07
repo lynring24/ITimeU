@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,12 +18,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.itti7.itimeu.data.ItemContract.ItemEntry;
+import com.itti7.itimeu.data.ItemDbHelper;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.SimpleDateFormat;
@@ -42,8 +44,14 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
      */
     private static final int ITEM_LOADER = 0;
 
+    // TextView for showing achievement rate
+    TextView mAchievementTextView;
+
+    // TextView for showing detail for achievement rate
+    TextView mDetailRateTextView;
+
     // ListView
-    ListView itemListView;
+    ListView mItemListView;
 
     // Show date text
     Button mDateButton;
@@ -57,13 +65,20 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
     // Date convert to String
     private String mDate;
 
-     /**
+    /**
      * Adapter for the ListView
      */
     ItemCursorAdapter mCursorAdapter;
 
     // Date year, month, day;
-    private int year, month, day;
+    private int mYear, mMonth, mDay;
+
+    // Sum total units, and units respectively.
+    private int mSumOfTotalUnits, mSumOfUnits;
+    private double mPercent;
+
+    private String mPercentStr;
+    private String mDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +90,8 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
         mDate = getDate(mListDate);
         mDateButton = (Button) findViewById(R.id.date_btn);
         mDateButton.setText(mDate);
+
+        setAchievementRate();
 
         // If click date TextView
         mDateButton.setOnClickListener(new View.OnClickListener() {
@@ -90,12 +107,12 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
                 // Setting calender -> list's date
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
-                year = calendar.get(Calendar.YEAR);
-                month = calendar.get(Calendar.MONTH);
-                day = calendar.get(Calendar.DAY_OF_MONTH);
+                mYear = calendar.get(Calendar.YEAR);
+                mMonth = calendar.get(Calendar.MONTH);
+                mDay = calendar.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog datePickerDialog
-                        = DatePickerDialog.newInstance(ListActivity.this, year, month, day);
+                        = DatePickerDialog.newInstance(ListActivity.this, mYear, mMonth, mDay);
                 datePickerDialog.show(getFragmentManager(), "DateFragment");
             }
         });
@@ -113,21 +130,33 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
         });
 
         // Find the ListView which will be populated with the item data
-        itemListView = (ListView) findViewById(R.id.item_list_view);
+        mItemListView = (ListView) findViewById(R.id.item_list_view);
 
         // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
         View emptyView = findViewById(R.id.empty_relative_view);
-        itemListView.setEmptyView(emptyView);
+        mItemListView.setEmptyView(emptyView);
 
         mCursorAdapter = new ItemCursorAdapter(this, null);
-        itemListView.setAdapter(mCursorAdapter);
+        mItemListView.setAdapter(mCursorAdapter);
+
 
         //displayListByDate();
         // Touch and hold the item to display the context menu (modify/delete).
-        registerForContextMenu(itemListView);
+        registerForContextMenu(mItemListView);
 
         //Kick off the loader
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
+    }
+
+    /**
+     * Perform a refresh when other activities are finished.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setAchievementRate();
+        // Update List Date
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     /**
@@ -180,7 +209,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
                 ItemEntry.COLUMN_ITEM_TOTAL_UNIT,
                 ItemEntry.COLUMN_ITEM_UNIT};
 
-        String[] date = { mDate };
+        String[] date = {mDate};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
@@ -203,6 +232,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Delete" button, so delete the pet.
                 deleteItem(index);
+                onResume();
             }
         });
         builder.setNegativeButton(getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
@@ -270,28 +300,69 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
     }
 
     /**
-     *
-     * @param view              DatePickerDialog
-     * @param selectedYear      Year selected by the user
-     * @param selectedMonth     Month selected by the user
-     * @param selectedDay       Date selected by the user
+     * @param view          DatePickerDialog
+     * @param selectedYear  Year selected by the user
+     * @param selectedMonth Month selected by the user
+     * @param selectedDay   Date selected by the user
      */
     @Override
     public void onDateSet(DatePickerDialog view, int selectedYear, int selectedMonth, int selectedDay) {
         Calendar calendar = Calendar.getInstance();
 
         // Assign Selected Date in DatePickerDialog
-        year = selectedYear;
-        month = selectedMonth;
-        day = selectedDay;
+        mYear = selectedYear;
+        mMonth = selectedMonth;
+        mDay = selectedDay;
 
         // Set Date in List
-        calendar.set(year, month, day);
+        calendar.set(mYear, mMonth, mDay);
         mListDate = calendar.getTime();
         mDate = getDate(mListDate);
         mDateButton.setText(mDate);
 
+        setAchievementRate();
         // Update List Date
         getLoaderManager().restartLoader(0, null, this);
+    }
+
+    /**
+     * Calculate Percentage: sum of units / sum of total-units
+     */
+    void calculateAchievementRate() {
+        ItemDbHelper dbHelper = new ItemDbHelper(this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        mSumOfTotalUnits = 0;
+        mSumOfUnits = 0;
+        String[] date = {mDate};
+        Cursor cursor = db.rawQuery("SELECT totalUnit, unit FROM list WHERE date = ?", date);
+
+        if(cursor.moveToFirst()) {
+            do {
+                mSumOfTotalUnits += cursor.getInt(cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_TOTAL_UNIT));
+                mSumOfUnits += cursor.getInt(cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_UNIT));
+            } while (cursor.moveToNext());
+
+            if (mSumOfTotalUnits != 0) {
+                mPercent = Math.round(((double) mSumOfUnits / mSumOfTotalUnits) * 100);
+            } else {
+                mPercent = 0;
+            }
+        }
+        cursor.close();
+
+        mPercentStr = "  "+mPercent+" %";
+        mDetail = "( " + mSumOfUnits + " / " + mSumOfTotalUnits + " )";
+    }
+
+    /**
+     * Setting Achievement rate in TextView
+     */
+    void setAchievementRate(){
+        calculateAchievementRate();
+        // Find the TextView which will show sum of units / sum of total units in list's date
+        mAchievementTextView = (TextView) findViewById(R.id.achievement_rate_txt_view);
+        mAchievementTextView.setText(mPercentStr);
+        mDetailRateTextView = (TextView) findViewById(R.id.rate_detail_txt_view);
+        mDetailRateTextView.setText(mDetail);
     }
 }
