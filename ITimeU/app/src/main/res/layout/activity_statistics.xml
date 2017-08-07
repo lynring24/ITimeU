@@ -1,17 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.itti7.itimeu.StatisticsActivity">
+    android:orientation="vertical">
 
-    <Button
-        android:id="@+id/button_testor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="63dp"
-        tools:layout_editor_absoluteY="92dp" />
+    <include layout="@layout/toolbar"/>
 
-</RelativeLayout>
+    <Spinner
+        android:id="@+id/stat_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"></Spinner>
+
+    <RelativeLayout
+        android:id="@+id/stat_chart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center_horizontal"
+        android:layout_weight="10"></RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="RESULT"/>
+    <TextView
+        android:id="@+id/stat_done"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:text="Session Done: 6 (75%)"/>
+
+</LinearLayout>
+
