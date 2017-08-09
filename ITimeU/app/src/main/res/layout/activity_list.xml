@@ -16,14 +16,14 @@
         <TextView
             android:id="@+id/achievement_rate_txt_view"
             android:layout_gravity="center"
-            android:paddingTop="40dp"
+            android:paddingTop="10dp"
             android:textColor="@color/colorAccent"
             android:textSize="32sp" />
 
         <TextView
             android:id="@+id/rate_detail_txt_view"
             android:layout_gravity="center"
-            android:paddingBottom="20dp"
+            android:paddingBottom="10dp"
             android:textColor="@color/colorPrimary"
             android:textSize="16sp" />
 
@@ -32,11 +32,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:backgroundTint="@color/colorAccent"
-            android:drawableRight="@drawable/ic_date_selection"
-            android:paddingBottom="12dp"
-            android:paddingLeft="32dp"
-            android:paddingTop="12dp"
+            android:background="@color/colorAccent"
+            android:drawableLeft="@drawable/ic_date_left"
+            android:drawableRight="@drawable/ic_date_right"
+            android:drawablePadding="10dp"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
             android:textAllCaps="true"
             android:textColor="#ffffff"
             android:textSize="16sp" />
@@ -62,6 +63,7 @@
 
         <ImageView
             android:id="@+id/empty_shelter_image"
+            android:paddingTop="40dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -95,7 +97,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="32dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
         android:src="@drawable/ic_add_white"
         app:fabSize="normal" />
 </RelativeLayout>
