@@ -1,13 +1,10 @@
 package com.itti7.itimeu;
 
 
-import android.app.AlarmManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.Calendar;
-
-import static android.content.Context.ALARM_SERVICE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,7 +20,9 @@ public class TimerFragment extends Fragment {
     /*timer components*/
     private View header;
     private TextView mTimeText;
-    private String mTime;
+    private String mWorkTime; //R.id.work_time
+    private String mBreakTime; //R.id.work_time
+    private String mLongBreakTime; //R.id.work_time
     private ProgressBar mProgressBar;
     private Button mStateBttn;
     /*button state value*/
@@ -36,11 +30,11 @@ public class TimerFragment extends Fragment {
     final boolean STATE_STOP=false;
     private boolean state=STATE_STOP;
     /*progressBar state value*/
-    private Handler handler;
+    private TimerHandler handler;
     private int progressBarValue = 0;
     /*timer calc*/
 
-    private CountDownTimer mCalcTimer;
+    private Timer mCalcTimer;
     public TimerFragment() {
         // Required empty public constructor
     }
@@ -60,38 +54,15 @@ public class TimerFragment extends Fragment {
 
         /*work time 을 갖고 오기위해 inflater*/
         header = getActivity().getLayoutInflater().inflate(R.layout.activity_setting, null, false);
-        mTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
-        final int time = Integer.parseInt(mTime);
 
-        mCalcTimer = new CountDownTimer(time*1000*60,1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                String hour = String.format("%02d",(millisUntilFinished / (1000*60*60)) );
-                String min = String.format("%02d",(millisUntilFinished) / (1000*60) );
-                String sec = String.format("%02d",(millisUntilFinished/1000) %60);
-                mTimeText.setText(hour+":"+min+":"+sec);
-//              mTimeText.setText("seconds remaining: " + millisUntilFinished / 1000); //TesterCode
-            }
-            @Override
-            public void onFinish() {
-                        /*alarm or vibration*/
-                // We want the alarm to go off 30 seconds from now.
-               mTimeText.setText("done!");
-            }
-        };
-        handler = new Handler()
-        {
-            public void handleMessage(android.os.Message msg)
-            {
-                if(state)
-                {
-                    progressBarValue+=1; // match to sec
-                }
-                mProgressBar.setProgress(progressBarValue);
-                handler.sendEmptyMessageDelayed(0, 1000); //increase by sec
-            }
-        };
+        mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
+        mBreakTime= ((EditText) header.findViewById(R.id.break_time)).getText().toString();
+        mLongBreakTime= ((EditText) header.findViewById(R.id.long_break_time)).getText().toString();
 
+        final int time = Integer.parseInt(mWorkTime);
+        mCalcTimer = new Timer(2*1000*60,1000);
+
+        handler = new TimerHandler();
         handler.sendEmptyMessage(0);
         return timerView;
     }
@@ -113,5 +84,40 @@ public class TimerFragment extends Fragment {
         }
     };
 
+    public class Timer extends CountDownTimer{
+        Timer(long total,long interval){
+            super(total,interval);
+        }
+        @Override
+        public void onTick(long millisUntilFinished) {
+            String hour = String.format("%02d",(millisUntilFinished / (1000*60*60)) );
+            String min = String.format("%02d",(millisUntilFinished) / (1000*60) );
+            String sec = String.format("%02d",(millisUntilFinished/1000) %60);
+            mTimeText.setText(hour+":"+min+":"+sec);
+        }
+        @Override
+        public void onFinish() {
+                        /*alarm or vibration*/
+            // We want the alarm to go off 30 seconds from now.
+            handler.removeMessages(0);
+            final int time = Integer.parseInt(mBreakTime);
+            mCalcTimer = new Timer(time*1000*60,1000);
 
+        }
+    }
+    public class TimerHandler extends Handler{
+        TimerHandler(){
+            super();
+        }
+        @Override
+        public void handleMessage(android.os.Message msg)
+        {
+            if(state)
+            {
+                progressBarValue++; // match to sec
+            }
+            mProgressBar.setProgress(progressBarValue);
+            handler.sendEmptyMessageDelayed(0, 1000); //increase by sec
+        }
+    }
 }
