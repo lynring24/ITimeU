@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,9 @@ import static android.content.Context.ALARM_SERVICE;
  */
 public class TimerFragment extends Fragment {
     /*timer components*/
+    private View header;
     private TextView mTimeText;
+    private String mTime;
     private ProgressBar mProgressBar;
     private Button mStateBttn;
     /*button state value*/
@@ -36,6 +39,7 @@ public class TimerFragment extends Fragment {
     private Handler handler;
     private int progressBarValue = 0;
     /*timer calc*/
+
     private CountDownTimer mCalcTimer;
     public TimerFragment() {
         // Required empty public constructor
@@ -54,7 +58,10 @@ public class TimerFragment extends Fragment {
         /*Time Text Initialize */
         mTimeText = (TextView)timerView.findViewById(R.id.time_txt_view);
 
-        final int time = 25;
+        /*work time 을 갖고 오기위해 inflater*/
+        header = getActivity().getLayoutInflater().inflate(R.layout.activity_setting, null, false);
+        mTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
+        final int time = Integer.parseInt(mTime);
 
         mCalcTimer = new CountDownTimer(time*1000*60,1000) {
             @Override
