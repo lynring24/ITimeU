@@ -7,6 +7,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**
@@ -154,7 +155,7 @@ public class ItemProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues contentValues, String selection,
+    public int update(@NonNull Uri uri, ContentValues contentValues, String selection,
                       String[] selectionArgs) {
         final int match = sUriMatcher.match(uri);
         switch (match) {
@@ -187,9 +188,9 @@ public class ItemProvider extends ContentProvider {
             }
         }
 
-        //{@link ItemEntry#COLUMN_ITEM_QUANTITY}
-        if (values.containsKey(ItemContract.ItemEntry.COLUMN_ITEM_QUANTITY)) {
-            String quantity = values.getAsString(ItemContract.ItemEntry.COLUMN_ITEM_QUANTITY);
+        //{@link ItemEntry#COLUMN_ITEM_DETAIL}
+        if (values.containsKey(ItemContract.ItemEntry.COLUMN_ITEM_DETAIL)) {
+            String detail = values.getAsString(ItemContract.ItemEntry.COLUMN_ITEM_DETAIL);
         }
 
         // If the {@link ItemEntry#COLUMN_ITEM_TOTAL_UNIT} key is present,

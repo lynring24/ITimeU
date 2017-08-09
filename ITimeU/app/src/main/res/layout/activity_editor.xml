@@ -36,12 +36,12 @@
             android:hint="@string/input_name_hint" />
 
         <EditText
-            android:id="@+id/quantity_edit_txt"
+            android:id="@+id/detail_edit_txt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:hint="@string/input_quantity_hint" />
+            android:hint="@string/input_detail_hint" />
 
         <LinearLayout
             android:layout_width="match_parent"

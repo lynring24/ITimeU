@@ -39,7 +39,7 @@ public class ItemDbHelper extends SQLiteOpenHelper {
         String SQL_CREATE_LIST_TABLE = "CREATE TABLE " + ItemEntry.TABLE_NAME + "("
                 + ItemEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + ItemEntry.COLUMN_ITEM_NAME + " TEXT NOT NULL, "
-                + ItemEntry.COLUMN_ITEM_QUANTITY + " TEXT, "
+                + ItemEntry.COLUMN_ITEM_DETAIL + " TEXT, "
                 + ItemEntry.COLUMN_ITEM_DATE + " TEXT, "
                 + ItemEntry.COLUMN_ITEM_TOTAL_UNIT + " INTEGER NOT NULL DEFAULT 1, "
                 + ItemEntry.COLUMN_ITEM_UNIT + " INTEGER NOT NULL DEFAULT 0, "

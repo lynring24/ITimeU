@@ -40,10 +40,10 @@
 
     <!-- activity_editor.xml -->
     <string name="input_name_hint">name</string>
-    <string name="input_quantity_hint">quantity</string>
+    <string name="input_detail_hint">detail</string>
     <string name="unit_txt_view_editor">unit</string>
     <string name="default_total_unit_editor">1</string>
-    <string name="ok_btn">ok</string>
+    <string name="ok_btn">OK</string>
 
     <!-- list_item.xml -->
     <string name="unit_divider">/</string>

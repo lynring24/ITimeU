@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Displays list of pets that were entered and stored in the app.
+ * Displays list of items that were entered and stored in the app.
  */
 
 public class ListActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
@@ -205,7 +205,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
         String[] projection = {
                 ItemEntry._ID,
                 ItemEntry.COLUMN_ITEM_NAME,
-                ItemEntry.COLUMN_ITEM_QUANTITY,
+                ItemEntry.COLUMN_ITEM_DETAIL,
                 ItemEntry.COLUMN_ITEM_TOTAL_UNIT,
                 ItemEntry.COLUMN_ITEM_UNIT};
 
@@ -221,7 +221,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
     }
 
     /**
-     * Prompt the user to confirm that they want to delete this pet.
+     * Prompt the user to confirm that they want to delete this item.
      */
     private void showDeleteConfirmationDialog(final int index) {
         // Create an AlertDialog.Builder and set the message, and click listeners
@@ -230,7 +230,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
         builder.setMessage(getString(R.string.delete_confirm_msg));
         builder.setPositiveButton(getString(R.string.delete_btn), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User clicked the "Delete" button, so delete the pet.
+                // User clicked the "Delete" button, so delete the item.
                 deleteItem(index);
                 onResume();
             }
@@ -238,7 +238,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
         builder.setNegativeButton(getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Cancel" button, so dismiss the dialog
-                // and continue editing the pet.
+                // and continue editing the item.
                 if (dialog != null) {
                     dialog.dismiss();
                 }
@@ -258,11 +258,11 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
     private void deleteItem(int id) {
         Uri currentItemUri = ContentUris.withAppendedId(ItemEntry.CONTENT_URI, id);
 
-        // Only perform the delete if this is an existing pet.
+        // Only perform the delete if this is an existing item.
         if (currentItemUri != null) {
-            // Call the ContentResolver to delete the pet at the given content URI.
-            // Pass in null for the selection and selection args because the mCurrentPetUri
-            // content URI already identifies the pet that we want.
+            // Call the ContentResolver to delete the item at the given content URI.
+            // Pass in null for the selection and selection args because the mCurrentItemUri
+            // content URI already identifies the item that we want.
             int rowsDeleted = getContentResolver().delete(currentItemUri, null, null);
 
             // Show a toast message depending on whether or not the delete was successful.

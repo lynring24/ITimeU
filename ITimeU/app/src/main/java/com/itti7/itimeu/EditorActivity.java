@@ -39,8 +39,8 @@ public class EditorActivity extends AppCompatActivity implements
     /** EditText field to enter the item's name */
     private EditText mNameEditText;
 
-    /** EditText field to enter the item's quantity */
-    private EditText mQuantityEditText;
+    /** EditText field to enter the item's detail */
+    private EditText mDetailEditText;
 
     /** TextView field to enter the item's total unit */
     private TextView mTotalUnitTextView;
@@ -109,7 +109,7 @@ public class EditorActivity extends AppCompatActivity implements
 
         // Find all relevant views that we will need to read user input from
         mNameEditText = (EditText) findViewById(R.id.name_edit_txt);
-        mQuantityEditText = (EditText) findViewById(R.id.quantity_edit_txt);
+        mDetailEditText = (EditText) findViewById(R.id.detail_edit_txt);
         mTotalUnitTextView = (TextView) findViewById(R.id.get_total_unit_txt_view);
         mDate = intent.getStringExtra("date");
         mTotalUnitNumber = Integer.parseInt(mTotalUnitTextView.getText().toString().trim());
@@ -121,7 +121,7 @@ public class EditorActivity extends AppCompatActivity implements
         // has touched or modified them. This will let us know if there are unsaved changes
         // or not, if the user tries to leave the editor without saving.
         mNameEditText.setOnTouchListener(mTouchListener);
-        mQuantityEditText.setOnTouchListener(mTouchListener);
+        mDetailEditText.setOnTouchListener(mTouchListener);
         mUnitMinusImageButton.setOnTouchListener(mTouchListener);
         mUnitPlusImageButton.setOnTouchListener(mTouchListener);
 
@@ -139,7 +139,7 @@ public class EditorActivity extends AppCompatActivity implements
         // Read from input fields
         // Use trim to eliminate leading or trailing white space
         String nameString = mNameEditText.getText().toString().trim();
-        String quantityString = mQuantityEditText.getText().toString().trim();
+        String detailString = mDetailEditText.getText().toString().trim();
 
         // Check whether name edit text is empty.
         // if name is empty return false, else save the item than return true
@@ -155,7 +155,7 @@ public class EditorActivity extends AppCompatActivity implements
                 // Create  a ContentValues object for a new Item
                 ContentValues createValues = new ContentValues();
                 createValues.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
-                createValues.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantityString);
+                createValues.put(ItemEntry.COLUMN_ITEM_DETAIL, detailString);
                 createValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
                 createValues.put(ItemEntry.COLUMN_ITEM_STATUS, mStatus);
                 createValues.put(ItemEntry.COLUMN_ITEM_DATE, mDate);
@@ -176,12 +176,12 @@ public class EditorActivity extends AppCompatActivity implements
                 // Create a ContentValues object for a existing item
                 ContentValues editValues = new ContentValues();
                 editValues.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
-                editValues.put(ItemEntry.COLUMN_ITEM_QUANTITY, quantityString);
+                editValues.put(ItemEntry.COLUMN_ITEM_DETAIL, detailString);
                 editValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
 
                 // Otherwise this is an EXISTING item, so update the item with content URI: mCurrentItemUri
                 // and pass in the new ContentValues. Pass in null for the selection and selection args
-                // because mCurrentPetUri will already identify the correct row in the database that
+                // because mCurrentItemUri will already identify the correct row in the database that
                 // we want to modify.
                 int rowsAffected = getContentResolver().update(mCurrentItemUri, editValues, null, null);
 
@@ -271,7 +271,7 @@ public class EditorActivity extends AppCompatActivity implements
         String[] projection = {
                 ItemEntry._ID,
                 ItemEntry.COLUMN_ITEM_NAME,
-                ItemEntry.COLUMN_ITEM_QUANTITY,
+                ItemEntry.COLUMN_ITEM_DETAIL,
                 ItemEntry.COLUMN_ITEM_DATE,
                 ItemEntry.COLUMN_ITEM_TOTAL_UNIT,
                 ItemEntry.COLUMN_ITEM_UNIT,
@@ -297,14 +297,14 @@ public class EditorActivity extends AppCompatActivity implements
 
         if (cursor.moveToFirst()) {
             int nameColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_NAME);
-            int quantityColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_QUANTITY);
+            int detailColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DETAIL);
             //int unitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_UNIT);
             int totalUnitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_TOTAL_UNIT);
             //int statusColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_STATUS);
             //int dateColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DATE);
 
             String name = cursor.getString(nameColumnIndex);
-            String quantity = cursor.getString(quantityColumnIndex);
+            String detail = cursor.getString(detailColumnIndex);
             //String date = cursor.getString(dateColumnIndex);
             //int unit = cursor.getInt(unitColumnIndex);
             int totalUnit = cursor.getInt(totalUnitColumnIndex);
@@ -313,7 +313,7 @@ public class EditorActivity extends AppCompatActivity implements
             mTotalUnitString = Integer.toString(totalUnit);
 
             mNameEditText.setText(name);
-            mQuantityEditText.setText(quantity);
+            mDetailEditText.setText(detail);
             mTotalUnitNumber = totalUnit;
             mTotalUnitTextView.setText(mTotalUnitString);
 
@@ -324,7 +324,7 @@ public class EditorActivity extends AppCompatActivity implements
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mNameEditText.setText("");
-        mQuantityEditText.setText("");
+        mDetailEditText.setText("");
         mTotalUnitTextView.setText(getString(R.string.reset_total_unit));
     }
 
@@ -345,7 +345,7 @@ public class EditorActivity extends AppCompatActivity implements
         builder.setNegativeButton(getString(R.string.keep_editing_btn), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Keep editing" button, so dismiss the dialog
-                // and continue editing the pet.
+                // and continue editing the item.
                 if (dialog != null) {
                     dialog.dismiss();
                 }

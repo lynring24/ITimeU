@@ -41,7 +41,7 @@ public final class ItemContract {
     public static final String PATH_ITIMEU = "itimeu";
 
     /**
-     * Inner class that defines constant values for the pets database table.
+     * Inner class that defines constant values for the items database table.
      * Each entry in the table represents a single item.
      */
 
@@ -80,11 +80,11 @@ public final class ItemContract {
         public final static String COLUMN_ITEM_NAME = "name";
 
         /**
-         * Quantity of the item.
+         * Detail of the item.
          *
          * Type: TEXT
          */
-        public final static String COLUMN_ITEM_QUANTITY = "quantity";
+        public final static String COLUMN_ITEM_DETAIL = "detail";
 
         /**
          * Created date of the item.

@@ -57,13 +57,13 @@ class ItemCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         // Find individual views that we want to modify in the list item layout
         TextView nameTextView = view.findViewById(R.id.name_txt_view);
-        TextView quantityTextView = view.findViewById(R.id.quantity_txt_view);
+        TextView detailTextView = view.findViewById(R.id.detail_txt_view);
         TextView totalUnitTextView = view.findViewById(R.id.total_unit_txt_view);
         TextView unitTextView = view.findViewById(R.id.unit_txt_view);
 
         // Find the columns of item attributes that we're interested in
         int nameColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME);
-        int quantityColumnIdex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_QUANTITY);
+        int quantityColumnIdex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DETAIL);
         int totalUnitColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT);
         int unitColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT);
 
@@ -78,7 +78,7 @@ class ItemCursorAdapter extends CursorAdapter {
 
         // Update the TextViews with the attributes for the current item
         nameTextView.setText(itemName);
-        quantityTextView.setText(itemQuantity);
+        detailTextView.setText(itemQuantity);
         totalUnitTextView.setText(itemTotalUnitString);
         unitTextView.setText(itemUnitString);
     }
