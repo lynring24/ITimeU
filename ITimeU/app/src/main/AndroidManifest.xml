@@ -19,7 +19,9 @@
         <activity android:name=".StatisticsActivity">
 
         </activity>
+        <activity android:name=".SettingActivity">
 
+        </activity>
     </application>
 
 </manifest>

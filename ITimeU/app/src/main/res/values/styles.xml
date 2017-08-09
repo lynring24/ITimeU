@@ -9,7 +9,10 @@
     </style>
     <!-- bottom navigation bar style -->
     <style name="ThemeOverlay.Shrine.BottomNavigation" parent="">
-        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
 </resources>

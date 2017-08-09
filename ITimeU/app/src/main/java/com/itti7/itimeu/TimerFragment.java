@@ -2,6 +2,7 @@ package com.itti7.itimeu;
 
 
 import android.app.AlarmManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +53,8 @@ public class TimerFragment extends Fragment {
 
         /*Time Text Initialize */
         mTimeText = (TextView)timerView.findViewById(R.id.time_txt_view);
-        final int time = Integer.parseInt(getString(R.string.time).split(":")[1]);
+
+        final int time = 25;
 
         mCalcTimer = new CountDownTimer(time*1000*60,1000) {
             @Override

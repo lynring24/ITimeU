@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
                             return true;
                         }
                         if (id == R.id.category_setting) {
-            /*Intent passTo  = new Intent(getApplicationContext(),StatisticsActivity);
-                * startActivity(passTo);*/
+                            Intent passTo  = new Intent(getApplicationContext(),SettingActivity.class);
+                            startActivity(passTo);
                             return true;
                         }
                         return true;
