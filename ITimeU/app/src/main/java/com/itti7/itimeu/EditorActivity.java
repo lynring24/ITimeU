@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -23,11 +24,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.itti7.itimeu.data.ItemContract.ItemEntry;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Allows user to create a new item or edit an existing one.
  */
-public class EditorActivity extends AppCompatActivity implements
+public class EditorActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
     /** Identifier for the item data loader */
@@ -41,6 +49,9 @@ public class EditorActivity extends AppCompatActivity implements
 
     /** EditText field to enter the item's detail */
     private EditText mDetailEditText;
+
+    /** EditText field to enter the item's date */
+    private EditText mDateEditText;
 
     /** TextView field to enter the item's total unit */
     private TextView mTotalUnitTextView;
@@ -59,6 +70,12 @@ public class EditorActivity extends AppCompatActivity implements
 
     /** Creation date */
     private String mDate;
+
+    // Simple date format
+    public static final String DATE_FORMAT = "yyyy.MM.dd";
+
+    // Date year, month, day;
+    private int mYear, mMonth, mDay;
 
     /**
      * Status of the item. The possible valid values are in the ItemContract.java file:
@@ -112,6 +129,7 @@ public class EditorActivity extends AppCompatActivity implements
         mDetailEditText = (EditText) findViewById(R.id.detail_edit_txt);
         mTotalUnitTextView = (TextView) findViewById(R.id.get_total_unit_txt_view);
         mDate = intent.getStringExtra("date");
+        mDateEditText = (EditText) findViewById(R.id.editor_date_edit_txt);
         mTotalUnitNumber = Integer.parseInt(mTotalUnitTextView.getText().toString().trim());
 
         mUnitMinusImageButton = (ImageButton) findViewById(R.id.unit_minus_btn);
@@ -125,11 +143,60 @@ public class EditorActivity extends AppCompatActivity implements
         mUnitMinusImageButton.setOnTouchListener(mTouchListener);
         mUnitPlusImageButton.setOnTouchListener(mTouchListener);
 
+        // Get the date selected by the user.
+        dateSelection();
+
         // change total unit number
         getTotalUnitNumber();
 
         // click ok
         submit();
+    }
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int selectedYear, int selectedMonth, int selectedDay) {
+        Calendar calendar = Calendar.getInstance();
+
+        // Assign Selected Date in DatePickerDialog
+        mYear = selectedYear;
+        mMonth = selectedMonth;
+        mDay = selectedDay;
+
+        // Set Date in List
+        calendar.set(mYear, mMonth, mDay);
+        Date date = calendar.getTime();
+        mDate = getDate(date);
+        mDateEditText.setText(mDate);
+    }
+
+    void dateSelection(){
+        mDateEditText.setFocusable(false);
+        mDateEditText.setOnTouchListener(mTouchListener);
+        mDateEditText.setText(mDate);
+        mDateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT, Locale.KOREA);
+                try {
+                    // String -> Date
+                    Date date = format.parse(mDate);
+
+                    // Setting calender -> list's date
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(date);
+                    mYear = calendar.get(Calendar.YEAR);
+                    mMonth = calendar.get(Calendar.MONTH);
+                    mDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+                    DatePickerDialog datePickerDialog
+                            = DatePickerDialog.newInstance(EditorActivity.this, mYear, mMonth, mDay);
+                    datePickerDialog.show(getFragmentManager(), "DateFragment");
+                }
+                catch (ParseException e) {
+                    Log.e("EditorActivity", "ParseException: " + e);
+                }
+            }
+        });
     }
 
     /**
@@ -149,6 +216,7 @@ public class EditorActivity extends AppCompatActivity implements
             Toast.makeText(this, getString(R.string.input_name_toast), Toast.LENGTH_SHORT).show();
             return false;
         } else {
+            Log.v("EditorActivity", mDate);
             // Determine if this is a new or existing item by checking
             // if mCurrentItemUri is null or not
             if (mCurrentItemUri == null) {
@@ -159,6 +227,7 @@ public class EditorActivity extends AppCompatActivity implements
                 createValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
                 createValues.put(ItemEntry.COLUMN_ITEM_STATUS, mStatus);
                 createValues.put(ItemEntry.COLUMN_ITEM_DATE, mDate);
+                Log.v("EditorActivity", mDate);
 
                 // This is a NEW item, so insert a new item into the provider,
                 // returning the content URI for the new item.
@@ -178,6 +247,7 @@ public class EditorActivity extends AppCompatActivity implements
                 editValues.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
                 editValues.put(ItemEntry.COLUMN_ITEM_DETAIL, detailString);
                 editValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
+                editValues.put(ItemEntry.COLUMN_ITEM_DATE, mDate);
 
                 // Otherwise this is an EXISTING item, so update the item with content URI: mCurrentItemUri
                 // and pass in the new ContentValues. Pass in null for the selection and selection args
@@ -301,11 +371,11 @@ public class EditorActivity extends AppCompatActivity implements
             //int unitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_UNIT);
             int totalUnitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_TOTAL_UNIT);
             //int statusColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_STATUS);
-            //int dateColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DATE);
+            int dateColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DATE);
 
             String name = cursor.getString(nameColumnIndex);
             String detail = cursor.getString(detailColumnIndex);
-            //String date = cursor.getString(dateColumnIndex);
+            String date = cursor.getString(dateColumnIndex);
             //int unit = cursor.getInt(unitColumnIndex);
             int totalUnit = cursor.getInt(totalUnitColumnIndex);
             //int status = cursor.getInt(statusColumnIndex);
@@ -316,6 +386,8 @@ public class EditorActivity extends AppCompatActivity implements
             mDetailEditText.setText(detail);
             mTotalUnitNumber = totalUnit;
             mTotalUnitTextView.setText(mTotalUnitString);
+            mDate = date;
+            mDateEditText.setText(mDate);
 
             getTotalUnitNumber();
         }
@@ -408,4 +480,20 @@ public class EditorActivity extends AppCompatActivity implements
             mUnitPlusImageButton.setImageResource(R.drawable.ic_unit_plus_false);
         }
     }
+
+    /**
+     * It is a function of today's date.
+     *
+     * @return Return the current month and day.
+     */
+    public String getDate(Date date) {
+        return new SimpleDateFormat(DATE_FORMAT, Locale.KOREA).format(date);
+    }
+
+    /**
+     * @param view          DatePickerDialog
+     * @param selectedYear  Year selected by the user
+     * @param selectedMonth Month selected by the user
+     * @param selectedDay   Date selected by the user
+     */
 }
