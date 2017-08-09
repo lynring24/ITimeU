@@ -27,6 +27,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         int id = item.getItemId(); //pressed item ID
+                        if (id == R.id.category_main) {
+                            Intent passTo  = new Intent(getApplicationContext(),MainActivity.class);
+                            startActivity(passTo);
+                            return true;
+                        }
                         if (id == R.id.category_about) {
                 /*Intent passTo  = new Intent(getApplicationContext(),SettingActivity);
                 * startActivity(passTo);*/
@@ -34,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
                             return true;
                         }
                         if (id == R.id.category_statistics) {
-           Intent passTo  = new Intent(getApplicationContext(),StatisticsActivity.class);
-                 startActivity(passTo);
+                            Intent passTo  = new Intent(getApplicationContext(),StatisticsActivity.class);
+                            startActivity(passTo);
                             return true;
                         }
                         if (id == R.id.category_setting) {
@@ -56,23 +61,3 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-/*    public boolean onOptionsItemSelected(MenuItem item){
-        int id = item.getItemId(); //pressed item ID
-        if (id == R.id.category_about) {
-                *//*Intent passTo  = new Intent(getApplicationContext(),SettingActivity);
-                * startActivity(passTo);*//*
-//            Toast.makeText(this, "setting", Toast.LENGTH_SHORT).show(); // test code
-            return true;
-        }
-        if (id == R.id.category_statistics) {
-            *//*Intent passTo  = new Intent(getApplicationContext(),StatisticsActivity);
-                * startActivity(passTo);*//*
-            return true;
-        }
-        if (id == R.id.category_setting) {
-            *//*Intent passTo  = new Intent(getApplicationContext(),StatisticsActivity);
-                * startActivity(passTo);*//*
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }*/

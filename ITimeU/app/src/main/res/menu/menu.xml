@@ -2,22 +2,28 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/category_main"
+        android:enabled="true"
+        android:title="@string/list"
+        android:icon="@drawable/list"
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/category_about"
         android:enabled="true"
         android:title="@string/about"
         android:icon="@drawable/about"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
     <item
         android:id="@+id/category_statistics"
         android:enabled="true"
         android:title="@string/statistics"
         android:icon="@drawable/statistics"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
     <item
         android:id="@+id/category_setting"
         android:enabled="true"
         android:title="@string/setting"
         android:icon="@drawable/setting"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 </menu>
 

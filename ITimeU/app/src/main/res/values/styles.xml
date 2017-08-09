@@ -11,9 +11,5 @@
     <style name="ThemeOverlay.Shrine.BottomNavigation" parent="">
         <item name="colorPrimary">@color/primary</item>
     </style>
-    <style name="StatTheme" parent="Theme.AppCompat.Light">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/accent</item>
-        <item name="colorPrimaryDark">#ff0000</item>
-    </style>
+
 </resources>

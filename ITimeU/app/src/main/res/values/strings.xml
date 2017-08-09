@@ -4,6 +4,58 @@
     <string name="statistics">statistics</string>
     <string name="about">about</string>
     <string name="time">00:25</string>
+    <string name="list">list</string>
     <string name="start">start</string>
     <string name="stop">stop</string>
+
+    <!-- EditorActivity.java -->
+
+    <!-- editor view's title -->
+    <string name="editor_title_add">add</string>
+    <string name="editor_title_edit">edit</string>
+
+    <!-- If name edit view is blank then -->
+    <string name="input_name_toast">You should input your name</string>
+
+    <!-- Create item -->
+    <string name="create_item_fail">Fail to create item</string>
+    <string name="create_item_success">Success to create item</string>
+
+    <!-- Update item-->
+    <string name="update_item_fail">Fail to update item</string>
+    <string name="update_item_success">Success to update item</string>
+
+    <!-- Reset total unit TextView's text-->
+    <string name="reset_total_unit">1</string>
+
+    <!-- Alert unsaved change message-->
+    <string name="unsaved_change_msg">Unsaved change</string>
+    <!-- discard or keep editing -->
+    <string name="discard_btn">Discard</string>
+    <string name="keep_editing_btn">Keep editing</string>
+
+    <!-- ListActivity.java -->
+
+    <!-- Delete confirm dialog -->
+    <string name="delete_confirm_msg">Do you want to delete this item?</string>
+    <string name="delete_btn">Delete</string>
+    <string name="cancel_btn">Cancel</string>
+
+    <!-- Delete item -->
+    <string name="delete_item_fail">Fail to delete</string>
+    <string name="delete_item_success">Success to delete</string>
+
+    <!-- activity_editor.xml -->
+    <string name="input_name_hint">name</string>
+    <string name="input_quantity_hint">quantity</string>
+    <string name="unit_txt_view_editor">unit</string>
+    <string name="default_total_unit_editor">1</string>
+    <string name="ok_btn">ok</string>
+
+    <!-- list_item.xml -->
+    <string name="unit_divider">/</string>
+
+    <!-- activity_list.xml -->
+    <string name="empty_title_str">The list is empty</string>
+    <string name="empty_subtitle_str">Add the to-do list item</string>
 </resources>
