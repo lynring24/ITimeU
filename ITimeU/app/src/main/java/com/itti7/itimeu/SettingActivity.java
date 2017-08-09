@@ -8,7 +8,23 @@ import android.widget.SeekBar;
 public class SettingActivity extends AppCompatActivity {
 
     private SeekBar mworksb, mbreaksb, mlongBreaksb, msessionNumsb; //시크바
-    private EditText mworket, mbreaket, mlongBreaket, msessionNumet; //에디트텍스트 뷰
+    private static EditText mworket, mbreaket, mlongBreaket, msessionNumet; //에디트텍스트 뷰
+
+    public static EditText getMworket() {
+        return mworket;
+    }
+
+    public static EditText getMbreaket() {
+        return mbreaket;
+    }
+
+    public static EditText getMlongBreaket() {
+        return mlongBreaket;
+    }
+
+    public static EditText getMsessionNumet() {
+        return msessionNumet;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
