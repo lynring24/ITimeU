@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="13dp"
+    tools:context="com.itti7.itimeu.StatisticFragment"
     android:orientation="vertical">
+
     <Spinner
         android:id="@+id/stat_spinner"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></Spinner>
-
+        android:layout_weight="1"/>
     <RelativeLayout
         android:id="@+id/stat_chart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:gravity="center_horizontal"
-        android:layout_weight="10"></RelativeLayout>
-
+        android:layout_weight="7"
+        android:gravity="center_horizontal"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="RESULT"/>
+        android:text="@string/result"/>
     <TextView
         android:id="@+id/stat_done"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:text="Session Done: 6 (75%)"/>
 
 </LinearLayout>
