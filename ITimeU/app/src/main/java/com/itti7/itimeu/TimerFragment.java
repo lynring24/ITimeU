@@ -116,6 +116,8 @@ public class TimerFragment extends Fragment {
             {
                 progressBarValue++; // match to sec
             }
+
+            mProgressBar.bringToFront(); // bring the progressbar to the top
             mProgressBar.setProgress(progressBarValue);
             handler.sendEmptyMessageDelayed(0, 1000); //increase by sec
         }
