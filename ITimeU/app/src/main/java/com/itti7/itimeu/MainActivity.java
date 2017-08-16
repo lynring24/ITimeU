@@ -27,7 +27,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         int id = item.getItemId(); //pressed item ID
-                        if (id == R.id.category_main) {
+                        if (id == R.id.category_list) {
+                            Intent passTo  = new Intent(getApplicationContext(),MainActivity.class);
+                            startActivity(passTo);
+                            return true;
+                        }
+                        if (id == R.id.category_timer) {
                             Intent passTo  = new Intent(getApplicationContext(),MainActivity.class);
                             startActivity(passTo);
                             return true;
