@@ -26,5 +26,5 @@
         android:theme="@style/ThemeOverlay.Shrine.BottomNavigation"
         app:menu="@menu/menu"/>
 
-
 </LinearLayout>
+
