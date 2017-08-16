@@ -3,9 +3,16 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="colorPrimary">#bdbdbd</item>
+        <item name="colorPrimaryDark">#9e9e9e</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+    <!-- bottom navigation bar style -->
+    <style name="ThemeOverlay.Shrine.BottomNavigation" parent="">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
 </resources>
