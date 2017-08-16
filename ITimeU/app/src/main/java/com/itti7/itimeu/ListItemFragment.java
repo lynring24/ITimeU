@@ -1,29 +1,32 @@
 package com.itti7.itimeu;
 
-import android.app.LoaderManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.app.Activity;
 import android.content.ContentUris;
-import android.content.CursorLoader;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.itti7.itimeu.data.ItemContract.ItemEntry;
+import com.itti7.itimeu.data.ItemContract;
 import com.itti7.itimeu.data.ItemDbHelper;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
@@ -32,16 +35,23 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * Displays list of items that were entered and stored in the app.
- */
 
-public class ListActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
+/**
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link ListItemFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ */
+public class ListItemFragment extends Fragment implements DatePickerDialog.OnDateSetListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * Identifier for the item data loader
      */
+    View listItemView;
+    Activity listItemActivity;
+    Context listItemContext;
+
     private static final int ITEM_LOADER = 0;
 
     // TextView for showing achievement rate
@@ -80,15 +90,23 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
     private String mPercentStr;
     private String mDetail;
 
+
+    public ListItemFragment() {
+        // Required empty public constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        listItemView = inflater.inflate(R.layout.fragment_list_item, container, false);
+        listItemActivity = getActivity();
+        listItemContext = listItemView.getContext();
 
         // show today's date
         mListDate = new Date();
         mDate = getDate(mListDate);
-        mDateButton = (Button) findViewById(R.id.date_btn);
+        mDateButton = listItemView.findViewById(R.id.date_btn);
         mDateButton.setText(mDate);
 
         setAchievementRate();
@@ -112,31 +130,31 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
                 mDay = calendar.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog datePickerDialog
-                        = DatePickerDialog.newInstance(ListActivity.this, mYear, mMonth, mDay);
-                datePickerDialog.show(getFragmentManager(), "DateFragment");
+                        = DatePickerDialog.newInstance(ListItemFragment.this, mYear, mMonth, mDay);
+                datePickerDialog.show(listItemActivity.getFragmentManager(), "DateFragment");
             }
         });
 
         //when user click add FloatingActionButton for add a item in the list.
         final FloatingActionButton addFab
-                = (FloatingActionButton) this.findViewById(R.id.add_fab_btn);
+                = listItemView.findViewById(R.id.add_fab_btn);
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ListActivity.this, EditorActivity.class);
+                Intent intent = new Intent(listItemContext, EditorActivity.class);
                 intent.putExtra("date", mDate);
                 startActivity(intent);
             }
         });
 
         // Find the ListView which will be populated with the item data
-        mItemListView = (ListView) findViewById(R.id.item_list_view);
+        mItemListView = listItemView.findViewById(R.id.item_list_view);
 
         // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
-        View emptyView = findViewById(R.id.empty_relative_view);
+        View emptyView = listItemView.findViewById(R.id.empty_relative_view);
         mItemListView.setEmptyView(emptyView);
 
-        mCursorAdapter = new ItemCursorAdapter(this, null);
+        mCursorAdapter = new ItemCursorAdapter(listItemContext, null);
         mItemListView.setAdapter(mCursorAdapter);
 
 
@@ -146,13 +164,30 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
 
         //Kick off the loader
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
+
+        return listItemView;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     /**
      * Perform a refresh when other activities are finished.
      */
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         setAchievementRate();
         // Update List Date
@@ -165,7 +200,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 
-        getMenuInflater().inflate(R.menu.menu_editor, menu);
+        listItemActivity.getMenuInflater().inflate(R.menu.menu_editor, menu);
 
         super.onCreateContextMenu(menu, v, menuInfo);
     }
@@ -181,8 +216,8 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
         // click item's index
         int id = (int) info.id;
 
-        Intent intent = new Intent(ListActivity.this, EditorActivity.class);
-        Uri currentItemUri = ContentUris.withAppendedId(ItemEntry.CONTENT_URI, id);
+        Intent intent = new Intent(listItemContext, EditorActivity.class);
+        Uri currentItemUri = ContentUris.withAppendedId(ItemContract.ItemEntry.CONTENT_URI, id);
         intent.setData(currentItemUri);
 
         switch (item.getItemId()) {
@@ -203,17 +238,17 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // Define a projection that specifies the columns from the table we care about.
         String[] projection = {
-                ItemEntry._ID,
-                ItemEntry.COLUMN_ITEM_NAME,
-                ItemEntry.COLUMN_ITEM_DETAIL,
-                ItemEntry.COLUMN_ITEM_TOTAL_UNIT,
-                ItemEntry.COLUMN_ITEM_UNIT};
+                ItemContract.ItemEntry._ID,
+                ItemContract.ItemEntry.COLUMN_ITEM_NAME,
+                ItemContract.ItemEntry.COLUMN_ITEM_DETAIL,
+                ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT,
+                ItemContract.ItemEntry.COLUMN_ITEM_UNIT};
 
         String[] date = {mDate};
 
         // This loader will execute the ContentProvider's query method on a background thread
-        return new CursorLoader(this,   // Parent activity context
-                ItemEntry.CONTENT_URI,  // Provider content URI to query
+        return new CursorLoader(listItemContext,   // Parent activity context
+                ItemContract.ItemEntry.CONTENT_URI,  // Provider content URI to query
                 projection,             // Columns to include in the resulting Cursor
                 "date = ?",             // Date selection clause
                 date,                   // Date selection arguments
@@ -226,7 +261,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
     private void showDeleteConfirmationDialog(final int index) {
         // Create an AlertDialog.Builder and set the message, and click listeners
         // for the positive and negative buttons on the dialog.
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(listItemContext);
         builder.setMessage(getString(R.string.delete_confirm_msg));
         builder.setPositiveButton(getString(R.string.delete_btn), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -256,23 +291,24 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
      * @param id item's id
      */
     private void deleteItem(int id) {
-        Uri currentItemUri = ContentUris.withAppendedId(ItemEntry.CONTENT_URI, id);
+        Uri currentItemUri = ContentUris.withAppendedId(ItemContract.ItemEntry.CONTENT_URI, id);
 
         // Only perform the delete if this is an existing item.
         if (currentItemUri != null) {
             // Call the ContentResolver to delete the item at the given content URI.
             // Pass in null for the selection and selection args because the mCurrentItemUri
             // content URI already identifies the item that we want.
-            int rowsDeleted = getContentResolver().delete(currentItemUri, null, null);
+            int rowsDeleted
+                    = listItemActivity.getContentResolver().delete(currentItemUri, null, null);
 
             // Show a toast message depending on whether or not the delete was successful.
             if (rowsDeleted == 0) {
                 // If no rows were deleted, then there was an error with the delete.
-                Toast.makeText(this, getString(R.string.delete_item_fail),
+                Toast.makeText(listItemContext, getString(R.string.delete_item_fail),
                         Toast.LENGTH_SHORT).show();
             } else {
                 // Otherwise, the delete was successful and we can display a toast.
-                Toast.makeText(this, getString(R.string.delete_item_success),
+                Toast.makeText(listItemContext, getString(R.string.delete_item_success),
                         Toast.LENGTH_SHORT).show();
             }
         }
@@ -329,7 +365,7 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
      * Calculate Percentage: sum of units / sum of total-units
      */
     void calculateAchievementRate() {
-        ItemDbHelper dbHelper = new ItemDbHelper(this);
+        ItemDbHelper dbHelper = new ItemDbHelper(listItemContext);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         mSumOfTotalUnits = 0;
         mSumOfUnits = 0;
@@ -338,8 +374,8 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
 
         if(cursor.moveToFirst()) {
             do {
-                mSumOfTotalUnits += cursor.getInt(cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_TOTAL_UNIT));
-                mSumOfUnits += cursor.getInt(cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_UNIT));
+                mSumOfTotalUnits += cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT));
+                mSumOfUnits += cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT));
             } while (cursor.moveToNext());
 
             if (mSumOfTotalUnits != 0) {
@@ -360,9 +396,24 @@ public class ListActivity extends AppCompatActivity implements DatePickerDialog.
     void setAchievementRate(){
         calculateAchievementRate();
         // Find the TextView which will show sum of units / sum of total units in list's date
-        mAchievementTextView = (TextView) findViewById(R.id.achievement_rate_txt_view);
+        mAchievementTextView = listItemView.findViewById(R.id.achievement_rate_txt_view);
         mAchievementTextView.setText(mPercentStr);
-        mDetailRateTextView = (TextView) findViewById(R.id.rate_detail_txt_view);
+        mDetailRateTextView = listItemView.findViewById(R.id.rate_detail_txt_view);
         mDetailRateTextView.setText(mDetail);
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
     }
 }
