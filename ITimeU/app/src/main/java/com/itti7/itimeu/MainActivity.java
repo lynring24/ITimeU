@@ -15,10 +15,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-/*timer fragment call*/
+        /*timer fragment call*/
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.timer_container, new TimerFragment()).commit();
-/*Toolbar init*/
+        /*Toolbar init*/
         BottomNavigationView bottomNavigation =
                 (BottomNavigationView)  findViewById(R.id.menu_toolbar);
         bottomNavigation.setOnNavigationItemSelectedListener(
