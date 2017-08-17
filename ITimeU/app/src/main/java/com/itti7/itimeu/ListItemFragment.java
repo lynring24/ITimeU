@@ -48,9 +48,9 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     /**
      * Identifier for the item data loader
      */
-    View listItemView;
-    Activity listItemActivity;
-    Context listItemContext;
+    private View mListItemView;
+    private Activity mListItemActivity;
+    private Context mListItemContext;
 
     private static final int ITEM_LOADER = 0;
 
@@ -99,14 +99,14 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        listItemView = inflater.inflate(R.layout.fragment_list_item, container, false);
-        listItemActivity = getActivity();
-        listItemContext = listItemView.getContext();
+        mListItemView = inflater.inflate(R.layout.fragment_list_item, container, false);
+        mListItemActivity = getActivity();
+        mListItemContext = mListItemView.getContext();
 
         // show today's date
         mListDate = new Date();
         mDate = getDate(mListDate);
-        mDateButton = listItemView.findViewById(R.id.date_btn);
+        mDateButton = mListItemView.findViewById(R.id.date_btn);
         mDateButton.setText(mDate);
 
         setAchievementRate();
@@ -131,30 +131,30 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
                 DatePickerDialog datePickerDialog
                         = DatePickerDialog.newInstance(ListItemFragment.this, mYear, mMonth, mDay);
-                datePickerDialog.show(listItemActivity.getFragmentManager(), "DateFragment");
+                datePickerDialog.show(mListItemActivity.getFragmentManager(), "DateFragment");
             }
         });
 
         //when user click add FloatingActionButton for add a item in the list.
         final FloatingActionButton addFab
-                = listItemView.findViewById(R.id.add_fab_btn);
+                = mListItemView.findViewById(R.id.add_fab_btn);
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(listItemContext, EditorActivity.class);
+                Intent intent = new Intent(mListItemContext, EditorActivity.class);
                 intent.putExtra("date", mDate);
                 startActivity(intent);
             }
         });
 
         // Find the ListView which will be populated with the item data
-        mItemListView = listItemView.findViewById(R.id.item_list_view);
+        mItemListView = mListItemView.findViewById(R.id.item_list_view);
 
         // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
-        View emptyView = listItemView.findViewById(R.id.empty_relative_view);
+        View emptyView = mListItemView.findViewById(R.id.empty_relative_view);
         mItemListView.setEmptyView(emptyView);
 
-        mCursorAdapter = new ItemCursorAdapter(listItemContext, null);
+        mCursorAdapter = new ItemCursorAdapter(mListItemContext, null);
         mItemListView.setAdapter(mCursorAdapter);
 
 
@@ -165,7 +165,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         //Kick off the loader
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
 
-        return listItemView;
+        return mListItemView;
     }
 
     @Override
@@ -200,7 +200,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 
-        listItemActivity.getMenuInflater().inflate(R.menu.menu_editor, menu);
+        mListItemActivity.getMenuInflater().inflate(R.menu.menu_editor, menu);
 
         super.onCreateContextMenu(menu, v, menuInfo);
     }
@@ -216,7 +216,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         // click item's index
         int id = (int) info.id;
 
-        Intent intent = new Intent(listItemContext, EditorActivity.class);
+        Intent intent = new Intent(mListItemContext, EditorActivity.class);
         Uri currentItemUri = ContentUris.withAppendedId(ItemContract.ItemEntry.CONTENT_URI, id);
         intent.setData(currentItemUri);
 
@@ -247,7 +247,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         String[] date = {mDate};
 
         // This loader will execute the ContentProvider's query method on a background thread
-        return new CursorLoader(listItemContext,   // Parent activity context
+        return new CursorLoader(mListItemContext,   // Parent activity context
                 ItemContract.ItemEntry.CONTENT_URI,  // Provider content URI to query
                 projection,             // Columns to include in the resulting Cursor
                 "date = ?",             // Date selection clause
@@ -261,7 +261,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     private void showDeleteConfirmationDialog(final int index) {
         // Create an AlertDialog.Builder and set the message, and click listeners
         // for the positive and negative buttons on the dialog.
-        AlertDialog.Builder builder = new AlertDialog.Builder(listItemContext);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mListItemContext);
         builder.setMessage(getString(R.string.delete_confirm_msg));
         builder.setPositiveButton(getString(R.string.delete_btn), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -299,16 +299,16 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             // Pass in null for the selection and selection args because the mCurrentItemUri
             // content URI already identifies the item that we want.
             int rowsDeleted
-                    = listItemActivity.getContentResolver().delete(currentItemUri, null, null);
+                    = mListItemActivity.getContentResolver().delete(currentItemUri, null, null);
 
             // Show a toast message depending on whether or not the delete was successful.
             if (rowsDeleted == 0) {
                 // If no rows were deleted, then there was an error with the delete.
-                Toast.makeText(listItemContext, getString(R.string.delete_item_fail),
+                Toast.makeText(mListItemContext, getString(R.string.delete_item_fail),
                         Toast.LENGTH_SHORT).show();
             } else {
                 // Otherwise, the delete was successful and we can display a toast.
-                Toast.makeText(listItemContext, getString(R.string.delete_item_success),
+                Toast.makeText(mListItemContext, getString(R.string.delete_item_success),
                         Toast.LENGTH_SHORT).show();
             }
         }
@@ -365,7 +365,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
      * Calculate Percentage: sum of units / sum of total-units
      */
     void calculateAchievementRate() {
-        ItemDbHelper dbHelper = new ItemDbHelper(listItemContext);
+        ItemDbHelper dbHelper = new ItemDbHelper(mListItemContext);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         mSumOfTotalUnits = 0;
         mSumOfUnits = 0;
@@ -396,9 +396,9 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     void setAchievementRate(){
         calculateAchievementRate();
         // Find the TextView which will show sum of units / sum of total units in list's date
-        mAchievementTextView = listItemView.findViewById(R.id.achievement_rate_txt_view);
+        mAchievementTextView = mListItemView.findViewById(R.id.achievement_rate_txt_view);
         mAchievementTextView.setText(mPercentStr);
-        mDetailRateTextView = listItemView.findViewById(R.id.rate_detail_txt_view);
+        mDetailRateTextView = mListItemView.findViewById(R.id.rate_detail_txt_view);
         mDetailRateTextView.setText(mDetail);
     }
 
