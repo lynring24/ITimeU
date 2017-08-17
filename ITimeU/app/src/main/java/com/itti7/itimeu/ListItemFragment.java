@@ -88,6 +88,11 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     // Date year, month, day;
     private int mYear, mMonth, mDay;
 
+    private String mItemName;
+    private String mItemDate;
+    private int mItemUnit;
+    private int mItemStatus;
+
     // Sum total units, and units respectively.
     private int mSumOfTotalUnits, mSumOfUnits;
     private double mPercent;
@@ -127,16 +132,20 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String[] idStr = {String.valueOf(id)};
-                Cursor cursor = db.rawQuery("SELECT name, unit, status FROM list WHERE "
+                Cursor cursor = db.rawQuery("SELECT name, unit, status, date FROM list WHERE "
                         + BaseColumns._ID + " = ?", idStr);
 
                 if (cursor.moveToFirst()) {
-                    do {
-                        Toast.makeText(mListItemContext, "name: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME))
-                                        + ", unit: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT))
-                                        + ", status: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS)),
-                                Toast.LENGTH_SHORT).show();
-                    } while (cursor.moveToNext());
+                    mItemName = cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME));
+                    mItemDate =  cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE));
+                    mItemUnit = cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT));
+                    mItemStatus = cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS));
+
+                    Toast.makeText(mListItemContext, "name: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME))
+                                    + ", unit: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT))
+                                    + ", status: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS))
+                                    + ", date: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE)),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
