@@ -1,11 +1,16 @@
 package com.itti7.itimeu;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -21,26 +26,35 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 
-public class StatisticsActivity extends AppCompatActivity {
+public class StatisticsFragment extends Fragment {
+
+    private View mStatisticsView;
+    private Activity mStatisticsActivity;
+    private Context mStatisticsContext;
+
     private RelativeLayout mLineLayout;
     private LineChart mChart;
     private float[] yData = {5, 10, 7, 8, 13};
     private String[] xData = { "Done", "Still", "LG", "Apple111", "Samsung"};
     private Spinner statSpinner;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_statistics);
-        statSpinner = (Spinner)findViewById(R.id.stat_spinner);
 
-        ArrayAdapter statAdapter = ArrayAdapter.createFromResource(this, R.array.stat_type, android.R.layout.simple_spinner_item);
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        mStatisticsView = inflater.inflate(R.layout.fragment_statistics, container, false);
+        mStatisticsActivity = getActivity();
+        mStatisticsContext = mStatisticsView.getContext();
+
+        statSpinner = mStatisticsView.findViewById(R.id.stat_spinner);
+
+        ArrayAdapter statAdapter = ArrayAdapter.createFromResource(mStatisticsContext, R.array.stat_type, android.R.layout.simple_spinner_item);
         statAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         statSpinner.setAdapter(statAdapter);
 
 
 
-        mLineLayout = (RelativeLayout)findViewById(R.id.stat_chart);
-        mChart = new LineChart(this);
+        mLineLayout = mStatisticsView.findViewById(R.id.stat_chart);
+        mChart = new LineChart(mStatisticsContext);
 
         // add pie chart to main layout
         mLineLayout.addView(mChart);
@@ -57,7 +71,7 @@ public class StatisticsActivity extends AppCompatActivity {
                 if (entry == null)
                     return;
 
-                Toast.makeText(getBaseContext(), "Data : " + xData[entry.getXIndex()] + " , value : " + entry.getVal(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mStatisticsActivity.getBaseContext(), "Data : " + xData[entry.getXIndex()] + " , value : " + entry.getVal(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -74,6 +88,14 @@ public class StatisticsActivity extends AppCompatActivity {
         l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
         l.setXEntrySpace(7);
         l.setYEntrySpace(5);
+
+        return mStatisticsView;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     private void addData() {
@@ -129,8 +151,8 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        super.onCreateOptionsMenu(menu, menuInflater);
     }
 }
 
