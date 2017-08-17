@@ -42,7 +42,7 @@ public class TimerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View timerView = inflater.inflate(R.layout.activity_timer, container, false);
+        View timerView = inflater.inflate(R.layout.fragment_timer, container, false);
 
         /*progressBar button init*/
         mProgressBar = (ProgressBar)timerView.findViewById(R.id.progressBar);
@@ -53,7 +53,7 @@ public class TimerFragment extends Fragment {
         mTimeText = (TextView)timerView.findViewById(R.id.time_txt_view);
 
         /*work time 을 갖고 오기위해 inflater*/
-        header = getActivity().getLayoutInflater().inflate(R.layout.activity_setting, null, false);
+        header = getActivity().getLayoutInflater().inflate(R.layout.fragment_setting, null, false);
 
         mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
         mBreakTime= ((EditText) header.findViewById(R.id.break_time)).getText().toString();
