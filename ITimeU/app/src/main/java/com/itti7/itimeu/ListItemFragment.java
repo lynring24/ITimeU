@@ -1,5 +1,6 @@
 package com.itti7.itimeu;
 
+import android.content.SharedPreferences;
 import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -137,10 +138,14 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
                 // Get current item's info
                 if (cursor.moveToFirst()) {
-                    mItemName = cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME));
-                    mItemDate =  cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE));
-                    mItemUnit = cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT));
-                    mItemStatus = cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS));
+                    mItemName = cursor.getString(
+                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME));
+                    mItemDate =  cursor.getString(
+                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE));
+                    mItemUnit = cursor.getInt(
+                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT));
+                    mItemStatus = cursor.getInt(
+                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS));
 
                     Toast.makeText(mListItemContext, "name: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME))
                                     + ", unit: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT))
@@ -148,9 +153,22 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                                     + ", date: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE)),
                             Toast.LENGTH_SHORT).show();
 
+                    // Get MainActivity
+                    MainActivity mainActivity = (MainActivity)getActivity();
+
+                    // Set to MainActivity: selected item name and unit.
+                    mainActivity.setItemName(mItemName);
+                    mainActivity.setItemUnit(mItemUnit);
+
+                    // Set item name text to job_txt_view in TimerFragment
+                    String tabOfTimerFragment = mainActivity.getTimerFragment();
+                    TimerFragment timerFragment = (TimerFragment)getActivity()
+                            .getSupportFragmentManager()
+                            .findFragmentByTag(tabOfTimerFragment);
+
+                    timerFragment.nameUpdate(mItemName);
                     // Change Fragment ListItemFragment -> TimerFragment
-                    ((MainActivity)getActivity()).getViewPager().setCurrentItem(1);
-                    // ToDo: TimerFragment로 name, unit, status 값 넘겨주기
+                    (mainActivity).getViewPager().setCurrentItem(1);
                 }
             }
         });

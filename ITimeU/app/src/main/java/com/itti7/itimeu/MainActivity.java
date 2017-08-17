@@ -10,6 +10,19 @@ public class MainActivity extends AppCompatActivity {
     // ViewPager for movement between tabs
     ViewPager viewPager;
 
+    String mItemName;
+    int mItemUnit;
+
+    String mTimerFragment;
+
+    public void setTimerFragment(String timerFragment){
+        mTimerFragment = timerFragment;
+    }
+
+    public String getTimerFragment(){
+        return mTimerFragment;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,5 +73,21 @@ public class MainActivity extends AppCompatActivity {
             viewPager = (ViewPager) findViewById(R.id.viewpager);
         }
         return viewPager;
+    }
+
+    public String getItemName() {
+        return mItemName;
+    }
+
+    public void setItemName(String mItemName) {
+        this.mItemName = mItemName;
+    }
+
+    public int getItemUnit() {
+        return mItemUnit;
+    }
+
+    public void setItemUnit(int mItemUnit) {
+        this.mItemUnit = mItemUnit;
     }
 }

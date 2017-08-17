@@ -19,6 +19,7 @@ import android.widget.TextView;
 public class TimerFragment extends Fragment {
     /*timer components*/
     private View header;
+    private TextView mItemNameText;
     private TextView mTimeText;
     private String mWorkTime; //R.id.work_time
     private String mBreakTime; //R.id.work_time
@@ -43,6 +44,11 @@ public class TimerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View timerView = inflater.inflate(R.layout.fragment_timer, container, false);
+
+        String timerTag = getTag();
+        ((MainActivity)getActivity()).setTimerFragment(timerTag);
+
+        mItemNameText = timerView.findViewById(R.id.job_name_txt);
 
         /*progressBar button init*/
         mProgressBar = (ProgressBar)timerView.findViewById(R.id.progressBar);
@@ -121,5 +127,9 @@ public class TimerFragment extends Fragment {
             mProgressBar.setProgress(progressBarValue);
             handler.sendEmptyMessageDelayed(0, 1000); //increase by sec
         }
+    }
+
+    public void nameUpdate(String name){
+        mItemNameText.setText(name);
     }
 }
