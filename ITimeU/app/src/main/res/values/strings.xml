@@ -64,7 +64,4 @@
     <!-- activity_list.xml -->
     <string name="empty_title_str">The list is empty</string>
     <string name="empty_subtitle_str">Add the to-do list item</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
