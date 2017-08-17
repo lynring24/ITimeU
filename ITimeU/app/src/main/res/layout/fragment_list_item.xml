@@ -14,14 +14,14 @@
         <TextView
             android:id="@+id/achievement_rate_txt_view"
             android:layout_gravity="center"
-            android:paddingTop="10dp"
+            android:paddingTop="20dp"
             android:textColor="@color/colorAccent"
             android:textSize="32sp" />
 
         <TextView
             android:id="@+id/rate_detail_txt_view"
             android:layout_gravity="center"
-            android:paddingBottom="10dp"
+            android:paddingBottom="20dp"
             android:textColor="@color/colorPrimary"
             android:textSize="16sp" />
 
