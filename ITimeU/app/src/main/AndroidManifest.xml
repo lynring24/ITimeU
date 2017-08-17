@@ -17,8 +17,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StatisticsActivity" />
-        <activity android:name=".SettingActivity" />
         <activity android:name=".EditorActivity" />
 
         <provider
