@@ -167,7 +167,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                             .getSupportFragmentManager()
                             .findFragmentByTag(tabOfTimerFragment);
 
-                    timerFragment.nameUpdate(mItemName);
+                    timerFragment.nameUpdate(mainActivity.getItemName());
                     // Change Fragment ListItemFragment -> TimerFragment
                     (mainActivity).getViewPager().setCurrentItem(1);
                 }
