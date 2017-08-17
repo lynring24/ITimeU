@@ -17,6 +17,7 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         this.mNumbOfTabs = NumbOfTabs;
     }
 
+    /** return the fragment for each position */
     @Override
     public Fragment getItem(int position) {
         switch (position) {
@@ -29,6 +30,7 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
+    /** return number of tabs*/
     @Override
     public int getCount() {
         return mNumbOfTabs;
