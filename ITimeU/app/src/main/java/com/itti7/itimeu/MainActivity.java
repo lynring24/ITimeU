@@ -51,4 +51,14 @@ public class MainActivity extends AppCompatActivity {
                 tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
     }
+
+    /**
+     * @return  Return existing viewpager
+     * */
+    public ViewPager getViewPager() {
+        if (null == viewPager) {
+            viewPager = (ViewPager) findViewById(R.id.viewpager);
+        }
+        return viewPager;
+    }
 }

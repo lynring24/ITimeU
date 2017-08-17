@@ -1,6 +1,5 @@
 package com.itti7.itimeu;
 
-import android.content.ClipData;
 import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -47,6 +46,7 @@ import java.util.Locale;
 public class ListItemFragment extends Fragment implements DatePickerDialog.OnDateSetListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
+    // For access ITimeU database
     ItemDbHelper dbHelper;
     SQLiteDatabase db;
 
@@ -127,7 +127,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         mCursorAdapter = new ItemCursorAdapter(mListItemContext, null);
         mListView.setAdapter(mCursorAdapter);
 
-        // When click item, get the item's name and unit
+        // When click item, access to the list table in DB
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -135,6 +135,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 Cursor cursor = db.rawQuery("SELECT name, unit, status, date FROM list WHERE "
                         + BaseColumns._ID + " = ?", idStr);
 
+                // Get current item's info
                 if (cursor.moveToFirst()) {
                     mItemName = cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME));
                     mItemDate =  cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE));
@@ -146,6 +147,10 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                                     + ", status: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS))
                                     + ", date: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE)),
                             Toast.LENGTH_SHORT).show();
+
+                    // Change Fragment ListItemFragment -> TimerFragment
+                    ((MainActivity)getActivity()).getViewPager().setCurrentItem(1);
+                    // ToDo: TimerFragment로 name, unit, status 값 넘겨주기
                 }
             }
         });
