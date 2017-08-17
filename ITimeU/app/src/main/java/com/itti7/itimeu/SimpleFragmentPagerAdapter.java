@@ -1,5 +1,6 @@
 package com.itti7.itimeu;
 
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.*;
 import android.support.v4.app.ListFragment;
 
@@ -9,21 +10,27 @@ import android.support.v4.app.ListFragment;
 
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public SimpleFragmentPagerAdapter(FragmentManager fm){
+    int mNumbOfTabs;
+
+    public SimpleFragmentPagerAdapter(FragmentManager fm, int NumbOfTabs){
         super(fm);
+        this.mNumbOfTabs = NumbOfTabs;
     }
 
     @Override
     public Fragment getItem(int position) {
-        if(position == 0) return new ListItemFragment();
-        else if(position == 1) return new TimerFragment();
-        else if(position == 2) return new StatisticsFragment();
-        else if(position == 3) return new SettingFragment();
-        else return new AboutFragment();
+        switch (position) {
+            case 0: return new ListItemFragment();
+            case 1: return new TimerFragment();
+            case 2: return new StatisticsFragment();
+            case 3: return new SettingFragment();
+            case 4: return new AboutFragment();
+            default: return null;
+        }
     }
 
     @Override
     public int getCount() {
-        return 5;
+        return mNumbOfTabs;
     }
 }

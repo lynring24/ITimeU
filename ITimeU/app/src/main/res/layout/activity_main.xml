@@ -7,21 +7,15 @@
     android:orientation="vertical"
     tools:context="com.itti7.itimeu.MainActivity">
 
-
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
-    <!-- Add this view -->
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/menu_toolbar"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="#ffffff"
-        android:theme="@style/ThemeOverlay.Shrine.BottomNavigation"
-        app:menu="@menu/menu" />
-
+        android:layout_height="wrap_content"/>
 </LinearLayout>
 
