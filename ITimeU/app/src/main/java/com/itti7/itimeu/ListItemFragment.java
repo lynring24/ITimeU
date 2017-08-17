@@ -1,5 +1,7 @@
 package com.itti7.itimeu;
 
+import android.content.ClipData;
+import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -45,6 +47,9 @@ import java.util.Locale;
 public class ListItemFragment extends Fragment implements DatePickerDialog.OnDateSetListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
+    ItemDbHelper dbHelper;
+    SQLiteDatabase db;
+
     /**
      * Identifier for the item data loader
      */
@@ -61,7 +66,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     TextView mDetailRateTextView;
 
     // ListView
-    ListView mItemListView;
+    ListView mListView;
 
     // Show date text
     Button mDateButton;
@@ -90,7 +95,6 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     private String mPercentStr;
     private String mDetail;
 
-
     public ListItemFragment() {
         // Required empty public constructor
     }
@@ -98,11 +102,44 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         mListItemView = inflater.inflate(R.layout.fragment_list_item, container, false);
         mListItemActivity = getActivity();
         mListItemContext = mListItemView.getContext();
 
+        // list table db
+        dbHelper = new ItemDbHelper(mListItemContext);
+        db = dbHelper.getReadableDatabase();
+
+        // Find the ListView which will be populated with the item data
+        mListView = mListItemView.findViewById(R.id.item_list_view);
+
+        // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
+        View emptyView = mListItemView.findViewById(R.id.empty_relative_view);
+        mListView.setEmptyView(emptyView);
+
+        mCursorAdapter = new ItemCursorAdapter(mListItemContext, null);
+        mListView.setAdapter(mCursorAdapter);
+
+        // When click item, get the item's name and unit
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String[] idStr = {String.valueOf(id)};
+                Cursor cursor = db.rawQuery("SELECT name, unit, status FROM list WHERE "
+                        + BaseColumns._ID + " = ?", idStr);
+
+                if (cursor.moveToFirst()) {
+                    do {
+                        Toast.makeText(mListItemContext, "name: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME))
+                                        + ", unit: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT))
+                                        + ", status: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS)),
+                                Toast.LENGTH_SHORT).show();
+                    } while (cursor.moveToNext());
+                }
+            }
+        });
         // show today's date
         mListDate = new Date();
         mDate = getDate(mListDate);
@@ -147,20 +184,9 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             }
         });
 
-        // Find the ListView which will be populated with the item data
-        mItemListView = mListItemView.findViewById(R.id.item_list_view);
-
-        // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
-        View emptyView = mListItemView.findViewById(R.id.empty_relative_view);
-        mItemListView.setEmptyView(emptyView);
-
-        mCursorAdapter = new ItemCursorAdapter(mListItemContext, null);
-        mItemListView.setAdapter(mCursorAdapter);
-
-
-        //displayListByDate();
+        // displayListByDate();
         // Touch and hold the item to display the context menu (modify/delete).
-        registerForContextMenu(mItemListView);
+        registerForContextMenu(mListView);
 
         //Kick off the loader
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
@@ -365,14 +391,12 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
      * Calculate Percentage: sum of units / sum of total-units
      */
     void calculateAchievementRate() {
-        ItemDbHelper dbHelper = new ItemDbHelper(mListItemContext);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
         mSumOfTotalUnits = 0;
         mSumOfUnits = 0;
         String[] date = {mDate};
         Cursor cursor = db.rawQuery("SELECT totalUnit, unit FROM list WHERE date = ?", date);
 
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 mSumOfTotalUnits += cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT));
                 mSumOfUnits += cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT));
@@ -386,14 +410,14 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         }
         cursor.close();
 
-        mPercentStr = "  "+mPercent+" %";
+        mPercentStr = "  " + mPercent + " %";
         mDetail = "( " + mSumOfUnits + " / " + mSumOfTotalUnits + " )";
     }
 
     /**
      * Setting Achievement rate in TextView
      */
-    void setAchievementRate(){
+    void setAchievementRate() {
         calculateAchievementRate();
         // Find the TextView which will show sum of units / sum of total units in list's date
         mAchievementTextView = mListItemView.findViewById(R.id.achievement_rate_txt_view);
