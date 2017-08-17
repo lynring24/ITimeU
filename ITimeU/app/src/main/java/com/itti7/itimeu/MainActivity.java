@@ -17,11 +17,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Add tabs
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.list).setText("list"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.clock).setText("timer"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.statistics).setText("statistics"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.setting).setText("setting"));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.about).setText("about"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.list).setText(R.string.tab_list));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.clock).setText(R.string.tab_timer));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.statistics).
+                setText(R.string.tab_statistics));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.setting).
+                setText(R.string.tab_setting));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.about).setText(R.string.tab_about));
 
         // ViewPager for swiping and navigation to the selected tab
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -45,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Setting pager adapter
         SimpleFragmentPagerAdapter adapter
-                = new SimpleFragmentPagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+                = new SimpleFragmentPagerAdapter(getSupportFragmentManager(),
+                tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
     }
 }

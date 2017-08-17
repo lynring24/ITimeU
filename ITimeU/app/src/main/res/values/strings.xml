@@ -64,4 +64,11 @@
     <!-- activity_list.xml -->
     <string name="empty_title_str">The list is empty</string>
     <string name="empty_subtitle_str">Add the to-do list item</string>
+
+    <!-- MainActivity.java -->
+    <string name="tab_list">list</string>
+    <string name="tab_timer">timer</string>
+    <string name="tab_statistics">statistics</string>
+    <string name="tab_setting">setting</string>
+    <string name="tab_about">about</string>
 </resources>
