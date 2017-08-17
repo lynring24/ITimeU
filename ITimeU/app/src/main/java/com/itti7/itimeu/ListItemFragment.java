@@ -147,12 +147,13 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                     mItemStatus = cursor.getInt(
                             cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS));
 
-                    Toast.makeText(mListItemContext, "name: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME))
+                    // Test code
+                    /*Toast.makeText(mListItemContext, "name: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME))
                                     + ", unit: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT))
                                     + ", status: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS))
                                     + ", date: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE)),
                             Toast.LENGTH_SHORT).show();
-
+                    */
                     // Get MainActivity
                     MainActivity mainActivity = (MainActivity)getActivity();
 
@@ -161,7 +162,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                     mainActivity.setItemUnit(mItemUnit);
 
                     // Set item name text to job_txt_view in TimerFragment
-                    String tabOfTimerFragment = mainActivity.getTimerFragment();
+                    String tabOfTimerFragment = mainActivity.getTimerTag();
                     TimerFragment timerFragment = (TimerFragment)getActivity()
                             .getSupportFragmentManager()
                             .findFragmentByTag(tabOfTimerFragment);

@@ -10,17 +10,19 @@ public class MainActivity extends AppCompatActivity {
     // ViewPager for movement between tabs
     ViewPager viewPager;
 
+    // Item info in List
     String mItemName;
     int mItemUnit;
 
-    String mTimerFragment;
+    // Tag of TimerFragment
+    String mTimerTag;
 
-    public void setTimerFragment(String timerFragment){
-        mTimerFragment = timerFragment;
+    public void setTimerTag(String timerTag) {
+        mTimerTag = timerTag;
     }
 
-    public String getTimerFragment(){
-        return mTimerFragment;
+    public String getTimerTag(){
+        return mTimerTag;
     }
 
     @Override
@@ -75,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
         return viewPager;
     }
 
+
+    /** Getter and Setter */
     public String getItemName() {
         return mItemName;
     }

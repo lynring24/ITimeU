@@ -45,9 +45,11 @@ public class TimerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View timerView = inflater.inflate(R.layout.fragment_timer, container, false);
 
+        // get Timer tag and set to TimerTag
         String timerTag = getTag();
-        ((MainActivity)getActivity()).setTimerFragment(timerTag);
+        ((MainActivity)getActivity()).setTimerTag(timerTag);
 
+        // Job name
         mItemNameText = timerView.findViewById(R.id.job_name_txt);
 
         /*progressBar button init*/
@@ -129,6 +131,9 @@ public class TimerFragment extends Fragment {
         }
     }
 
+    /** @param name  Selected Item name
+     *
+     * This function set item name in TextView(job_txt_view)*/
     public void nameUpdate(String name){
         mItemNameText.setText(name);
     }
