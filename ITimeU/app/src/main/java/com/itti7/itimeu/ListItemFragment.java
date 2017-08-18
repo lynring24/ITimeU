@@ -1,6 +1,5 @@
 package com.itti7.itimeu;
 
-import android.content.SharedPreferences;
 import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
