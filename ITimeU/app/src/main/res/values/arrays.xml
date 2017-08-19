@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="stat_type">
+        <item>WEEK</item>
+        <item>MONTH</item>
+        <item>CUSTOM</item>
+    </string-array>
+
+</resources>
