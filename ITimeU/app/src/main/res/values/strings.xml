@@ -71,4 +71,10 @@
     <string name="tab_statistics">statistics</string>
     <string name="tab_setting">setting</string>
     <string name="tab_about">about</string>
+
+    <!-- fragment_about.xml -->
+    <string name="about_title">About</string>
+    <string name="about_version">Version</string>
+    <string name="about_licenses">Open licenses</string>
+    <string name="about_feedback">Feedback</string>
 </resources>
