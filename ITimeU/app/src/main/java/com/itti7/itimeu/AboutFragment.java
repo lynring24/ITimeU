@@ -15,8 +15,12 @@ public class AboutFragment extends Fragment {
 
     // This application's Version
     final static String APPLICATION_VERSION = "0.0.0";
+
+    // Mail receiver
     String[] emailTo = { "1117hyemin@gmail.com" , "juneoh227@gmail.com"
             , "lync2846@gmail.com"};
+
+    // Mail title subject
     String emailSubject = "[I Time U]";
 
     // This Fragment's inflater, activity, context
