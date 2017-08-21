@@ -8,7 +8,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 public class TimerService extends Service {
 
@@ -18,7 +17,6 @@ public class TimerService extends Service {
 
     public TimerService() {
     }
-
     public String getTime() {
         return timerSwitch?mLeftTime:"00:00";
     }
@@ -55,12 +53,9 @@ public class TimerService extends Service {
                 public void onFinish() {
                     mLeftTime="00:00";
                     timerSwitch=false;
-                    Log.i("SendBroadCast","SendBroadCast---------------------------------------------------->");
-                    Toast.makeText(getApplicationContext(),getPackageName(), Toast.LENGTH_SHORT).show(); //Testor 코드
                     Intent sendIntent = new Intent(getPackageName()+"SEND_BROAD_CAST");
                     sendIntent.putExtra("TIME", runTime);
                     sendBroadcast(sendIntent);
-                    Log.i("SendBroadCast","SendBroadCast GoGO---------------------------------------------------->");
                     /////////////////////////////////////////////////ALARM N VIBRATION//////////////////////////////////////////////////////////////////////////////////////////////
                     Log.i("Timer", "Timer Finish--->");
                 }
