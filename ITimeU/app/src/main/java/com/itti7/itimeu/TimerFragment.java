@@ -28,7 +28,7 @@ public class TimerFragment extends Fragment {
     boolean mBound = false;
     /*Setting UI*/
     private View header;
-   /* timer value */
+    /* timer value */
     private TextView mTimeText;
     private String mWorkTime; //R.id.work_time
     private String mBreakTime; //R.id.work_time
@@ -44,6 +44,7 @@ public class TimerFragment extends Fragment {
     private int mCountTimer; //
     private ServiceConnection conn;
     private Thread mReadThread;
+
     public TimerFragment() {
         // Required empty public constructor
     }
@@ -53,7 +54,7 @@ public class TimerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View timerView = inflater.inflate(R.layout.activity_timer, container, false);
         init();
-        mCountTimer=0;
+        mCountTimer = 0;
         mStateBttn = (Button) timerView.findViewById(R.id.state_bttn_view);
         mStateBttn.setOnClickListener(stateChecker);
         /*Time Text Initialize */
@@ -81,7 +82,7 @@ public class TimerFragment extends Fragment {
 
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                mTimerService = ((TimerService.MyBinder)service).getService();
+                mTimerService = ((TimerService.MyBinder) service).getService();
             }
         };
         getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
@@ -92,30 +93,22 @@ public class TimerFragment extends Fragment {
         public void onClick(View v) {
             if (mStateBttn.getText().toString().equals("start")) { // checked
                 mCountTimer++;
-                if(mCountTimer%8==0) // assign time by work,short & long break
-                    runTime=Integer.parseInt(mLongBreakTime);
-                else if(mCountTimer%2==0)
-                    runTime=Integer.parseInt(mWorkTime);
+                if (mCountTimer % 8 == 0) // assign time by work,short & long break
+                    runTime = Integer.parseInt(mLongBreakTime);
+                else if (mCountTimer % 2 == 1)
+                    runTime = Integer.parseInt(mWorkTime);
                 else
-                    runTime=Integer.parseInt(mBreakTime);
-
+                    runTime = Integer.parseInt(mBreakTime);
+                runTime = 1; //Testor Code
                 mProgressBar.setMax(runTime * 60); // setMax by sec
                 handler = new TimerHandler();
-                intent.putExtra("RUNTIME",runTime);
+                intent.putExtra("RUNTIME", runTime);
                 getActivity().startService(intent);
                 listenTimer(); //catch up timer
                 mStateBttn.setText(R.string.stop);
                 handler.sendEmptyMessage(0);
-            }
-            else {
-                getActivity().stopService(intent); //stop service
-                mReadThread.interrupt();
-                mTimerService.stopTimer();
-                mProgressBar.setProgress(0);
-                handler.removeMessages(0);
-                progressBarValue=0; //must be set 0
-                Log.v("TimerFragment", "Service stop--->");
-                mStateBttn.setText(R.string.start);
+            } else {
+                stopTimer();
             }
         }
     };
@@ -142,6 +135,16 @@ public class TimerFragment extends Fragment {
         mReadThread.start();
     }
 
+    public void stopTimer() {
+        getActivity().stopService(intent); //stop service
+        mReadThread.interrupt();
+        mTimerService.stopTimer();
+        mProgressBar.setProgress(0);
+        handler.removeMessages(0);
+        progressBarValue = 0; //must be set 0
+        Log.v("TimerFragment", "Service stop--->");
+        mStateBttn.setText(R.string.start);
+    }
 
     public class TimerHandler extends Handler {
         TimerHandler() {
@@ -150,17 +153,23 @@ public class TimerFragment extends Fragment {
 
         @Override
         public void handleMessage(android.os.Message msg) {
-            progressBarValue++;
-            mProgressBar.bringToFront();
-            mProgressBar.setProgress(progressBarValue);
-            handler.sendEmptyMessageDelayed(0, 1000); //increase by sec
+            if (mTimerService.getRun()) {
+                progressBarValue++;
+                mProgressBar.bringToFront();
+                mProgressBar.setProgress(progressBarValue);
+                handler.sendEmptyMessageDelayed(0, 1000); //increase by sec
+            }
+            else { // Timer must be finished
+                mProgressBar.setProgress(0);
+                progressBarValue=0;
+            }
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mBound) {
+        if (mBound) {
             getActivity().unbindService(conn);
             mBound = false;
         }

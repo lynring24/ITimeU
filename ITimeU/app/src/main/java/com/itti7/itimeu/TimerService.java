@@ -24,6 +24,7 @@ public class TimerService extends Service {
 
         return timerSwitch?mLeftTime:"00:00";
     }
+    public boolean getRun(){ return timerSwitch;}
 
     public void startTimer() {
         Log.i(TAG, "startTimer--->");
@@ -50,12 +51,17 @@ public class TimerService extends Service {
                         if (runTime >= 60) {
                             String hour = String.format("%02d", (millisUntilFinished / (1000 * 60 * 60)));
                             mLeftTime = hour + ":" + mLeftTime;
+
+                          /*  Noti*/
                         }
                     }
                 }
 
                 public void onFinish() {
+                    mLeftTime="00:00";
+                    timerSwitch=false;
                       /*alarm or vibration*/
+
                     /////////////////////////////////////지은아 여기에 삽입하면 될거야//////////////////////////////////////////////////////////////////////////////////////////////
                     Log.i("Timer", "Timer Finish--->");
                 }
@@ -99,5 +105,4 @@ public class TimerService extends Service {
             return TimerService.this;
         }
     }
-
 }
