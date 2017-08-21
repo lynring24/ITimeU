@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,6 +37,13 @@ public class TimerFragment extends Fragment {
     /*timer calc*/
 
     private Timer mCalcTimer;
+
+    // Item info come from ListView
+    private int mId;
+    private int mStatus;
+    private int mUnit;
+    private String mName;
+
     public TimerFragment() {
         // Required empty public constructor
     }
@@ -131,10 +139,32 @@ public class TimerFragment extends Fragment {
         }
     }
 
-    /** @param name  Selected Item name
-     *
+    /**
      * This function set item name in TextView(job_txt_view)*/
-    public void nameUpdate(String name){
-        mItemNameText.setText(name);
+    public void nameUpdate(){
+        mItemNameText.setText(mName);
+
+        // test code
+        Toast.makeText(getContext(), "ID: " + mId + ", Name: " + mName + ", Status: " + mStatus +
+        ", Unit: " + mUnit, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Setter
+     */
+    public void setmId(int mId) {
+        this.mId = mId;
+    }
+
+    public void setmStatus(int mStatus) {
+        this.mStatus = mStatus;
+    }
+
+    public void setmUnit(int mUnit) {
+        this.mUnit = mUnit;
+    }
+
+    public void setmName(String mName) {
+        this.mName = mName;
     }
 }

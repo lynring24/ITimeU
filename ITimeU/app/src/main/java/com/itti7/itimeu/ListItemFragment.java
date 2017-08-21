@@ -36,13 +36,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ListItemFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- */
 public class ListItemFragment extends Fragment implements DatePickerDialog.OnDateSetListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -88,6 +81,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     // Date year, month, day;
     private int mYear, mMonth, mDay;
 
+    // Save selected item data
+    private int mItemID;
     private String mItemName;
     private String mItemDate;
     private int mItemUnit;
@@ -131,7 +126,9 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String[] idStr = {String.valueOf(id)};
+                // Get item's primary id
+                mItemID = (int) id;
+                String[] idStr = {String.valueOf(mItemID)};
                 Cursor cursor = db.rawQuery("SELECT name, unit, status, date FROM list WHERE "
                         + BaseColumns._ID + " = ?", idStr);
 
@@ -139,7 +136,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 if (cursor.moveToFirst()) {
                     mItemName = cursor.getString(
                             cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME));
-                    mItemDate =  cursor.getString(
+                    mItemDate = cursor.getString(
                             cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE));
                     mItemUnit = cursor.getInt(
                             cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT));
@@ -147,26 +144,28 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                             cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS));
 
                     // Test code
-                    /*Toast.makeText(mListItemContext, "name: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME))
+                    /*Toast.makeText(mListItemContext, "id: " + mItemID+ " name: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME))
                                     + ", unit: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT))
                                     + ", status: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS))
                                     + ", date: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE)),
                             Toast.LENGTH_SHORT).show();
                     */
                     // Get MainActivity
-                    MainActivity mainActivity = (MainActivity)getActivity();
-
-                    // Set to MainActivity: selected item name and unit.
-                    mainActivity.setItemName(mItemName);
-                    mainActivity.setItemUnit(mItemUnit);
+                    MainActivity mainActivity = (MainActivity) getActivity();
 
                     // Set item name text to job_txt_view in TimerFragment
                     String tabOfTimerFragment = mainActivity.getTimerTag();
-                    TimerFragment timerFragment = (TimerFragment)getActivity()
+                    TimerFragment timerFragment = (TimerFragment) getActivity()
                             .getSupportFragmentManager()
                             .findFragmentByTag(tabOfTimerFragment);
 
-                    timerFragment.nameUpdate(mainActivity.getItemName());
+                    // Set selected item info
+                    timerFragment.setmId(mItemID);
+                    timerFragment.setmName(mItemName);
+                    timerFragment.setmStatus(mItemStatus);
+                    timerFragment.setmUnit(mItemUnit);
+
+                    timerFragment.nameUpdate();
                     // Change Fragment ListItemFragment -> TimerFragment
                     (mainActivity).getViewPager().setCurrentItem(1);
                 }
@@ -456,20 +455,5 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         mAchievementTextView.setText(mPercentStr);
         mDetailRateTextView = mListItemView.findViewById(R.id.rate_detail_txt_view);
         mDetailRateTextView.setText(mDetail);
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 }
