@@ -79,6 +79,7 @@
     <string name="about_feedback">Feedback</string>
 
     <!-- activity_licenses.xml -->
+    <string name="back">Back</string>
     <string name="datepicker_name">Material Date Time Picker</string>
     <string name="licenses_datepicker">Copyright (&#169;) 2015 Wouter Dullaert
 
