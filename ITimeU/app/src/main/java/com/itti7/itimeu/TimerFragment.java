@@ -63,7 +63,6 @@ public class TimerFragment extends Fragment {
         mProgressBar.bringToFront(); // bring the progressbar to the top
 
         /*runTime = Integer.parseInt(mWorkTime);*/
- /*       mCalcTimer = new Timer(runTime * 1000 * 60, 1000);*/
 
         return timerView;
     }
@@ -128,7 +127,7 @@ public class TimerFragment extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mTimeText.setText(Integer.toString(mTimerService.getTime()));
+                                mTimeText.setText(mTimerService.getTime());
                             }
                         });
                         Thread.sleep(1000);

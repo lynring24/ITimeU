@@ -4,25 +4,28 @@ package com.itti7.itimeu;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-public class TimerService extends Service {
+public class TimerService extends Service{
 
     private static final String TAG="Test";
-    private int timer = 0;
+    private String mLeftTime;
+    private int mMinute;
     private boolean timerSwitch = false;
 
     public TimerService() {
     }
 
-    public int getTime() {
-        return timer;
+    public String getTime() {
+        return mLeftTime;
     }
 
     public void startTimer() {
         Log.i(TAG, "startTimer--->");
+
         timerSwitch = true;
         handler.post(runnable);
     }
@@ -35,11 +38,23 @@ public class TimerService extends Service {
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if(timerSwitch == true){
-                timer++;
-                System.out.println(timer);
-                handler.postDelayed(runnable, 1000);
-            }
+            new CountDownTimer(100000, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    Log.i("Timer", "Timer OnTick--->");
+                    String min = String.format("%02d", (millisUntilFinished) / (1000 * 60));
+                    String sec = String.format("%02d", (millisUntilFinished / 1000) % 60);
+                    mLeftTime = min + ":" + sec;
+                    if (mMinute >= 60) {
+                        String hour = String.format("%02d", (millisUntilFinished / (1000 * 60 * 60)));
+                        mLeftTime = hour + ":" + mLeftTime;
+                    }
+                }
+
+                public void onFinish() {
+                      /*alarm or vibration*/
+                    Log.i("Timer", "Timer Finish--->");
+                }
+            }.start();
         }
     };
 
