@@ -98,9 +98,13 @@ public class TimerFragment extends Fragment {
                     runTime=Integer.parseInt(mWorkTime);
                 else
                     runTime=Integer.parseInt(mBreakTime);
-                Toast.makeText(getContext(),""+runTime, Toast.LENGTH_SHORT).show(); //Testor 코드
-                handler = new TimerHandler();
 
+                //testor Code
+                Toast.makeText(getContext(),""+runTime, Toast.LENGTH_SHORT).show(); //Testor 코드
+                runTime=1;//testor Code
+
+                mProgressBar.setMax(runTime * 60); // setMax by sec
+                handler = new TimerHandler();
                 getActivity().startService(intent);
                 /*intent.putExtra("RUNTIME",runTime); //call service*/
                 listenTimer(); //catch up timer
@@ -108,10 +112,12 @@ public class TimerFragment extends Fragment {
                 handler.sendEmptyMessage(0);
             }
             else {
+                getActivity().stopService(intent); //stop service
+                mReadThread.interrupt();
+                mTimerService.stopTimer();
+                mProgressBar.setProgress(0);
                 handler.removeMessages(0);
                 progressBarValue=0; //must be set 0
-                getActivity().stopService(intent); //stop service
-                stopTimer();
                 Log.v("TimerFragment", "Service stop--->");
                 mStateBttn.setText(R.string.start);
             }
@@ -139,10 +145,7 @@ public class TimerFragment extends Fragment {
         });
         mReadThread.start();
     }
-    public void stopTimer(){
-        mReadThread.interrupt();
-        mTimerService.stopTimer();
-    }
+
 
     public class TimerHandler extends Handler {
         TimerHandler() {
@@ -153,7 +156,6 @@ public class TimerFragment extends Fragment {
         public void handleMessage(android.os.Message msg) {
             progressBarValue++;
             mProgressBar.bringToFront();
-            mProgressBar.setMax(runTime * 60); // setMax by sec
             mProgressBar.setProgress(progressBarValue);
             handler.sendEmptyMessageDelayed(0, 1000); //increase by sec
         }
