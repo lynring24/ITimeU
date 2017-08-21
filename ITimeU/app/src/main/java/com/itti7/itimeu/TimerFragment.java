@@ -43,7 +43,7 @@ public class TimerFragment extends Fragment {
     private Intent intent;
     private int mCountTimer; //
     private ServiceConnection conn;
-
+    private Thread mReadThread;
     public TimerFragment() {
         // Required empty public constructor
     }
@@ -69,7 +69,6 @@ public class TimerFragment extends Fragment {
 
     private void init() {
         intent = new Intent(getActivity(), TimerService.class);
-       /* getActivity().startService(intent);*/
         /*work time 을 갖고 오기위해 inflater*/
         header = getActivity().getLayoutInflater().inflate(R.layout.activity_setting, null, false);
         mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
@@ -101,25 +100,26 @@ public class TimerFragment extends Fragment {
                     runTime=Integer.parseInt(mBreakTime);
                 Toast.makeText(getContext(),""+runTime, Toast.LENGTH_SHORT).show(); //Testor 코드
                 handler = new TimerHandler();
+
                 getActivity().startService(intent);
                 /*intent.putExtra("RUNTIME",runTime); //call service*/
                 listenTimer(); //catch up timer
                 mStateBttn.setText(R.string.stop);
+                handler.sendEmptyMessage(0);
             }
             else {
+                handler.removeMessages(0);
                 progressBarValue=0; //must be set 0
-                handler.sendEmptyMessage(0);
-                /*handler.removeMessages(0);*/
-                /*getActivity().stopService(intent); //stop service
+                getActivity().stopService(intent); //stop service
+                stopTimer();
                 Log.v("TimerFragment", "Service stop--->");
-                mTimeText.setText("");*/
                 mStateBttn.setText(R.string.start);
             }
         }
     };
 
     public void listenTimer() {
-        new Thread(new Runnable() {
+        mReadThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
@@ -136,7 +136,12 @@ public class TimerFragment extends Fragment {
                     }
                 }
             }
-        }).start();
+        });
+        mReadThread.start();
+    }
+    public void stopTimer(){
+        mReadThread.interrupt();
+        mTimerService.stopTimer();
     }
 
     public class TimerHandler extends Handler {

@@ -9,9 +9,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-public class TimerService extends Service{
+public class TimerService extends Service {
 
-    private static final String TAG="Test";
+    private static final String TAG = "Test";
     private String mLeftTime;
     private int mMinute;
     private boolean timerSwitch = false;
@@ -20,7 +20,8 @@ public class TimerService extends Service{
     }
 
     public String getTime() {
-        return mLeftTime;
+
+        return timerSwitch?mLeftTime:"00:00";
     }
 
     public void startTimer() {
@@ -38,20 +39,23 @@ public class TimerService extends Service{
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            new CountDownTimer(100000, 1000) {
+            new CountDownTimer(1000 * 60, 1000) { // minute
                 public void onTick(long millisUntilFinished) {
-                    Log.i("Timer", "Timer OnTick--->");
-                    String min = String.format("%02d", (millisUntilFinished) / (1000 * 60));
-                    String sec = String.format("%02d", (millisUntilFinished / 1000) % 60);
-                    mLeftTime = min + ":" + sec;
-                    if (mMinute >= 60) {
-                        String hour = String.format("%02d", (millisUntilFinished / (1000 * 60 * 60)));
-                        mLeftTime = hour + ":" + mLeftTime;
+                    if (timerSwitch) {
+                        Log.i("Timer", "Timer OnTick--->");
+                        String min = String.format("%02d", (millisUntilFinished) / (1000 * 60));
+                        String sec = String.format("%02d", (millisUntilFinished / 1000) % 60);
+                        mLeftTime = min + ":" + sec;
+                        if (mMinute >= 60) {
+                            String hour = String.format("%02d", (millisUntilFinished / (1000 * 60 * 60)));
+                            mLeftTime = hour + ":" + mLeftTime;
+                        }
                     }
                 }
 
                 public void onFinish() {
                       /*alarm or vibration*/
+                    /////////////////////////////////////지은아 여기에 삽입하면 될거야//////////////////////////////////////////////////////////////////////////////////////////////
                     Log.i("Timer", "Timer Finish--->");
                 }
             }.start();
@@ -89,8 +93,8 @@ public class TimerService extends Service{
         return new MyBinder();
     }
 
-    public class MyBinder extends Binder{
-        public TimerService getService(){
+    public class MyBinder extends Binder {
+        public TimerService getService() {
             return TimerService.this;
         }
     }
