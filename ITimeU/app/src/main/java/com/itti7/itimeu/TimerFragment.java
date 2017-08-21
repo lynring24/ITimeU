@@ -92,22 +92,9 @@ public class TimerFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if (mStateBttn.getText().toString().equals("start")) { // checked
-                Toast.makeText(getContext(),""+mCountTimer, Toast.LENGTH_SHORT).show(); //Testor 코드
-                mCountTimer++;
-                if (mCountTimer % 8 == 0) // assign time by work,short & long break
-                    runTime = Integer.parseInt(mLongBreakTime);
-                else if (mCountTimer % 2 == 1)
-                    runTime = Integer.parseInt(mWorkTime);
-                else
-                    runTime = Integer.parseInt(mBreakTime);
-                runTime = 1; //Testor Code
-                mProgressBar.setMax(runTime * 60); // setMax by sec
-                handler = new TimerHandler();
-                intent.putExtra("RUNTIME", runTime);
-                getActivity().startService(intent);
-                listenTimer(); //catch up timer
-                mStateBttn.setText(R.string.stop);
-                handler.sendEmptyMessage(0);
+                 startTimer();
+                if(runTime==Integer.parseInt(mWorkTime))
+                    startTimer();
             } else {
                 getActivity().stopService(intent); //stop service
                 mReadThread.interrupt();
@@ -147,6 +134,7 @@ public class TimerFragment extends Fragment {
     }
 
     public void startTimer() {
+        Toast.makeText(getContext(),""+mCountTimer, Toast.LENGTH_SHORT).show(); //Testor 코드
         mCountTimer++;
         if (mCountTimer % 8 == 0) // assign time by work,short & long break
             runTime = Integer.parseInt(mLongBreakTime);
@@ -155,7 +143,7 @@ public class TimerFragment extends Fragment {
         else
             runTime = Integer.parseInt(mBreakTime);
         runTime = 1; //Testor Code
-        mProgressBar.setMax(runTime * 60); // setMax by sec
+        mProgressBar.setMax(runTime * 60+2); // setMax by sec
         handler = new TimerHandler();
         intent.putExtra("RUNTIME", runTime);
         getActivity().startService(intent);
