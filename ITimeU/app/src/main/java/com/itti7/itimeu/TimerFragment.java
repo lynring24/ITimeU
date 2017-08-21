@@ -92,6 +92,7 @@ public class TimerFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if (mStateBttn.getText().toString().equals("start")) { // checked
+                Toast.makeText(getContext(),""+mCountTimer, Toast.LENGTH_SHORT).show(); //Testor 코드
                 mCountTimer++;
                 if (mCountTimer % 8 == 0) // assign time by work,short & long break
                     runTime = Integer.parseInt(mLongBreakTime);
@@ -108,7 +109,17 @@ public class TimerFragment extends Fragment {
                 mStateBttn.setText(R.string.stop);
                 handler.sendEmptyMessage(0);
             } else {
-                stopTimer();
+                getActivity().stopService(intent); //stop service
+                mReadThread.interrupt();
+                mTimerService.stopTimer();
+                mProgressBar.setProgress(0);
+                handler.removeMessages(0);
+                mCountTimer--;
+                progressBarValue = 0; //must be set 0
+                Log.v("TimerFragment", "Service stop--->");
+                mStateBttn.setText(R.string.start);
+                /*go back to liSt*/
+
             }
         }
     };
@@ -135,15 +146,22 @@ public class TimerFragment extends Fragment {
         mReadThread.start();
     }
 
-    public void stopTimer() {
-        getActivity().stopService(intent); //stop service
-        mReadThread.interrupt();
-        mTimerService.stopTimer();
-        mProgressBar.setProgress(0);
-        handler.removeMessages(0);
-        progressBarValue = 0; //must be set 0
-        Log.v("TimerFragment", "Service stop--->");
-        mStateBttn.setText(R.string.start);
+    public void startTimer() {
+        mCountTimer++;
+        if (mCountTimer % 8 == 0) // assign time by work,short & long break
+            runTime = Integer.parseInt(mLongBreakTime);
+        else if (mCountTimer % 2 == 1)
+            runTime = Integer.parseInt(mWorkTime);
+        else
+            runTime = Integer.parseInt(mBreakTime);
+        runTime = 1; //Testor Code
+        mProgressBar.setMax(runTime * 60); // setMax by sec
+        handler = new TimerHandler();
+        intent.putExtra("RUNTIME", runTime);
+        getActivity().startService(intent);
+        listenTimer(); //catch up timer
+        mStateBttn.setText(R.string.stop);
+        handler.sendEmptyMessage(0);
     }
 
     public class TimerHandler extends Handler {
@@ -158,10 +176,9 @@ public class TimerFragment extends Fragment {
                 mProgressBar.bringToFront();
                 mProgressBar.setProgress(progressBarValue);
                 handler.sendEmptyMessageDelayed(0, 1000); //increase by sec
-            }
-            else { // Timer must be finished
+            } else { // Timer must be finished
                 mProgressBar.setProgress(0);
-                progressBarValue=0;
+                progressBarValue = 0;
             }
         }
     }

@@ -21,14 +21,13 @@ public class TimerService extends Service {
     }
 
     public String getTime() {
-
         return timerSwitch?mLeftTime:"00:00";
     }
     public boolean getRun(){ return timerSwitch;}
 
     public void startTimer() {
         Log.i(TAG, "startTimer--->");
-        Toast.makeText(getApplicationContext(),""+runTime, Toast.LENGTH_SHORT).show(); //Testor 코드
+       /* Toast.makeText(getApplicationContext(),""+runTime, Toast.LENGTH_SHORT).show(); //Testor 코드*/
         timerSwitch = true;
         handler.post(runnable);
     }
@@ -51,7 +50,6 @@ public class TimerService extends Service {
                         if (runTime >= 60) {
                             String hour = String.format("%02d", (millisUntilFinished / (1000 * 60 * 60)));
                             mLeftTime = hour + ":" + mLeftTime;
-
                           /*  Noti*/
                         }
                     }
@@ -60,8 +58,8 @@ public class TimerService extends Service {
                 public void onFinish() {
                     mLeftTime="00:00";
                     timerSwitch=false;
-                      /*alarm or vibration*/
 
+                      /*alarm or vibration*/
                     /////////////////////////////////////지은아 여기에 삽입하면 될거야//////////////////////////////////////////////////////////////////////////////////////////////
                     Log.i("Timer", "Timer Finish--->");
                 }
