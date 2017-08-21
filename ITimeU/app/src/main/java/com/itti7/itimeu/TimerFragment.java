@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,7 +26,7 @@ public class TimerFragment extends Fragment {
     /*timer Service Component*/
     private TimerService mTimerService;
     boolean mBound = false;
-    /*UI Inflator*/
+    /*Setting UI*/
     private View header;
    /* timer value */
     private TextView mTimeText;
@@ -62,9 +63,8 @@ public class TimerFragment extends Fragment {
         mProgressBar.bringToFront(); // bring the progressbar to the top
 
         /*runTime = Integer.parseInt(mWorkTime);*/
- /*       mCalcTimer = new Timer(runTime * 1000 * 60, 1000);
-        handler = new TimerHandler();
-        handler.sendEmptyMessage(0);*/
+ /*       mCalcTimer = new Timer(runTime * 1000 * 60, 1000);*/
+
         return timerView;
     }
 
@@ -92,28 +92,26 @@ public class TimerFragment extends Fragment {
     Button.OnClickListener stateChecker = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.v("TimerFragment", "got Clicked--->");
-            if (mStateBttn.getText().toString().equals("START")) {
-                Log.v("TimerFragment", "start Clicked--->");
-                /*mCountTimer++;
+            if (mStateBttn.getText().toString().equals("start")) { // checked
+                mCountTimer++;
                 if(mCountTimer%8==0) // assign time by work,short & long break
                     runTime=Integer.parseInt(mLongBreakTime);
                 else if(mCountTimer%2==0)
                     runTime=Integer.parseInt(mWorkTime);
                 else
                     runTime=Integer.parseInt(mBreakTime);
-                Log.v("TimerFragment", "Service call--->");
-                intent.putExtra("RUNTIME",runTime); //call service
-
-                getActivity().startService(intent);
+                Toast.makeText(getContext(),""+runTime, Toast.LENGTH_SHORT).show(); //Testor 코드
                 handler = new TimerHandler();
-                listenTimer(); //catch up timer*/
+                getActivity().startService(intent);
+                /*intent.putExtra("RUNTIME",runTime); //call service*/
+                listenTimer(); //catch up timer
                 mStateBttn.setText(R.string.stop);
             }
             else {
-                Log.v("TimerFragment", "Clicked stop--->");
-                /*handler.sendEmptyMessage(0);
-                getActivity().stopService(intent); //stop service
+                progressBarValue=0; //must be set 0
+                handler.sendEmptyMessage(0);
+                /*handler.removeMessages(0);*/
+                /*getActivity().stopService(intent); //stop service
                 Log.v("TimerFragment", "Service stop--->");
                 mTimeText.setText("");*/
                 mStateBttn.setText(R.string.start);
@@ -130,7 +128,7 @@ public class TimerFragment extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mTimeText.setText(mTimerService.getTime());
+                                mTimeText.setText(Integer.toString(mTimerService.getTime()));
                             }
                         });
                         Thread.sleep(1000);
@@ -150,6 +148,7 @@ public class TimerFragment extends Fragment {
         @Override
         public void handleMessage(android.os.Message msg) {
             progressBarValue++;
+            mProgressBar.bringToFront();
             mProgressBar.setMax(runTime * 60); // setMax by sec
             mProgressBar.setProgress(progressBarValue);
             handler.sendEmptyMessageDelayed(0, 1000); //increase by sec

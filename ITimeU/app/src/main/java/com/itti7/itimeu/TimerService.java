@@ -22,6 +22,7 @@ public class TimerService extends Service {
     }
 
     public void startTimer() {
+        Log.i(TAG, "startTimer--->");
         timerSwitch = true;
         handler.post(runnable);
     }
