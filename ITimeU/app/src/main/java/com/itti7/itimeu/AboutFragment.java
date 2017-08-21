@@ -11,18 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AboutFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AboutFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AboutFragment extends Fragment {
 
     // This application's Version
     final static String APPLICATION_VERSION = "0.0.0";
+    String[] emailTo = { "1117hyemin@gmail.com" , "juneoh227@gmail.com"
+            , "lync2846@gmail.com"};
+    String emailSubject = "[I Time U]";
 
     // This Fragment's inflater, activity, context
     View mAboutView;
@@ -33,32 +28,16 @@ public class AboutFragment extends Fragment {
     TextView mVersionTextView;
     // TextView to show Activity for open licenses
     TextView mLicensesTextView;
-
-    private OnFragmentInteractionListener mListener;
+    // TextView for feedback with mail
+    TextView mFeedbackTextView;
 
     public AboutFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment AboutFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AboutFragment newInstance() {
-        AboutFragment fragment = new AboutFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
@@ -84,14 +63,15 @@ public class AboutFragment extends Fragment {
             }
         });
 
+        // When click this text view, than show Email intent for feedback
+        mFeedbackTextView = mAboutView.findViewById(R.id.feedback_txt_view);
+        mFeedbackTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendFeedback(emailTo, emailSubject);
+            }
+        });
         return mAboutView;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -102,21 +82,21 @@ public class AboutFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * This function create intent for sending Email.
+     *
+     * @param mailto    Receiving address
+     * @param subject   Subject of mail
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    public void sendFeedback(String[] mailto, String subject) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Intent.EXTRA_EMAIL, mailto);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+
+        startActivity(intent);
     }
 }
