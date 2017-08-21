@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -23,9 +24,7 @@ import android.widget.Toast;
  * A simple {@link Fragment} subclass.
  */
 public class TimerFragment extends Fragment {
-    /*timer Service Component*/
-    private TimerService mTimerService;
-    boolean mBound = false;
+
     /*Setting UI*/
     private View header;
     /* timer value */
@@ -35,16 +34,20 @@ public class TimerFragment extends Fragment {
     private String mLongBreakTime; //R.id.work_time
     private ProgressBar mProgressBar;
     private Button mStateBttn;
-
+    /*timer Service Component*/
+    private TimerService mTimerService;
+    boolean mBound = false;
     private TimerHandler handler;
     private int progressBarValue = 0;
     public int runTime; // minute
     /*timer calc*/
     private Intent intent;
-    private int mCountTimer; //
     private ServiceConnection conn;
     private Thread mReadThread;
-
+   /*store  time count*/
+    private SharedPreferences mPref;
+    private SharedPreferences.Editor editor;
+    private int mCountTimer;
     public TimerFragment() {
         // Required empty public constructor
     }
@@ -70,6 +73,12 @@ public class TimerFragment extends Fragment {
 
     private void init() {
         intent = new Intent(getActivity(), TimerService.class);
+        /*init timer count */
+        mPref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        editor = mPref.edit();
+        editor.putString("COUNT", "10");
+        editor.commit();
+
         /*work time 을 갖고 오기위해 inflater*/
         header = getActivity().getLayoutInflater().inflate(R.layout.activity_setting, null, false);
         mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
@@ -92,10 +101,9 @@ public class TimerFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if (mStateBttn.getText().toString().equals("start")) { // checked
-                 startTimer();
-                if(runTime==Integer.parseInt(mWorkTime))
-                    startTimer();
+                startTimer();
             } else {
+                Log.i("StatTimer", "Timer Stopped--->");
                 getActivity().stopService(intent); //stop service
                 mReadThread.interrupt();
                 mTimerService.stopTimer();
@@ -106,7 +114,6 @@ public class TimerFragment extends Fragment {
                 Log.v("TimerFragment", "Service stop--->");
                 mStateBttn.setText(R.string.start);
                 /*go back to liSt*/
-
             }
         }
     };
@@ -134,8 +141,9 @@ public class TimerFragment extends Fragment {
     }
 
     public void startTimer() {
-        Toast.makeText(getContext(),""+mCountTimer, Toast.LENGTH_SHORT).show(); //Testor 코드
+        mCountTimer=Integer.parseInt(mPref.getString("COUNT",""));
         mCountTimer++;
+        Toast.makeText(getContext(),""+mCountTimer, Toast.LENGTH_SHORT).show(); //Testor 코드
         if (mCountTimer % 8 == 0) // assign time by work,short & long break
             runTime = Integer.parseInt(mLongBreakTime);
         else if (mCountTimer % 2 == 1)
@@ -170,7 +178,19 @@ public class TimerFragment extends Fragment {
             }
         }
     }
+        public void alarm(){
+    /*        서비스가 끝났다
+                    -> mCountTimer 정장
+            editor.putString("COUNT", ""+mCountTimer);
+            editor.commit();
+                    ->만약 work 였으면
+                    start Timer()
 
+                   리스트로 어떨게 돌아가야할까
+
+
+                    */
+        }
     @Override
     public void onDestroy() {
         super.onDestroy();
