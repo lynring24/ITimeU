@@ -8,12 +8,13 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 public class TimerService extends Service {
 
     private static final String TAG = "Test";
     private String mLeftTime;
-    private int mMinute;
+    private int runTime;
     private boolean timerSwitch = false;
 
     public TimerService() {
@@ -26,7 +27,7 @@ public class TimerService extends Service {
 
     public void startTimer() {
         Log.i(TAG, "startTimer--->");
-
+        Toast.makeText(getApplicationContext(),""+runTime, Toast.LENGTH_SHORT).show(); //Testor 코드
         timerSwitch = true;
         handler.post(runnable);
     }
@@ -39,14 +40,14 @@ public class TimerService extends Service {
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            new CountDownTimer(1000 * 60, 1000) { // minute
+            new CountDownTimer(runTime*1000 * 60, 1000) { // minute
                 public void onTick(long millisUntilFinished) {
                     if (timerSwitch) {
                         Log.i("Timer", "Timer OnTick--->");
                         String min = String.format("%02d", (millisUntilFinished) / (1000 * 60));
                         String sec = String.format("%02d", (millisUntilFinished / 1000) % 60);
                         mLeftTime = min + ":" + sec;
-                        if (mMinute >= 60) {
+                        if (runTime >= 60) {
                             String hour = String.format("%02d", (millisUntilFinished / (1000 * 60 * 60)));
                             mLeftTime = hour + ":" + mLeftTime;
                         }
@@ -70,8 +71,8 @@ public class TimerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "Service onStart--->");
+        runTime  = intent.getIntExtra("RUNTIME",1);
         startTimer();
-//        String data = intent.getStringExtra("input");
         return super.onStartCommand(intent, flags, startId);
     }
 

@@ -99,14 +99,10 @@ public class TimerFragment extends Fragment {
                 else
                     runTime=Integer.parseInt(mBreakTime);
 
-                //testor Code
-                Toast.makeText(getContext(),""+runTime, Toast.LENGTH_SHORT).show(); //Testor 코드
-                runTime=1;//testor Code
-
                 mProgressBar.setMax(runTime * 60); // setMax by sec
                 handler = new TimerHandler();
+                intent.putExtra("RUNTIME",runTime);
                 getActivity().startService(intent);
-                /*intent.putExtra("RUNTIME",runTime); //call service*/
                 listenTimer(); //catch up timer
                 mStateBttn.setText(R.string.stop);
                 handler.sendEmptyMessage(0);
