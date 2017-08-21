@@ -1,0 +1,63 @@
+package com.itti7.itimeu;
+
+
+import android.app.Service;
+import android.content.Intent;
+import android.os.Binder;
+import android.os.Handler;
+import android.os.IBinder;
+import android.util.Log;
+
+public class TimerService extends Service {
+    Timer mTimer;
+    IBinder mBinder;
+    private int mRunTime;
+    public TimerService() {
+       mBinder = new LocalBinder();
+    }
+
+    public String getTime() {
+        return mTimer.getTime();
+    }
+    public void startTimer() {
+        handler.post(runnable);
+    }
+    @Override
+    public IBinder onBind(Intent intent) {
+        //A client is binding to the service with bindService()
+        //not provide binding,return null
+        return mBinder;
+    }
+    Handler handler = new Handler();
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            mTimer=new Timer(mRunTime*1000*60,1000);
+            handler.postDelayed(runnable, 1000);
+        }
+    };
+    @Override
+    public int onStartCommand(Intent intent, int flag, int startId) {
+        Log.i("TimerService", "Service onStart--->");
+        mRunTime = intent.getIntExtra("RUNTIME",1);
+        if (mRunTime>0) {
+            /*calculate Timer*/
+            startTimer();
+            /*Notification*/
+        }
+        return START_NOT_STICKY;
+    }
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.i("TimerService", "Service onCreate--->");
+    }
+
+    public class LocalBinder extends Binder {
+        TimerService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return TimerService.this;
+        }
+    }
+
+}
