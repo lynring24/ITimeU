@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 public class TimerService extends Service {
 
-    private static final String TAG = "Test";
     private String mLeftTime;
     private int runTime;
     private boolean timerSwitch = false;
@@ -26,8 +25,6 @@ public class TimerService extends Service {
     public boolean getRun(){ return timerSwitch;}
 
     public void startTimer() {
-        Log.i(TAG, "startTimer--->");
-       /* Toast.makeText(getApplicationContext(),""+runTime, Toast.LENGTH_SHORT).show(); //Testor 코드*/
         timerSwitch = true;
         handler.post(runnable);
     }
@@ -58,9 +55,13 @@ public class TimerService extends Service {
                 public void onFinish() {
                     mLeftTime="00:00";
                     timerSwitch=false;
-
-                      /*alarm or vibration*/
-                    /////////////////////////////////////지은아 여기에 삽입하면 될거야//////////////////////////////////////////////////////////////////////////////////////////////
+                    Log.i("SendBroadCast","SendBroadCast---------------------------------------------------->");
+                    Toast.makeText(getApplicationContext(),getPackageName(), Toast.LENGTH_SHORT).show(); //Testor 코드
+                    Intent sendIntent = new Intent(getPackageName()+"SEND_BROAD_CAST");
+                    sendIntent.putExtra("TIME", runTime);
+                    sendBroadcast(sendIntent);
+                    Log.i("SendBroadCast","SendBroadCast GoGO---------------------------------------------------->");
+                    /////////////////////////////////////////////////ALARM N VIBRATION//////////////////////////////////////////////////////////////////////////////////////////////
                     Log.i("Timer", "Timer Finish--->");
                 }
             }.start();
@@ -74,7 +75,6 @@ public class TimerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "Service onStart--->");
         runTime  = intent.getIntExtra("RUNTIME",1);
         startTimer();
         return super.onStartCommand(intent, flags, startId);
@@ -82,14 +82,12 @@ public class TimerService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.i(TAG, "Service onDestroy--->");
         super.onDestroy();
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(TAG, "Service onCreate--->");
     }
 
     @Override

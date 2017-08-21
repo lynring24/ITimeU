@@ -1,8 +1,10 @@
 package com.itti7.itimeu;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -44,13 +46,16 @@ public class TimerFragment extends Fragment {
     private Intent intent;
     private ServiceConnection conn;
     private Thread mReadThread;
-   /*store  time count*/
+    /*store  time count*/
     private SharedPreferences mPref;
     private SharedPreferences.Editor editor;
     private int mCountTimer;
+
     public TimerFragment() {
         // Required empty public constructor
     }
+
+    BroadcastReceiver mReceiver;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,8 +71,26 @@ public class TimerFragment extends Fragment {
         mProgressBar = (ProgressBar) timerView.findViewById(R.id.progressBar);
         mProgressBar.bringToFront(); // bring the progressbar to the top
 
-        /*runTime = Integer.parseInt(mWorkTime);*/
+        /* 브로드캐스트의 액션을 등록하기 위한 인텐트 필터 */
+         IntentFilter intentfilter = new IntentFilter();
+         intentfilter.addAction(getActivity().getPackageName()+"SEND_BROAD_CAST");
 
+        /*동적 리시버 구현 */
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+            String mPlayedTime = ""+intent.getIntExtra("TIME",1);
+                Toast.makeText(getActivity(),mPlayedTime+" GOT FROM BC", Toast.LENGTH_SHORT).show(); //Testor 코드
+                  /* editor.putString("COUNT", ""+mCountTimer);
+                editor.commit();
+                if(mPlayedTime.equals(mWorkTime)){
+                    mProgressBar.setProgress(0);
+                    progressBarValue=0;
+                    startTimer();
+                }*/
+            }
+        };
+        getActivity().registerReceiver(mReceiver,intentfilter);
         return timerView;
     }
 
@@ -84,6 +107,7 @@ public class TimerFragment extends Fragment {
         mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
         mBreakTime = ((EditText) header.findViewById(R.id.break_time)).getText().toString();
         mLongBreakTime = ((EditText) header.findViewById(R.id.long_break_time)).getText().toString();
+        /*TimerService connection*/
         conn = new ServiceConnection() {
             @Override
             public void onServiceDisconnected(ComponentName name) {
@@ -94,6 +118,7 @@ public class TimerFragment extends Fragment {
                 mTimerService = ((TimerService.MyBinder) service).getService();
             }
         };
+        /*TimerService Intent Listener*/
         getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
     }
 
@@ -141,9 +166,9 @@ public class TimerFragment extends Fragment {
     }
 
     public void startTimer() {
-        mCountTimer=Integer.parseInt(mPref.getString("COUNT",""));
+        mCountTimer = Integer.parseInt(mPref.getString("COUNT", ""));
         mCountTimer++;
-        Toast.makeText(getContext(),""+mCountTimer, Toast.LENGTH_SHORT).show(); //Testor 코드
+        Toast.makeText(getContext(), "" + mCountTimer, Toast.LENGTH_SHORT).show(); //Testor 코드
         if (mCountTimer % 8 == 0) // assign time by work,short & long break
             runTime = Integer.parseInt(mLongBreakTime);
         else if (mCountTimer % 2 == 1)
@@ -151,7 +176,7 @@ public class TimerFragment extends Fragment {
         else
             runTime = Integer.parseInt(mBreakTime);
         runTime = 1; //Testor Code
-        mProgressBar.setMax(runTime * 60+2); // setMax by sec
+        mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
         handler = new TimerHandler();
         intent.putExtra("RUNTIME", runTime);
         getActivity().startService(intent);
@@ -178,19 +203,7 @@ public class TimerFragment extends Fragment {
             }
         }
     }
-        public void alarm(){
-    /*        서비스가 끝났다
-                    -> mCountTimer 정장
-            editor.putString("COUNT", ""+mCountTimer);
-            editor.commit();
-                    ->만약 work 였으면
-                    start Timer()
 
-                   리스트로 어떨게 돌아가야할까
-
-
-                    */
-        }
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -198,5 +211,10 @@ public class TimerFragment extends Fragment {
             getActivity().unbindService(conn);
             mBound = false;
         }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+       getActivity().unregisterReceiver(mReceiver);
     }
 }
