@@ -34,6 +34,8 @@
             android:textSize="16sp" />
 
         <TextView
+            android:id="@+id/version_txt_view"
+            android:layout_gravity="right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
@@ -49,11 +51,12 @@
         android:background="#C1C1C1" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/licenses_txt_view"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="30dp"
+        android:paddingBottom="30dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="30dp"
         android:text="@string/about_licenses"
         android:textSize="16sp" />
 
