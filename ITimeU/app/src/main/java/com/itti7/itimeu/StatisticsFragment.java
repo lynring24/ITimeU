@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +52,8 @@ public class StatisticsFragment extends Fragment {
     private Spinner mStatSpinner;
     private LineChart mChart;
     private TextView mStatResultText;
-    private TextView mStatPeriodText;
+    private EditText mStatStartEditText;
+    private EditText mStatEndEditText;
 
     // Spinner item's text
     private String mSpinnerText;
@@ -107,8 +109,9 @@ public class StatisticsFragment extends Fragment {
         // Get result text view
         mStatResultText = mStatisticsView.findViewById(R.id.stat_result);
 
-        // Get period text view
-        mStatPeriodText = mStatisticsView.findViewById(R.id.stat_period);
+        // Get period edit text view
+        mStatStartEditText = mStatisticsView.findViewById(R.id.start_edit_txt);
+        mStatEndEditText = mStatisticsView.findViewById(R.id.end_edit_txt);
 
         return mStatisticsView;
     }
@@ -191,8 +194,9 @@ public class StatisticsFragment extends Fragment {
                     getToday();
                     getAWeekAgo();
 
-                    // Set period to text view
-                    mStatPeriodText.setText(mAWeekAgoStr + " - " + mTodayStr);
+                    // Set period to edit text
+                    mStatStartEditText.setText(mAWeekAgoStr);
+                    mStatEndEditText.setText(mTodayStr);
 
                     /* Get sum of unit/total unit each days, whole value of these,
                        and set text result.*/
@@ -211,7 +215,8 @@ public class StatisticsFragment extends Fragment {
                     getAMonthAgo();
 
                     // Set period to text view
-                    mStatPeriodText.setText(mAMonthAgoStr + " - " + mTodayStr);
+                    mStatStartEditText.setText(mAMonthAgoStr);
+                    mStatEndEditText.setText(mTodayStr);
 
                     /* Get sum of unit/total unit each days, whole value of these,
                        and set text result.*/
@@ -225,7 +230,9 @@ public class StatisticsFragment extends Fragment {
                     // Add data
                     addData();
                 } else {
-                    // @ToDo
+                    // Can touch edit text, but focus is disabled.
+                    mStatStartEditText.setClickable(true);
+                    mStatEndEditText.setClickable(true);
                     Toast.makeText(mStatisticsContext, "custom", Toast.LENGTH_SHORT).show();
                 }
             }
