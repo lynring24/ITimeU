@@ -75,6 +75,7 @@ public class TimerFragment extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
                 mCountTimer++;
+                mStateBttn.setText(R.string.start);
     /*              String mPlayedTime = "" + intent.getIntExtra("TIME", 1);
                     if(mCountTimer%2==1){
                      mTimeText.setText("");
@@ -83,6 +84,7 @@ public class TimerFragment extends Fragment {
                      mCountTimer++;
                     startTimer();
                 }*/
+                //If breakTime go back to List
             }
         };
         getActivity().registerReceiver(mReceiver, intentfilter);
