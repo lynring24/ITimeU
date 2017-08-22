@@ -57,7 +57,7 @@ public class TimerService extends Service {
                         stopTimer();
                         Log.i("Timer", "------------------------------------------------------->Timer start send Intent");
                         Intent sendIntent = new Intent(getPackageName() + "SEND_BROAD_CAST");
-                        sendIntent.putExtra("TIME", runTime);
+                        //sendIntent.putExtra("TIME", runTime);
                         sendBroadcast(sendIntent);
                         Log.i("Timer", "------------------------------------------------------->Timer finish send Intent");
                     }

@@ -74,18 +74,15 @@ public class TimerFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
-                String mPlayedTime = "" + intent.getIntExtra("TIME", 1);
-/*                mProgressBar.setProgress(0);
-                progressBarValue=0;
                 mCountTimer++;
-                startTimer();*/
-                 if(mPlayedTime.equals(mWorkTime)){
+    /*              String mPlayedTime = "" + intent.getIntExtra("TIME", 1);
+                    if(mCountTimer%2==1){
                      mTimeText.setText("");
                      mProgressBar.setProgress(0);
                      progressBarValue=0;
                      mCountTimer++;
                     startTimer();
-                }
+                }*/
             }
         };
         getActivity().registerReceiver(mReceiver, intentfilter);
@@ -180,7 +177,7 @@ public class TimerFragment extends Fragment {
                         });
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        e.printStackTrace(); //back to list
                     }
                 }
             }
