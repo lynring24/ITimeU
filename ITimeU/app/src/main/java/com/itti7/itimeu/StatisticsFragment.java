@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,17 +19,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.itti7.itimeu.data.ItemContract;
 import com.itti7.itimeu.data.ItemDbHelper;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class StatisticsFragment extends Fragment {
@@ -95,19 +101,14 @@ public class StatisticsFragment extends Fragment {
         mStatSpinner = mStatisticsView.findViewById(R.id.stat_spinner);
         selectedSpinnerItem();
 
+        // Get chart view
         mChart = mStatisticsView.findViewById(R.id.chart);
 
+        // Get result text view
         mStatResultText = mStatisticsView.findViewById(R.id.stat_result);
 
+        // Get period text view
         mStatPeriodText = mStatisticsView.findViewById(R.id.stat_period);
-
-        // Add data
-        addData();
-
-        // Customize legends
-        Legend l = mChart.getLegend();
-        l.setXEntrySpace(7);
-        l.setYEntrySpace(5);
 
         return mStatisticsView;
     }
@@ -119,10 +120,56 @@ public class StatisticsFragment extends Fragment {
     }
 
     /**
-     * Set data to chart view (?)
+     * Set data to chart view
      */
     private void addData() {
-       
+        // Unit data
+        List<Entry> unitEntries = new ArrayList<>();
+
+        for(int i=0; i<sumOfDayUnit.size();i++) {
+            unitEntries.add(new Entry(i, sumOfDayUnit.get(i)));
+        }
+
+        LineDataSet unitDataSet = new LineDataSet(unitEntries, "Units");
+        unitDataSet.setColor(Color.BLACK);
+        unitDataSet.setCircleColor(Color.BLACK);
+        unitDataSet.setValueTextColor(Color.BLACK);
+
+        // Total unit data
+        List<Entry> totalUnitEntries = new ArrayList<>();
+
+        for(int i=0; i<sumOfDayTotalUnit.size();i++) {
+            totalUnitEntries.add(new Entry(i, sumOfDayTotalUnit.get(i)));
+        }
+
+        LineDataSet totalUnitDataSet = new LineDataSet(totalUnitEntries, "Total Units");
+        totalUnitDataSet.setColor(Color.BLACK);
+        totalUnitDataSet.setCircleColor(Color.BLACK);
+        totalUnitDataSet.setValueTextColor(Color.BLACK);
+
+        // Set x-axis
+        XAxis xAxis = mChart.getXAxis();
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return dates.get((int)value).replace(".","/").substring(5);
+            }
+
+            @Override
+            public int getDecimalDigits() {
+                return 0;
+            }
+        });
+
+        // Customize the chart
+        customChart();
+
+        LineData data = new LineData();
+        data.addDataSet(unitDataSet);
+        data.addDataSet(totalUnitDataSet);
+
+        mChart.setData(data);
+        mChart.invalidate();
     }
 
     @Override
@@ -149,7 +196,15 @@ public class StatisticsFragment extends Fragment {
 
                     /* Get sum of unit/total unit each days, whole value of these,
                        and set text result.*/
-                    getPeriodFromSql(mAWeekAgoDate, mTodayDate);
+                    try {
+                        getPeriodFromSql(mDateFormat.parse(mAWeekAgoStr)
+                                , mDateFormat.parse(mTodayStr));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Add data
+                    addData();
                 } else if (mSpinnerText.equals(getString(R.string.arrays_month))) {
                     // Get Date
                     getToday();
@@ -160,7 +215,15 @@ public class StatisticsFragment extends Fragment {
 
                     /* Get sum of unit/total unit each days, whole value of these,
                        and set text result.*/
-                    getPeriodFromSql(mAMonthAgoDate, mTodayDate);
+                    try {
+                        getPeriodFromSql(mDateFormat.parse(mAMonthAgoStr)
+                                , mDateFormat.parse(mTodayStr));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Add data
+                    addData();
                 } else {
                     // @ToDo
                     Toast.makeText(mStatisticsContext, "custom", Toast.LENGTH_SHORT).show();
@@ -187,7 +250,7 @@ public class StatisticsFragment extends Fragment {
      */
     void getAWeekAgo() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -7);
+        calendar.add(Calendar.DATE, -6);
         mAWeekAgoDate = calendar.getTime();
         mAWeekAgoStr = mDateFormat.format(mAWeekAgoDate);
     }
@@ -202,6 +265,12 @@ public class StatisticsFragment extends Fragment {
         mAMonthAgoStr = mDateFormat.format(mAMonthAgoDate);
     }
 
+    /**
+     * This function gets the date corresponding to the period.
+     *
+     * @param startDate     start date
+     * @param endDate       ~ end date
+     */
     void getPeriodFromSql(Date startDate, Date endDate) {
         int itemUnit = 0;
         int itemTotalUnit = 0;
@@ -256,6 +325,13 @@ public class StatisticsFragment extends Fragment {
         mStatResultText.setText(getPercent(sumOfWholeTotalUnits, sumOfWholeUnits));
     }
 
+    /**
+     * This function get percent : sum of whole units in period / sum of whole total units in period
+     *
+     * @param sumOfWholeTotalUnits  sum of whole total units in period
+     * @param sumOfWholeUnits       sum of whole units in period
+     * @return                      percent string set
+     */
     String getPercent(int sumOfWholeTotalUnits, int sumOfWholeUnits){
         if (sumOfWholeTotalUnits != 0) {
             mPercent = Math.round(((double) sumOfWholeUnits / sumOfWholeTotalUnits) * 100);
@@ -263,6 +339,41 @@ public class StatisticsFragment extends Fragment {
             mPercent = 0;
         }
         return mPercent + "% ( "+sumOfWholeUnits+" / "+sumOfWholeTotalUnits+ ")";
+    }
+
+    /**
+     * Customizing line chart
+     */
+    void customChart() {
+        mChart.setDrawGridBackground(false);
+        mChart.getDescription().setEnabled(false);
+        mChart.setDrawBorders(false);
+
+        mChart.getAxisRight().setEnabled(false);
+        mChart.getAxisRight().setDrawAxisLine(false);
+        mChart.getAxisRight().setDrawGridLines(false);
+
+        mChart.getXAxis().setDrawAxisLine(false);
+        mChart.getXAxis().setDrawGridLines(false);
+
+        mChart.getAxisLeft().setGranularity(1f);
+        mChart.getAxisLeft().setAxisMinimum(0);
+
+        // enable touch gestures
+        mChart.setTouchEnabled(true);
+
+        // enable scaling and dragging
+        mChart.setDragEnabled(true);
+        mChart.setScaleEnabled(true);
+
+        // if disabled, scaling can be done on x- and y-axis separately
+        mChart.setPinchZoom(false);
+
+        Legend l = mChart.getLegend();
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setDrawInside(false);
     }
 }
 
