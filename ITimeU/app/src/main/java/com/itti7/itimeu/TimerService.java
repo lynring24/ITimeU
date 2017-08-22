@@ -44,7 +44,6 @@ public class TimerService extends Service {
                         if (runTime >= 60) {
                             String hour = String.format("%02d", (millisUntilFinished / (1000 * 60 * 60)));
                             mLeftTime = hour + ":" + mLeftTime;
-                          /*  Noti*/
                         }
                     }
                 }
@@ -56,14 +55,14 @@ public class TimerService extends Service {
                         /////////////////////////////////////////////////ALARM N VIBRATION//////////////////////////////////////////////////////////////////////////////////////////////
                         stopTimer();
                         Log.i("Timer", "------------------------------------------------------->Timer start send Intent");
-                        Intent sendIntent = new Intent(getPackageName() + "SEND_BROAD_CAST");
-                        //sendIntent.putExtra("TIME", runTime);
+                        Intent sendIntent = new Intent(getPackageName() + "SEND_BROAD_CAST");  // notice the end of Timer to Fragment
                         sendBroadcast(sendIntent);
                         Log.i("Timer", "------------------------------------------------------->Timer finish send Intent");
                     }
                 }
             };
             timer.start();
+            ///////////////////////////////////////////////// /*  Notification HERE*///////////////////////////////////////////////////////////////////////////////////////////////
         }
     };
     public void startTimer(int time) {

@@ -76,7 +76,15 @@ public class TimerFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
+                //store mCountTimer
                 mCountTimer++;
+                SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putInt("COUNT",mCountTimer);
+                editor.commit();
+                ////end of store mCountTimer
+
+                mStateBttn.setText("start");
                 if(mCountTimer%2==1) mStateBttn.setEnabled(false);
                 //If breakTime go back to List
 
@@ -85,15 +93,6 @@ public class TimerFragment extends Fragment {
                     mJobName.setText("Long Break Time");
                 else
                     mJobName.setText("Break Time");
-    /*              String mPlayedTime = "" + intent.getIntExtra("TIME", 1);
-                    if(mCountTimer%2==1){
-                     mTimeText.setText("");
-                     mProgressBar.setProgress(0);
-                     progressBarValue=0;
-                     mCountTimer++;
-                    startTimer();
-                }*/
-
             }
         };
         getActivity().registerReceiver(mReceiver, intentfilter);
@@ -129,6 +128,13 @@ public class TimerFragment extends Fragment {
         };
         /*TimerService Intent Listener*/
         getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
+
+        /*init shared prefernce*/
+        SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("COUNT",1);
+        editor.commit();
+
     }
 
     Button.OnClickListener stateChecker = new View.OnClickListener() {
@@ -156,6 +162,13 @@ public class TimerFragment extends Fragment {
 
     public void startTimer() {
         Log.i("Fragment", "--------------------------------------------->startTimer()");
+        //read mCountTimer
+
+
+        SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        mCountTimer=pref.getInt("COUNT",1);
+
+        ////end of read mCountTimer
         if (mCountTimer % 8 == 0) // assign time by work,short & long break
             runTime = Integer.parseInt(mLongBreakTime);
         else if (mCountTimer % 2 == 1)
@@ -166,8 +179,6 @@ public class TimerFragment extends Fragment {
         mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
         handler = new TimerHandler();
         updateTimerText();
-       /* intent.putExtra("RUNTIME", runTime);
-        getActivity().startService(intent);*/
        mTimerService.startTimer(runTime);
         mStateBttn.setText(R.string.stop);
         handler.sendEmptyMessage(0);
