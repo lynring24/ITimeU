@@ -77,6 +77,9 @@ public class TimerFragment extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
                 mCountTimer++;
+                if(mCountTimer%2==1) mStateBttn.setEnabled(false);
+                //If breakTime go back to List
+
                 mStateBttn.setText(R.string.start);
                 if (mCountTimer % 8 == 0)
                     mJobName.setText("Long Break Time");
@@ -90,7 +93,7 @@ public class TimerFragment extends Fragment {
                      mCountTimer++;
                     startTimer();
                 }*/
-                //If breakTime go back to List
+
             }
         };
         getActivity().registerReceiver(mReceiver, intentfilter);
