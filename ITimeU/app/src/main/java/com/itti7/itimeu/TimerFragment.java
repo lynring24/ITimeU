@@ -158,8 +158,9 @@ public class TimerFragment extends Fragment {
         mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
         handler = new TimerHandler();
         updateTimerText();
-        intent.putExtra("RUNTIME", runTime);
-        getActivity().startService(intent);
+       /* intent.putExtra("RUNTIME", runTime);
+        getActivity().startService(intent);*/
+       mTimerService.startTimer(runTime);
         mStateBttn.setText(R.string.stop);
         handler.sendEmptyMessage(0);
     }

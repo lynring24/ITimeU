@@ -66,7 +66,8 @@ public class TimerService extends Service {
             timer.start();
         }
     };
-    public void startTimer() {
+    public void startTimer(int time) {
+        runTime=time;
         timerSwitch = true;
         handler.post(runnable);
     }
@@ -75,7 +76,6 @@ public class TimerService extends Service {
         Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
         timer.cancel();
-        handler.removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -90,8 +90,8 @@ public class TimerService extends Service {
         Log.i("Timer", "------------------------------------------------------->Timer onStartCommand");
         runTime = intent.getIntExtra("RUNTIME", 1);
         Log.i("RUNTIME", "------------------------------------------------------->RUNTIME : "+runTime);
-        timerSwitch = true;
-        handler.post(runnable);
+//        timerSwitch = true;
+//        handler.post(runnable);
         return super.onStartCommand(intent, flags, startId);
     }
 
