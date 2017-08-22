@@ -29,6 +29,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.itti7.itimeu.data.ItemContract;
 import com.itti7.itimeu.data.ItemDbHelper;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,7 +39,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class StatisticsFragment extends Fragment {
+public class StatisticsFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
     // For access ITimeU database
     ItemDbHelper dbHelper;
     SQLiteDatabase db;
@@ -76,16 +77,19 @@ public class StatisticsFragment extends Fragment {
     // Percent in the period
     private double mPercent;
 
+    // Date : year, month, day
+    private int mYear;
+    private int mMonth;
+    private int mDay;
+    private String mDate;
+    private boolean isClickStartDate;
+    private boolean isClickEndDate;
+
     private ArrayList<Integer> sumOfDayUnit;
     private ArrayList<Integer> sumOfDayTotalUnit;
     private ArrayList<String> dates;
 
     /*ToDo:
-        일단 week, month 만!
-        1. week, month 에 해당하는 unit sum, total unit sum 정보 얻어오기
-        2. 리스트 엔트리에 저장하기(x축은 날짜, y축은 포모도로 단위)
-        3. 데이터 셋에 저장하기
-        4. 차트에 데이터 뿌리기
         5. UI 커스터마이징 하기
      */
     @Nullable
@@ -233,6 +237,23 @@ public class StatisticsFragment extends Fragment {
                     // Can touch edit text, but focus is disabled.
                     mStatStartEditText.setClickable(true);
                     mStatEndEditText.setClickable(true);
+
+                    mStatStartEditText.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            checkClick(true, false);
+                            showDateDialog();
+                        }
+                    });
+
+                    mStatEndEditText.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            checkClick(false, true);
+                            showDateDialog();
+                        }
+                    });
+
                     Toast.makeText(mStatisticsContext, "custom", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -381,6 +402,59 @@ public class StatisticsFragment extends Fragment {
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         l.setDrawInside(false);
+    }
+
+    /**
+     * Set date to user selected date
+     */
+    @Override
+    public void onDateSet(DatePickerDialog view, int selectedYear, int selectedMonth, int selectedDay) {
+        Calendar calendar = Calendar.getInstance();
+
+        // Assign Selected Date in DatePickerDialog
+        mYear = selectedYear;
+        mMonth = selectedMonth;
+        mDay = selectedDay;
+
+        // Set Date in List
+        calendar.set(mYear, mMonth, mDay);
+        mDate = mDateFormat.format(calendar.getTime());
+
+        if(isClickStartDate && !isClickEndDate) {
+            mStatStartEditText.setText(mDate);
+        }
+        else {
+            mStatEndEditText.setText(mDate);
+        }
+    }
+
+    /**
+     * Show date picker dialog
+     */
+    void showDateDialog() {
+        // ToDo: end date should not early than start date
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(mTodayDate);
+        mYear = calendar.get(Calendar.YEAR);
+        mMonth = calendar.get(Calendar.MONTH);
+        mDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog
+                = DatePickerDialog.newInstance(StatisticsFragment.this,
+                mYear, mMonth, mDay);
+        datePickerDialog.show(mStatisticsActivity.getFragmentManager(),
+                "DateFragment");
+    }
+
+    /**
+     * Set bool values according to clicked edit text
+     *
+     * @param start is clicked start edit text?
+     * @param end   is clicked end edit text?
+     */
+    void checkClick(boolean start, boolean end) {
+        isClickStartDate = start;
+        isClickEndDate = end;
     }
 }
 
