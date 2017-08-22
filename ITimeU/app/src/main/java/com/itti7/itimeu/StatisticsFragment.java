@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +32,9 @@ public class StatisticsFragment extends Fragment {
     private Spinner mStatSpinner;
     private LineChart mChart;
     private TextView mStatResultText;
+
+    // Spinner item's text
+    String spinnerText;
 
     // xData: date, yData: unit
     private int[] yData = {0};
@@ -55,6 +59,8 @@ public class StatisticsFragment extends Fragment {
 
         // Get id from fragment_statistics
         mStatSpinner = mStatisticsView.findViewById(R.id.stat_spinner);
+        selectedSpinnerItem();
+
         mChart = mStatisticsView.findViewById(R.id.chart);
         mStatResultText = mStatisticsView.findViewById(R.id.stat_result);
 
@@ -97,21 +103,6 @@ public class StatisticsFragment extends Fragment {
         // Add mana colors
         ArrayList<Integer> colors = new ArrayList<Integer>();
 
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.LIBERTY_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.PASTEL_COLORS)
-            colors.add(c);
-
         colors.add(ColorTemplate.getHoloBlue());
 
         // Undo all highlights
@@ -124,6 +115,33 @@ public class StatisticsFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater);
+    }
+
+    /**
+     * This function is branched according to selected item.
+     */
+    void selectedSpinnerItem() {
+        mStatSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                spinnerText = mStatSpinner.getSelectedItem().toString();
+
+                if(spinnerText.equals(getString(R.string.arrays_week))) {
+                    Toast.makeText(mStatisticsContext, "week", Toast.LENGTH_SHORT).show();
+                }
+                else if (spinnerText.equals(getString(R.string.arrays_month))) {
+                    Toast.makeText(mStatisticsContext, "month", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(mStatisticsContext, "custom", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 }
 

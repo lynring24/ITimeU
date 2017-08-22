@@ -120,4 +120,9 @@
         limitations under the License.</string>
     <string name="mp_chart_link"><a href="https://github.com/PhilJay/MPAndroidChart">
         MPAndroidChart</a></string>
+
+    <!-- arrays.xml : spinner items -->
+    <string name="arrays_week">WEEK</string>
+    <string name="arrays_month">MONTH</string>
+    <string name="arrays_custom">CUSTOM</string>
 </resources>
