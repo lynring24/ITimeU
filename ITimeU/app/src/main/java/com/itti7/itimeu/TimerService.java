@@ -75,7 +75,7 @@ public class TimerService extends Service {
         Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
         timer.cancel();
-       /* handler.removeCallbacksAndMessages(null);*/
+        handler.removeCallbacksAndMessages(null);
     }
 
     @Override

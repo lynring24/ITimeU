@@ -75,6 +75,10 @@ public class TimerFragment extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
                 String mPlayedTime = "" + intent.getIntExtra("TIME", 1);
+/*                mProgressBar.setProgress(0);
+                progressBarValue=0;
+                mCountTimer++;
+                startTimer();*/
                  if(mPlayedTime.equals(mWorkTime)){
                      mTimeText.setText("");
                      mProgressBar.setProgress(0);
