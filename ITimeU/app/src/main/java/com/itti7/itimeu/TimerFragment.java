@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -17,10 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -78,18 +75,19 @@ public class TimerFragment extends Fragment {
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Toast.makeText(getContext(), mPref.getString("COUNT", ""), Toast.LENGTH_SHORT).show(); //Testor 코드
+                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
                 String mPlayedTime = "" + intent.getIntExtra("TIME", 1);
                 editor = mPref.edit();
                 editor.putString("COUNT", "" + (++mCountTimer));
                 editor.commit();
-                        Toast.makeText(getContext(), mPref.getString("COUNT", ""), Toast.LENGTH_SHORT).show(); //Testor 코드
-                 if(mPlayedTime.equals(mWorkTime)){
+                Log.i("mCount", "--------------------------------------------->Write : "+mCountTimer);
+               /*  if(mPlayedTime.equals(mWorkTime)){
                      mTimeText.setText("");
                     mProgressBar.setProgress(0);
                     progressBarValue=0;
                     startTimer();
-                }
+                }*/
+                //broaㅇcast 연결을 끊는다.
             }
         };
         getActivity().registerReceiver(mReceiver, intentfilter);
@@ -102,8 +100,7 @@ public class TimerFragment extends Fragment {
         mPref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         editor = mPref.edit();
         editor.putString("COUNT", "1");
-        editor.commit();
-
+        editor.apply();
         /*work time 을 갖고 오기위해 inflater*/
         header = getActivity().getLayoutInflater().inflate(R.layout.activity_setting, null, false);
        /* mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
@@ -116,11 +113,15 @@ public class TimerFragment extends Fragment {
         conn = new ServiceConnection() {
             @Override
             public void onServiceDisconnected(ComponentName name) {
+                mTimerService=null;
+                mBound=false;
             }
 
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onServiceConnected()");
                 mTimerService = ((TimerService.MyBinder) service).getService();
+                mBound = true;
             }
         };
         /*TimerService Intent Listener*/
@@ -131,27 +132,50 @@ public class TimerFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if (mStateBttn.getText().toString().equals("start")) { // checked
-                startTimer();
+                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Start");
+                if(mBound)
+                    startTimer();
             } else {
-                Log.i("StatTimer", "Timer Stopped--->");
+                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Stop");
+                Log.i("TimerFragment", "----------------------->Timer Stopped");
                 getActivity().stopService(intent); //stop service
                 mReadThread.interrupt();
                 mTimerService.stopTimer();
                 mProgressBar.setProgress(0);
                 handler.removeMessages(0);
                 progressBarValue = 0; //must be set 0
-                Log.v("TimerFragment", "Service stop--->");
+                Log.i("TimerFragment", "----------------------->Service stop");
                 mStateBttn.setText(R.string.start);
                 /*go back to liSt*/
             }
         }
     };
+    public void startTimer() {
+        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment startTimer()");
+        mCountTimer = Integer.parseInt(mPref.getString("COUNT", ""));
+        Log.i("mCount", "--------------------------------------------->Read : "+mCountTimer);
+        if (mCountTimer % 8 == 0) // assign time by work,short & long break
+            runTime = Integer.parseInt(mLongBreakTime);
+        else if (mCountTimer % 2 == 1)
+            runTime = Integer.parseInt(mWorkTime);
+        else
+            runTime = Integer.parseInt(mBreakTime);
 
-    public void listenTimer() {
+        mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
+        handler = new TimerHandler();
+        intent.putExtra("RUNTIME", runTime);
+        getActivity().startService(intent);
+        updateTimer(); //catch up timer
+        mStateBttn.setText(R.string.stop);
+        handler.sendEmptyMessage(0);
+    }
+
+    public void updateTimer() {
         mReadThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
+
                     try {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
@@ -166,26 +190,11 @@ public class TimerFragment extends Fragment {
                 }
             }
         });
+        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment ReadThreadStart()");
         mReadThread.start();
     }
 
-    public void startTimer() {
-        mCountTimer = Integer.parseInt(mPref.getString("COUNT", ""));
-        if (mCountTimer % 8 == 0) // assign time by work,short & long break
-            runTime = Integer.parseInt(mLongBreakTime);
-        else if (mCountTimer % 2 == 1)
-            runTime = Integer.parseInt(mWorkTime);
-        else
-            runTime = Integer.parseInt(mBreakTime);
 
-        mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
-        handler = new TimerHandler();
-        intent.putExtra("RUNTIME", runTime);
-        getActivity().startService(intent);
-        listenTimer(); //catch up timer
-        mStateBttn.setText(R.string.stop);
-        handler.sendEmptyMessage(0);
-    }
 
     public class TimerHandler extends Handler {
         TimerHandler() {
@@ -218,6 +227,9 @@ public class TimerFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        if (mBound) {
         getActivity().unregisterReceiver(mReceiver);
+            mBound = false;
+        }
     }
 }

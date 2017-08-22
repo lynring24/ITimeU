@@ -14,63 +14,76 @@ public class TimerService extends Service {
     private String mLeftTime;
     private int runTime;
     private boolean timerSwitch = false;
+    private CountDownTimer timer;
+
 
     public TimerService() {
+         timer = new CountDownTimer(runTime * 1000 * 60, 1000) { // minute
+            public void onTick(long millisUntilFinished) {
+                if (timerSwitch) {
+                    //Log.i("Timer", "------------------------------------------------------>Timer OnTick"); //checked
+                    String min = String.format("%02d", (millisUntilFinished) / (1000 * 60));
+                    String sec = String.format("%02d", (millisUntilFinished / 1000) % 60);
+                    mLeftTime = min + ":" + sec;
+                    if (runTime >= 60) {
+                        String hour = String.format("%02d", (millisUntilFinished / (1000 * 60 * 60)));
+                        mLeftTime = hour + ":" + mLeftTime;
+                          /*  Noti*/
+                    }
+                }
+            }
+
+            public void onFinish() {
+                Log.i("Timer", "------------------------------------------------------->Timer onFinish");
+                mLeftTime = "00:00";
+                Intent sendIntent = new Intent(getPackageName() + "SEND_BROAD_CAST");
+                sendIntent.putExtra("TIME", runTime);
+                sendBroadcast(sendIntent);
+                /////////////////////////////////////////////////ALARM N VIBRATION//////////////////////////////////////////////////////////////////////////////////////////////
+                stopTimer();
+            }
+        };
     }
+
     public String getTime() {
-        return timerSwitch?mLeftTime:"00:00";
-    }
-    public boolean getRun(){ return timerSwitch;}
-
-    public void startTimer() {
-        timerSwitch = true;
-        handler.post(runnable);
+        return timerSwitch ? mLeftTime : "00:00";
     }
 
-    public void stopTimer() {
-        timerSwitch = false;
+    public boolean getRun() {
+        return timerSwitch;
     }
 
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            new CountDownTimer(runTime*1000 * 60, 1000) { // minute
-                public void onTick(long millisUntilFinished) {
-                    if (timerSwitch) {
-                        Log.i("Timer", "Timer OnTick--->");
-                        String min = String.format("%02d", (millisUntilFinished) / (1000 * 60));
-                        String sec = String.format("%02d", (millisUntilFinished / 1000) % 60);
-                        mLeftTime = min + ":" + sec;
-                        if (runTime >= 60) {
-                            String hour = String.format("%02d", (millisUntilFinished / (1000 * 60 * 60)));
-                            mLeftTime = hour + ":" + mLeftTime;
-                          /*  Noti*/
-                        }
-                    }
-                }
-
-                public void onFinish() {
-                    mLeftTime="00:00";
-                    timerSwitch=false;
-                    Intent sendIntent = new Intent(getPackageName()+"SEND_BROAD_CAST");
-                    sendIntent.putExtra("TIME", runTime);
-                    sendBroadcast(sendIntent);
-                    /////////////////////////////////////////////////ALARM N VIBRATION//////////////////////////////////////////////////////////////////////////////////////////////
-                    Log.i("Timer", "Timer Finish--->");
-                }
-            }.start();
+            Log.i("Timer", "------------------------------------------------------->Timer run()");
+            timer.start();
         }
     };
+    public void startTimer() {
+        timerSwitch = true;
+        handler.post(runnable);
+    }
+
+    public void stopTimer() {
+        Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
+        timerSwitch = false;
+        timer.cancel();
+        handler.removeCallbacksAndMessages(runnable);
+    }
 
     @Override
     public boolean onUnbind(Intent intent) {
+        Log.i("Timer", "------------------------------------------------------->TimeronUnbind");
+        stopTimer();
         return true;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        runTime  = intent.getIntExtra("RUNTIME",1);
+        Log.i("Timer", "------------------------------------------------------->Timer onStartCommand");
+        runTime = intent.getIntExtra("RUNTIME", 1);
         startTimer();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -78,6 +91,7 @@ public class TimerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        stopTimer();
     }
 
     @Override
@@ -93,6 +107,7 @@ public class TimerService extends Service {
 
     public class MyBinder extends Binder {
         public TimerService getService() {
+            Log.i("Timer", "------------------------------------------------------->Timer getService()");
             return TimerService.this;
         }
     }
