@@ -68,9 +68,9 @@ public class StatisticsFragment extends Fragment {
     // Percent in the period
     private double mPercent;
 
-    // xData: date, yData: unit
-    private int[] yData = {0};
-    private String[] xData = {""};
+    private ArrayList<Integer> sumOfDayUnit;
+    private ArrayList<Integer> sumOfDayTotalUnit;
+    private ArrayList<String> dates;
 
     /*ToDo:
         일단 week, month 만!
@@ -122,31 +122,7 @@ public class StatisticsFragment extends Fragment {
      * Set data to chart view (?)
      */
     private void addData() {
-        ArrayList<Entry> yVals1 = new ArrayList<Entry>();
-
-        for (int i = 0; i < yData.length; i++) {
-            yVals1.add(new Entry(yData[i], i));
-        }
-
-        ArrayList<String> xVals = new ArrayList<String>();
-
-        for (int i = 0; i < xData.length; i++) {
-            xVals.add(xData[i]);
-        }
-
-        // Create pie data set
-        LineDataSet dataSet = new LineDataSet(yVals1, "Market Share");
-
-        // Add mana colors
-        ArrayList<Integer> colors = new ArrayList<>();
-
-        colors.add(ColorTemplate.getHoloBlue());
-
-        // Undo all highlights
-        mChart.highlightValues(null);
-
-        // Update pie chart
-        mChart.invalidate();
+       
     }
 
     @Override
@@ -229,12 +205,12 @@ public class StatisticsFragment extends Fragment {
     void getPeriodFromSql(Date startDate, Date endDate) {
         int itemUnit = 0;
         int itemTotalUnit = 0;
-        ArrayList<Integer> sumOfDayUnit = new ArrayList<>();
-        ArrayList<Integer> sumOfDayTotalUnit = new ArrayList<>();
+        sumOfDayUnit = new ArrayList<>();
+        sumOfDayTotalUnit = new ArrayList<>();
         int sumOfWholeUnits = 0;
         int sumOfWholeTotalUnits = 0;
 
-        ArrayList<String> dates = new ArrayList<>();
+        dates = new ArrayList<>();
         Date currentDate = startDate;
         while (currentDate.compareTo(endDate) <= 0) {
             dates.add(mDateFormat.format(currentDate));
