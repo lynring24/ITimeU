@@ -2,6 +2,8 @@ package com.itti7.itimeu;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,15 +16,26 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.itti7.itimeu.data.ItemContract;
+import com.itti7.itimeu.data.ItemDbHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class StatisticsFragment extends Fragment {
+    // For access ITimeU database
+    ItemDbHelper dbHelper;
+    SQLiteDatabase db;
+
     // Identifier for the item data loader
     private View mStatisticsView;
     private Activity mStatisticsActivity;
@@ -32,18 +45,36 @@ public class StatisticsFragment extends Fragment {
     private Spinner mStatSpinner;
     private LineChart mChart;
     private TextView mStatResultText;
+    private TextView mStatPeriodText;
 
     // Spinner item's text
-    String spinnerText;
+    private String mSpinnerText;
+
+    // Date format
+    private SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA);
+    // Today's date for getting period
+    private Date mTodayDate;
+    // Today : Date -> String
+    private String mTodayStr;
+    // A week ago date
+    private Date mAWeekAgoDate;
+    // A week ago: Date -> String
+    private String mAWeekAgoStr;
+    // A month ago
+    private Date mAMonthAgoDate;
+    // A month ago: Date -> String
+    private String mAMonthAgoStr;
+
+    // Percent in the period
+    private double mPercent;
 
     // xData: date, yData: unit
     private int[] yData = {0};
     private String[] xData = {""};
 
-
     /*ToDo:
-        0. Spinner 아이템에 따른 토스트창 띄우기
-        1. week, month, custom 에 해당하는 unit, total unit 정보 얻어오기
+        일단 week, month 만!
+        1. week, month 에 해당하는 unit sum, total unit sum 정보 얻어오기
         2. 리스트 엔트리에 저장하기(x축은 날짜, y축은 포모도로 단위)
         3. 데이터 셋에 저장하기
         4. 차트에 데이터 뿌리기
@@ -57,12 +88,18 @@ public class StatisticsFragment extends Fragment {
         mStatisticsActivity = getActivity();
         mStatisticsContext = mStatisticsView.getContext();
 
+        dbHelper = new ItemDbHelper(mStatisticsContext);
+        db = dbHelper.getReadableDatabase();
+
         // Get id from fragment_statistics
         mStatSpinner = mStatisticsView.findViewById(R.id.stat_spinner);
         selectedSpinnerItem();
 
         mChart = mStatisticsView.findViewById(R.id.chart);
+
         mStatResultText = mStatisticsView.findViewById(R.id.stat_result);
+
+        mStatPeriodText = mStatisticsView.findViewById(R.id.stat_period);
 
         // Add data
         addData();
@@ -101,7 +138,7 @@ public class StatisticsFragment extends Fragment {
         LineDataSet dataSet = new LineDataSet(yVals1, "Market Share");
 
         // Add mana colors
-        ArrayList<Integer> colors = new ArrayList<Integer>();
+        ArrayList<Integer> colors = new ArrayList<>();
 
         colors.add(ColorTemplate.getHoloBlue());
 
@@ -124,15 +161,32 @@ public class StatisticsFragment extends Fragment {
         mStatSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                spinnerText = mStatSpinner.getSelectedItem().toString();
+                mSpinnerText = mStatSpinner.getSelectedItem().toString();
 
-                if(spinnerText.equals(getString(R.string.arrays_week))) {
-                    Toast.makeText(mStatisticsContext, "week", Toast.LENGTH_SHORT).show();
-                }
-                else if (spinnerText.equals(getString(R.string.arrays_month))) {
-                    Toast.makeText(mStatisticsContext, "month", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                if (mSpinnerText.equals(getString(R.string.arrays_week))) {
+                    // Get Date
+                    getToday();
+                    getAWeekAgo();
+
+                    // Set period to text view
+                    mStatPeriodText.setText(mAWeekAgoStr + " - " + mTodayStr);
+
+                    /* Get sum of unit/total unit each days, whole value of these,
+                       and set text result.*/
+                    getPeriodFromSql(mAWeekAgoDate, mTodayDate);
+                } else if (mSpinnerText.equals(getString(R.string.arrays_month))) {
+                    // Get Date
+                    getToday();
+                    getAMonthAgo();
+
+                    // Set period to text view
+                    mStatPeriodText.setText(mAMonthAgoStr + " - " + mTodayStr);
+
+                    /* Get sum of unit/total unit each days, whole value of these,
+                       and set text result.*/
+                    getPeriodFromSql(mAMonthAgoDate, mTodayDate);
+                } else {
+                    // @ToDo
                     Toast.makeText(mStatisticsContext, "custom", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -142,6 +196,97 @@ public class StatisticsFragment extends Fragment {
 
             }
         });
+    }
+
+    /**
+     * Get today's date
+     */
+    void getToday() {
+        mTodayDate = new Date();
+        mTodayStr = mDateFormat.format(mTodayDate);
+    }
+
+    /**
+     * Get a week ago's date
+     */
+    void getAWeekAgo() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -7);
+        mAWeekAgoDate = calendar.getTime();
+        mAWeekAgoStr = mDateFormat.format(mAWeekAgoDate);
+    }
+
+    /**
+     * Get a month ago's date
+     */
+    void getAMonthAgo() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -1);
+        mAMonthAgoDate = calendar.getTime();
+        mAMonthAgoStr = mDateFormat.format(mAMonthAgoDate);
+    }
+
+    void getPeriodFromSql(Date startDate, Date endDate) {
+        int itemUnit = 0;
+        int itemTotalUnit = 0;
+        ArrayList<Integer> sumOfDayUnit = new ArrayList<>();
+        ArrayList<Integer> sumOfDayTotalUnit = new ArrayList<>();
+        int sumOfWholeUnits = 0;
+        int sumOfWholeTotalUnits = 0;
+
+        ArrayList<String> dates = new ArrayList<>();
+        Date currentDate = startDate;
+        while (currentDate.compareTo(endDate) <= 0) {
+            dates.add(mDateFormat.format(currentDate));
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(currentDate);
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            currentDate = calendar.getTime();
+        }
+
+        for (String date : dates) {
+            String[] dateStr = {date};
+            Cursor cursor = db.rawQuery("SELECT unit, totalUnit FROM list WHERE date = ?", dateStr);
+
+            // Get each day's sum of unit/totalUnit
+            if (cursor.moveToFirst()) {
+                do {
+                    itemUnit += cursor.getInt(
+                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT));
+
+                    itemTotalUnit += cursor.getInt(
+                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT));
+                } while (cursor.moveToNext());
+            }
+
+            sumOfDayUnit.add(itemUnit);
+            sumOfDayTotalUnit.add(itemTotalUnit);
+
+            // Re-initialize
+            itemUnit = 0;
+            itemTotalUnit = 0;
+        }
+
+        // Sum units
+        for (int i : sumOfDayUnit) {
+            sumOfWholeUnits += i;
+        }
+
+        // Sum total units
+        for (int i : sumOfDayTotalUnit) {
+            sumOfWholeTotalUnits += i;
+        }
+
+        mStatResultText.setText(getPercent(sumOfWholeTotalUnits, sumOfWholeUnits));
+    }
+
+    String getPercent(int sumOfWholeTotalUnits, int sumOfWholeUnits){
+        if (sumOfWholeTotalUnits != 0) {
+            mPercent = Math.round(((double) sumOfWholeUnits / sumOfWholeTotalUnits) * 100);
+        } else {
+            mPercent = 0;
+        }
+        return mPercent + "% ( "+sumOfWholeUnits+" / "+sumOfWholeTotalUnits+ ")";
     }
 }
 
