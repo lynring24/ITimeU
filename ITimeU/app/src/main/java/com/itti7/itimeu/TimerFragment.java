@@ -28,6 +28,7 @@ public class TimerFragment extends Fragment {
     private View header;
     /* timer value */
     private TextView mTimeText;
+    private TextView mJobName;
     private String mWorkTime; //R.id.work_time
     private String mBreakTime; //R.id.work_time
     private String mLongBreakTime; //R.id.work_time
@@ -57,6 +58,7 @@ public class TimerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View timerView = inflater.inflate(R.layout.activity_timer, container, false);
         init();
+        mJobName= (TextView) timerView.findViewById(R.id.job_name_txt);
         mStateBttn = (Button) timerView.findViewById(R.id.state_bttn_view);
         mStateBttn.setOnClickListener(stateChecker);
         /*Time Text Initialize */
@@ -76,6 +78,10 @@ public class TimerFragment extends Fragment {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
                 mCountTimer++;
                 mStateBttn.setText(R.string.start);
+                if (mCountTimer % 8 == 0)
+                    mJobName.setText("Long Break Time");
+                else
+                    mJobName.setText("Break Time");
     /*              String mPlayedTime = "" + intent.getIntExtra("TIME", 1);
                     if(mCountTimer%2==1){
                      mTimeText.setText("");
