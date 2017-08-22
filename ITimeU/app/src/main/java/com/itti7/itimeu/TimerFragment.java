@@ -77,10 +77,10 @@ public class TimerFragment extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
                 String mPlayedTime = "" + intent.getIntExtra("TIME", 1);
-                editor = mPref.edit();
+/*                editor = mPref.edit();
                 editor.putString("COUNT", "" + (++mCountTimer));
                 editor.commit();
-                Log.i("mCount", "--------------------------------------------->Write : "+mCountTimer);
+                Log.i("mCount", "--------------------------------------------->Write : "+mCountTimer);*/
                /*  if(mPlayedTime.equals(mWorkTime)){
                      mTimeText.setText("");
                     mProgressBar.setProgress(0);
@@ -113,8 +113,8 @@ public class TimerFragment extends Fragment {
         conn = new ServiceConnection() {
             @Override
             public void onServiceDisconnected(ComponentName name) {
-                mTimerService=null;
-                mBound=false;
+                mTimerService = null;
+                mBound = false;
             }
 
             @Override
@@ -133,7 +133,7 @@ public class TimerFragment extends Fragment {
         public void onClick(View v) {
             if (mStateBttn.getText().toString().equals("start")) { // checked
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Start");
-                if(mBound)
+                if (mBound)
                     startTimer();
             } else {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Stop");
@@ -150,10 +150,15 @@ public class TimerFragment extends Fragment {
             }
         }
     };
+
     public void startTimer() {
         Log.i("TimerFragment", "------------------------------------------------------->TimerFragment startTimer()");
         mCountTimer = Integer.parseInt(mPref.getString("COUNT", ""));
-        Log.i("mCount", "--------------------------------------------->Read : "+mCountTimer);
+        Log.i("mCount", "--------------------------------------------->Read : " + mCountTimer);
+        editor = mPref.edit();
+        editor.putString("COUNT", "" + (mCountTimer + 1));
+        editor.commit();
+        Log.i("mCount", "--------------------------------------------->Write : " + mCountTimer);
         if (mCountTimer % 8 == 0) // assign time by work,short & long break
             runTime = Integer.parseInt(mLongBreakTime);
         else if (mCountTimer % 2 == 1)
@@ -195,7 +200,6 @@ public class TimerFragment extends Fragment {
     }
 
 
-
     public class TimerHandler extends Handler {
         TimerHandler() {
             super();
@@ -228,7 +232,7 @@ public class TimerFragment extends Fragment {
     public void onPause() {
         super.onPause();
         if (mBound) {
-        getActivity().unregisterReceiver(mReceiver);
+            getActivity().unregisterReceiver(mReceiver);
             mBound = false;
         }
     }

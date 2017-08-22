@@ -35,12 +35,16 @@ public class TimerService extends Service {
 
             public void onFinish() {
                 Log.i("Timer", "------------------------------------------------------->Timer onFinish");
-                mLeftTime = "00:00";
-                Intent sendIntent = new Intent(getPackageName() + "SEND_BROAD_CAST");
-                sendIntent.putExtra("TIME", runTime);
-                sendBroadcast(sendIntent);
-                /////////////////////////////////////////////////ALARM N VIBRATION//////////////////////////////////////////////////////////////////////////////////////////////
-                stopTimer();
+                if (timerSwitch) {         //send only if it has finished
+                    mLeftTime = "00:00";
+                    /////////////////////////////////////////////////ALARM N VIBRATION//////////////////////////////////////////////////////////////////////////////////////////////
+                    stopTimer();
+                    Log.i("Timer", "------------------------------------------------------->Timer start send Intent");
+                    Intent sendIntent = new Intent(getPackageName() + "SEND_BROAD_CAST");
+                    sendIntent.putExtra("TIME", runTime);
+                    sendBroadcast(sendIntent);
+                    Log.i("Timer", "------------------------------------------------------->Timer finish send Intent");
+                }
             }
         };
     }
@@ -70,7 +74,7 @@ public class TimerService extends Service {
         Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
         timer.cancel();
-        handler.removeCallbacksAndMessages(runnable);
+       /* handler.removeCallbacksAndMessages(null);*/
     }
 
     @Override
