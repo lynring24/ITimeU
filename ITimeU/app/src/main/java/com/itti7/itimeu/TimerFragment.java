@@ -44,8 +44,6 @@ public class TimerFragment extends Fragment {
     private ServiceConnection conn;
     private Thread mReadThread;
     /*store  time count*/
-    private SharedPreferences mPref;
-    private SharedPreferences.Editor editor;
     private int mCountTimer;
 
     public TimerFragment() {
@@ -77,17 +75,13 @@ public class TimerFragment extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
                 String mPlayedTime = "" + intent.getIntExtra("TIME", 1);
-/*                editor = mPref.edit();
-                editor.putString("COUNT", "" + (++mCountTimer));
-                editor.commit();
-                Log.i("mCount", "--------------------------------------------->Write : "+mCountTimer);*/
-               /*  if(mPlayedTime.equals(mWorkTime)){
+                 if(mPlayedTime.equals(mWorkTime)){
                      mTimeText.setText("");
-                    mProgressBar.setProgress(0);
-                    progressBarValue=0;
+                     mProgressBar.setProgress(0);
+                     progressBarValue=0;
+                     mCountTimer++;
                     startTimer();
-                }*/
-                //broaㅇcast 연결을 끊는다.
+                }
             }
         };
         getActivity().registerReceiver(mReceiver, intentfilter);
@@ -97,10 +91,7 @@ public class TimerFragment extends Fragment {
     private void init() {
         intent = new Intent(getActivity(), TimerService.class);
         /*init timer count */
-        mPref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-        editor = mPref.edit();
-        editor.putString("COUNT", "1");
-        editor.apply();
+       mCountTimer=1;
         /*work time 을 갖고 오기위해 inflater*/
         header = getActivity().getLayoutInflater().inflate(R.layout.activity_setting, null, false);
        /* mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
@@ -152,13 +143,7 @@ public class TimerFragment extends Fragment {
     };
 
     public void startTimer() {
-        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment startTimer()");
-        mCountTimer = Integer.parseInt(mPref.getString("COUNT", ""));
-        Log.i("mCount", "--------------------------------------------->Read : " + mCountTimer);
-        editor = mPref.edit();
-        editor.putString("COUNT", "" + (mCountTimer + 1));
-        editor.commit();
-        Log.i("mCount", "--------------------------------------------->Write : " + mCountTimer);
+        Log.i("Fragment", "--------------------------------------------->startTimer()");
         if (mCountTimer % 8 == 0) // assign time by work,short & long break
             runTime = Integer.parseInt(mLongBreakTime);
         else if (mCountTimer % 2 == 1)
@@ -168,14 +153,14 @@ public class TimerFragment extends Fragment {
 
         mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
         handler = new TimerHandler();
+        updateTimerText();
         intent.putExtra("RUNTIME", runTime);
         getActivity().startService(intent);
-        updateTimer(); //catch up timer
         mStateBttn.setText(R.string.stop);
         handler.sendEmptyMessage(0);
     }
 
-    public void updateTimer() {
+    public void updateTimerText() {
         mReadThread = new Thread(new Runnable() {
             @Override
             public void run() {
