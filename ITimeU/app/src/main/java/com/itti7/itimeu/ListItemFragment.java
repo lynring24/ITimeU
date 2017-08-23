@@ -189,7 +189,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             }
         });
 
-        //when user click add FloatingActionButton for add a item in the list.
+        //when user click addadd FloatingActionButton for add a item in the list.
         final FloatingActionButton addFab
                 = mListItemView.findViewById(R.id.add_fab_btn);
         addFab.setOnClickListener(new View.OnClickListener() {

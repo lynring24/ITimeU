@@ -2,11 +2,13 @@ package com.itti7.itimeu;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -19,6 +21,9 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.itti7.itimeu.data.ItemContract;
+import com.itti7.itimeu.data.ItemDbHelper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,6 +61,12 @@ public class TimerFragment extends Fragment {
     private int mTotalUnit;
     private String mName;
 
+    // For access ITimeU database
+    ItemDbHelper dbHelper;
+    SQLiteDatabase db;
+
+
+
     public TimerFragment() {
         // Required empty public constructor
     }
@@ -72,6 +83,11 @@ public class TimerFragment extends Fragment {
         String timerTag = getTag();
         ((MainActivity)getActivity()).setTimerTag(timerTag);
 
+        // list table db-------------------------------------------------------------------------
+        db = dbHelper.getReadableDatabase();
+
+
+        // list table db-------------------------------------------------------------------------
         // Job name
         mItemNameText = timerView.findViewById(R.id.job_name_txt);
 
@@ -103,14 +119,28 @@ public class TimerFragment extends Fragment {
                 editor.commit();
                 ////end of store mCountTimer
                 //////----------------------------------------------------------------------------------------------------------------------------------------
-                /*mUnit 증가++*/
-/*                if(mUnit==mTotalUnit){ // if the job is completed
-                    DB mStatus = 2
+                ContentValues values  = new ContentValues();
+                values.put(ItemContract.ItemEntry.COLUMN_ITEM_UNIT,mUnit);
+
+                if(mUnit==mTotalUnit){ // if the job is completed
+                    //UPDATE DB  mStatus = 2
+                   values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS , ItemContract.ItemEntry.STATUS_DONE);
                 }
                 else {
-                    DB mStatus = 0
-                }*/
+                    //UPDATE DB  mStatus = 0
+                    values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS , ItemContract.ItemEntry.STATUS_TODO);
+                }
 
+                String selection = ItemContract.ItemEntry.COLUMN_ITEM_NAME+ " LIKE ?";
+                String [] selectionArgs = {""+mUnit};
+
+                 /* UPDATE DB mUnit++*/
+                int count = db.update(
+                        ItemContract.ItemEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs
+                );
                 //////----------------------------------------------------------------------------------------------------------------------------------------
                 mStateBttn.setText("start");
                 if(mCountTimer%2==1) mStateBttn.setEnabled(false);
@@ -131,7 +161,7 @@ public class TimerFragment extends Fragment {
         intent = new Intent(getActivity(), TimerService.class);
         /*init timer count */
        mCountTimer=1;
-        /*work time 을 갖고 오기위해 inflater*/
+        //work time  inflater
 
         header = getActivity().getLayoutInflater().inflate(R.layout.fragment_setting, null, false);
        /* mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
@@ -199,7 +229,7 @@ public class TimerFragment extends Fragment {
 
 
 
-                
+
                 ////--------------------------------------------------------------------------------------------------------------
             }
         }
