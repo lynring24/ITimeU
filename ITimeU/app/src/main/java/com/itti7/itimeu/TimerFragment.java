@@ -86,7 +86,6 @@ public class TimerFragment extends Fragment {
         // list table db-------------------------------------------------------------------------
         db = dbHelper.getReadableDatabase();
 
-
         // list table db-------------------------------------------------------------------------
         // Job name
         mItemNameText = timerView.findViewById(R.id.job_name_txt);
@@ -103,6 +102,7 @@ public class TimerFragment extends Fragment {
         mProgressBar.bringToFront(); // bring the progressbar to the top
 
         /* 브로드캐스트의 액션을 등록하기 위한 인텐트 필터 */
+        /* iIntentFilter to register Broadcast Receiver */
         IntentFilter intentfilter = new IntentFilter();
         intentfilter.addAction(getActivity().getPackageName() + "SEND_BROAD_CAST");
 
@@ -120,7 +120,7 @@ public class TimerFragment extends Fragment {
                 ////end of store mCountTimer
                 //////----------------------------------------------------------------------------------------------------------------------------------------
                 ContentValues values  = new ContentValues();
-                values.put(ItemContract.ItemEntry.COLUMN_ITEM_UNIT,mUnit);
+                values.put(ItemContract.ItemEntry.COLUMN_ITEM_UNIT,++mUnit);
 
                 if(mUnit==mTotalUnit){ // if the job is completed
                     //UPDATE DB  mStatus = 2
@@ -131,8 +131,8 @@ public class TimerFragment extends Fragment {
                     values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS , ItemContract.ItemEntry.STATUS_TODO);
                 }
 
-                String selection = ItemContract.ItemEntry.COLUMN_ITEM_NAME+ " LIKE ?";
-                String [] selectionArgs = {""+mUnit};
+                String selection = ItemContract.ItemEntry._ID+ " LIKE ?";
+                String [] selectionArgs = {""+mId};
 
                  /* UPDATE DB mUnit++*/
                 int count = db.update(
@@ -143,9 +143,11 @@ public class TimerFragment extends Fragment {
                 );
                 //////----------------------------------------------------------------------------------------------------------------------------------------
                 mStateBttn.setText("start");
-                if(mCountTimer%2==1) mStateBttn.setEnabled(false);
-                //If breakTime go back to List
-
+                if(mCountTimer%2==1) {
+                    
+                    mStateBttn.setEnabled(false);
+                    //If breakTime go back to List
+                }
                 mStateBttn.setText(R.string.start);
                 if (mCountTimer % 8 == 0)
                     mItemNameText.setText("Long Break Time");
@@ -202,12 +204,19 @@ public class TimerFragment extends Fragment {
             if (mStateBttn.getText().toString().equals("start")) { // checked
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Start");
                 ////--------------------------------------------------------------------------------------------------------------
-                /*mStatus DB로 set 1*/
+                //mUnit will be intialize when list item is clicked
+                /* set mStatus DB to DO(1)*/
+                ContentValues values  = new ContentValues();
+                values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS , ItemContract.ItemEntry.STATUS_DO);
+                String selection = ItemContract.ItemEntry._ID+ " LIKE ?";
+                String [] selectionArgs = {""+mId};
 
-
-
-
-
+                int count = db.update(
+                        ItemContract.ItemEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs
+                );
                 ////--------------------------------------------------------------------------------------------------------------
                 if (mBound)
                     startTimer();
@@ -223,13 +232,18 @@ public class TimerFragment extends Fragment {
                 Log.i("TimerFragment", "----------------------->Service stop");
                 mStateBttn.setText(R.string.start);
                 ////--------------------------------------------------------------------------------------------------------------
-                /*set mStatus =0*/
+                /*set mStatus to TO DO(0)*/
+                ContentValues values  = new ContentValues();
+                values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS , ItemContract.ItemEntry.STATUS_TODO);
+                String selection = ItemContract.ItemEntry._ID+ " LIKE ?";
+                String [] selectionArgs = {""+mId};
 
-
-
-
-
-
+                int count = db.update(
+                        ItemContract.ItemEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs
+                );
                 ////--------------------------------------------------------------------------------------------------------------
             }
         }
