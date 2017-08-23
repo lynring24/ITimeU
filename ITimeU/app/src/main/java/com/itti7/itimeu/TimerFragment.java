@@ -82,10 +82,11 @@ public class TimerFragment extends Fragment {
         // get Timer tag and set to TimerTag
         String timerTag = getTag();
         ((MainActivity)getActivity()).setTimerTag(timerTag);
+        // Inflate the layout for this fragment
 
-        // list table db-------------------------------------------------------------------------
-        db = dbHelper.getReadableDatabase();
-
+        Context mTimerContext = timerView.getContext();
+        // list table db
+        dbHelper = new ItemDbHelper(mTimerContext);
         // list table db-------------------------------------------------------------------------
         // Job name
         mItemNameText = timerView.findViewById(R.id.job_name_txt);
@@ -120,7 +121,8 @@ public class TimerFragment extends Fragment {
                 ////end of store mCountTimer
                 //////----------------------------------------------------------------------------------------------------------------------------------------
                 ContentValues values  = new ContentValues();
-                values.put(ItemContract.ItemEntry.COLUMN_ITEM_UNIT,++mUnit);
+                mUnit++;
+                values.put(ItemContract.ItemEntry.COLUMN_ITEM_UNIT,mUnit);
 
                 if(mUnit==mTotalUnit){ // if the job is completed
                     //UPDATE DB  mStatus = 2
@@ -143,14 +145,19 @@ public class TimerFragment extends Fragment {
                 );
                 //////----------------------------------------------------------------------------------------------------------------------------------------
                 mStateBttn.setText("start");
-                if(mCountTimer%2==1) {
-                    
+                //if finished, set the button disable
+                //go back to list
+                if(mUnit==mTotalUnit) {
                     mStateBttn.setEnabled(false);
-                    //If breakTime go back to List
+                    // Change Fragment ListItemFragment -> TimerFragment
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    (mainActivity).getViewPager().setCurrentItem(0);
                 }
-                mStateBttn.setText(R.string.start);
+
                 if (mCountTimer % 8 == 0)
                     mItemNameText.setText("Long Break Time");
+                else if (mCountTimer % 2 == 1)
+                    mItemNameText.setText(mName);
                 else
                     mItemNameText.setText("Break Time");
             }
