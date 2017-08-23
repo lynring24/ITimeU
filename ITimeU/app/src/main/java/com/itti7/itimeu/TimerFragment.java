@@ -53,7 +53,6 @@ public class TimerFragment extends Fragment {
     /*store  time count*/
     private int mCountTimer;
 
-
     // Item info come from ListView
     private int mId;
     private int mStatus;
@@ -75,7 +74,6 @@ public class TimerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View timerView = inflater.inflate(R.layout.fragment_timer, container, false);
 
         // get Timer tag and set to TimerTag
@@ -84,7 +82,7 @@ public class TimerFragment extends Fragment {
 
         //get ItemDbHelper to get SQLITEDB.getWritableDB()
         dbHelper = new ItemDbHelper(getActivity());
-        
+
         mItemNameText = timerView.findViewById(R.id.job_name_txt);
         /*progressBar button init*/
         mProgressBar = (ProgressBar) timerView.findViewById(R.id.progressBar);
@@ -129,6 +127,14 @@ public class TimerFragment extends Fragment {
                 db.close();
 
                 mStateBttn.setText("start");
+
+                if (mCountTimer % 8 == 0)
+                    mItemNameText.setText("Long Break Time");
+                else if (mCountTimer % 2 == 1)
+                    mItemNameText.setText(mName);
+                else
+                    mItemNameText.setText("Break Time");
+
                 //if finished, set the button disable
                 //go back to list
                 if (mUnit == mTotalUnit) {
@@ -137,13 +143,6 @@ public class TimerFragment extends Fragment {
                     MainActivity mainActivity = (MainActivity) getActivity();
                     (mainActivity).getViewPager().setCurrentItem(0);
                 }
-
-                if (mCountTimer % 8 == 0)
-                    mItemNameText.setText("Long Break Time");
-                else if (mCountTimer % 2 == 1)
-                    mItemNameText.setText(mName);
-                else
-                    mItemNameText.setText("Break Time");
             }
         };
         getActivity().registerReceiver(mReceiver, intentfilter);
