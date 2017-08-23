@@ -36,13 +36,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ListItemFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- */
 public class ListItemFragment extends Fragment implements DatePickerDialog.OnDateSetListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -80,6 +73,9 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     // Date convert to String
     private String mDate;
 
+    // Today's date
+    private String mToday = getDate(new Date());
+
     /**
      * Adapter for the ListView
      */
@@ -88,9 +84,12 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     // Date year, month, day;
     private int mYear, mMonth, mDay;
 
+    // Save selected item data
+    private int mItemID;
     private String mItemName;
     private String mItemDate;
     private int mItemUnit;
+    private int mItemTotalUnit;
     private int mItemStatus;
 
     // Sum total units, and units respectively.
@@ -131,44 +130,30 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String[] idStr = {String.valueOf(id)};
-                Cursor cursor = db.rawQuery("SELECT name, unit, status, date FROM list WHERE "
+                // Get item's primary id
+                mItemID = (int) id;
+                String[] idStr = {String.valueOf(mItemID)};
+                Cursor cursor = db.rawQuery("SELECT name, unit, totalUnit, status, date FROM list WHERE "
                         + BaseColumns._ID + " = ?", idStr);
 
                 // Get current item's info
                 if (cursor.moveToFirst()) {
                     mItemName = cursor.getString(
                             cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME));
-                    mItemDate =  cursor.getString(
+                    mItemDate = cursor.getString(
                             cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE));
                     mItemUnit = cursor.getInt(
                             cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT));
+                    mItemTotalUnit = cursor.getInt(
+                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT));
                     mItemStatus = cursor.getInt(
                             cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS));
 
-                    // Test code
-                    /*Toast.makeText(mListItemContext, "name: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME))
-                                    + ", unit: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT))
-                                    + ", status: " + cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS))
-                                    + ", date: " + cursor.getString(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE)),
-                            Toast.LENGTH_SHORT).show();
-                    */
-                    // Get MainActivity
-                    MainActivity mainActivity = (MainActivity)getActivity();
+                    // Check selected item's date is today
+                    if(checkDate()) return;
 
-                    // Set to MainActivity: selected item name and unit.
-                    mainActivity.setItemName(mItemName);
-                    mainActivity.setItemUnit(mItemUnit);
-
-                    // Set item name text to job_txt_view in TimerFragment
-                    String tabOfTimerFragment = mainActivity.getTimerTag();
-                    TimerFragment timerFragment = (TimerFragment)getActivity()
-                            .getSupportFragmentManager()
-                            .findFragmentByTag(tabOfTimerFragment);
-
-                    timerFragment.nameUpdate(mainActivity.getItemName());
-                    // Change Fragment ListItemFragment -> TimerFragment
-                    (mainActivity).getViewPager().setCurrentItem(1);
+                    // Check selected item's status
+                    if(checkStatus()) return;
                 }
             }
         });
@@ -459,17 +444,56 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Check item's date
+     *
+     * @return when item's date == today then return false, but date != today then return true.
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    boolean checkDate() {
+        if(!mItemDate.equals(mToday)) {
+            Toast.makeText(mListItemContext, R.string.not_today, Toast.LENGTH_SHORT)
+                    .show();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check item's status.
+     *
+     * @return
+     * status == To do then set item's info to Timer and change view List to Timer, return false.
+     * status == Do then just change view List to Timer, return false.
+     * status == Done then show toast message and return true.
+     */
+    boolean checkStatus() {
+        // Get MainActivity
+        MainActivity mainActivity = (MainActivity) getActivity();
+
+        // If selected item's status == Done, then stop action
+        if(mItemStatus == ItemContract.ItemEntry.STATUS_DONE){
+            Toast.makeText(mListItemContext, R.string.already_done, Toast.LENGTH_SHORT)
+                    .show();
+            return true;
+        }
+        else if(mItemStatus == ItemContract.ItemEntry.STATUS_TODO) {
+            // Set item name text to job_txt_view in TimerFragment
+            String tabOfTimerFragment = mainActivity.getTimerTag();
+            TimerFragment timerFragment = (TimerFragment) getActivity()
+                    .getSupportFragmentManager()
+                    .findFragmentByTag(tabOfTimerFragment);
+
+            // Set selected item info
+            timerFragment.setmId(mItemID);
+            timerFragment.setmName(mItemName);
+            timerFragment.setmStatus(mItemStatus);
+            timerFragment.setmUnit(mItemUnit);
+            timerFragment.setmTotalUnit(mItemTotalUnit);
+
+            timerFragment.nameUpdate();
+        }
+
+        // Change Fragment ListItemFragment -> TimerFragment
+        (mainActivity).getViewPager().setCurrentItem(1);
+        return false;
     }
 }
