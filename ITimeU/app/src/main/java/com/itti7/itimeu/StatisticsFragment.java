@@ -400,6 +400,9 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         // if disabled, scaling can be done on x- and y-axis separately
         mChart.setPinchZoom(false);
 
+        // Show dynamic animation
+        mChart.animateXY(2000, 2000);
+
         Legend l = mChart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
