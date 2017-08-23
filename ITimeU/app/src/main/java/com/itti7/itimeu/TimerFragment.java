@@ -62,10 +62,9 @@ public class TimerFragment extends Fragment {
     private String mName;
 
     // For access ITimeU database
-    ItemDbHelper dbHelper;
+    ItemDbHelper  dbHelper;
     SQLiteDatabase db;
-
-
+    String query;
 
     public TimerFragment() {
         // Required empty public constructor
@@ -81,19 +80,16 @@ public class TimerFragment extends Fragment {
 
         // get Timer tag and set to TimerTag
         String timerTag = getTag();
-        ((MainActivity)getActivity()).setTimerTag(timerTag);
-        // Inflate the layout for this fragment
+        ((MainActivity) getActivity()).setTimerTag(timerTag);
 
-        Context mTimerContext = timerView.getContext();
-        // list table db
-        dbHelper = new ItemDbHelper(mTimerContext);
-        // list table db-------------------------------------------------------------------------
-        // Job name
+        // list table db------------------------------------------------------------------------------------------------------------------------------------------------------------
+         dbHelper = new ItemDbHelper(getActivity());
+        // list table db-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
         mItemNameText = timerView.findViewById(R.id.job_name_txt);
-
         /*progressBar button init*/
-        mProgressBar = (ProgressBar)timerView.findViewById(R.id.progressBar);
-        mStateBttn = (Button)timerView.findViewById(R.id.state_bttn_view);
+        mProgressBar = (ProgressBar) timerView.findViewById(R.id.progressBar);
+        mStateBttn = (Button) timerView.findViewById(R.id.state_bttn_view);
         init();
         mStateBttn.setOnClickListener(stateChecker);
         /*Time Text Initialize */
@@ -116,38 +112,47 @@ public class TimerFragment extends Fragment {
                 mCountTimer++;
                 SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
-                editor.putInt("COUNT",mCountTimer);
+                editor.putInt("COUNT", mCountTimer);
                 editor.commit();
                 ////end of store mCountTimer
                 //////----------------------------------------------------------------------------------------------------------------------------------------
-                ContentValues values  = new ContentValues();
                 mUnit++;
-                values.put(ItemContract.ItemEntry.COLUMN_ITEM_UNIT,mUnit);
-
-                if(mUnit==mTotalUnit){ // if the job is completed
+                db = dbHelper.getWritableDatabase();
+                query= "UPDATE "+ ItemContract.ItemEntry.TABLE_NAME+ " SET unit = '"+mUnit+"', status = '";
+                if (mUnit == mTotalUnit) { // if the job is completed
                     //UPDATE DB  mStatus = 2
-                   values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS , ItemContract.ItemEntry.STATUS_DONE);
-                }
-                else {
+                    query = query + ItemContract.ItemEntry.STATUS_DONE+"' WHERE _ID = '"+mId+"';";
+                } else {
                     //UPDATE DB  mStatus = 0
-                    values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS , ItemContract.ItemEntry.STATUS_TODO);
+                    query = query + ItemContract.ItemEntry.STATUS_TODO+"' WHERE _ID = '"+mId+"';";
+                }
+                db.execSQL(query);
+                db.close();
+                /*ContentValues values = new ContentValues();
+                mUnit++;
+                values.put(ItemContract.ItemEntry.COLUMN_ITEM_UNIT, mUnit);
+
+                if (mUnit == mTotalUnit) { // if the job is completed
+                    //UPDATE DB  mStatus = 2
+                    values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS, ItemContract.ItemEntry.STATUS_DONE);
+                } else {
+                    //UPDATE DB  mStatus = 0
+                    values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS, ItemContract.ItemEntry.STATUS_TODO);
                 }
 
-                String selection = ItemContract.ItemEntry._ID+ " LIKE ?";
-                String [] selectionArgs = {""+mId};
+                String selection = "_ID='" + ItemContract.ItemEntry._ID + "'";
 
-                 /* UPDATE DB mUnit++*/
                 int count = db.update(
                         ItemContract.ItemEntry.TABLE_NAME,
                         values,
                         selection,
-                        selectionArgs
-                );
+                        new String[]{Integer.toString(mId)}
+                );*/
                 //////----------------------------------------------------------------------------------------------------------------------------------------
                 mStateBttn.setText("start");
                 //if finished, set the button disable
                 //go back to list
-                if(mUnit==mTotalUnit) {
+                if (mUnit == mTotalUnit) {
                     mStateBttn.setEnabled(false);
                     // Change Fragment ListItemFragment -> TimerFragment
                     MainActivity mainActivity = (MainActivity) getActivity();
@@ -169,7 +174,7 @@ public class TimerFragment extends Fragment {
     private void init() {
         intent = new Intent(getActivity(), TimerService.class);
         /*init timer count */
-       mCountTimer=1;
+        mCountTimer = 1;
         //work time  inflater
 
         header = getActivity().getLayoutInflater().inflate(R.layout.fragment_setting, null, false);
@@ -200,7 +205,7 @@ public class TimerFragment extends Fragment {
         /*init shared prefernce*/
         SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("COUNT",1);
+        editor.putInt("COUNT", 1);
         editor.commit();
 
     }
@@ -212,21 +217,26 @@ public class TimerFragment extends Fragment {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Start");
                 ////--------------------------------------------------------------------------------------------------------------
                 //mUnit will be intialize when list item is clicked
+                if (mBound) {
                 /* set mStatus DB to DO(1)*/
-                ContentValues values  = new ContentValues();
+                    db = dbHelper.getWritableDatabase();
+                    query = "UPDATE "+ ItemContract.ItemEntry.TABLE_NAME+" SET unit = '"+mUnit+"' WHERE _ID = '"+mId+"';";
+                    db.execSQL(query);
+                    db.close();
+               /* ContentValues values  = new ContentValues();
                 values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS , ItemContract.ItemEntry.STATUS_DO);
-                String selection = ItemContract.ItemEntry._ID+ " LIKE ?";
-                String [] selectionArgs = {""+mId};
+                String selection =  "_ID='" + ItemContract.ItemEntry._ID+ "'";
 
                 int count = db.update(
                         ItemContract.ItemEntry.TABLE_NAME,
                         values,
                         selection,
-                        selectionArgs
-                );
-                ////--------------------------------------------------------------------------------------------------------------
-                if (mBound)
+                        new String[] { Integer.toString(mId) }
+                );*/
+                    ////--------------------------------------------------------------------------------------------------------------
+
                     startTimer();
+                }
             } else {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Stop");
                 Log.i("TimerFragment", "----------------------->Timer Stopped");
@@ -240,17 +250,20 @@ public class TimerFragment extends Fragment {
                 mStateBttn.setText(R.string.start);
                 ////--------------------------------------------------------------------------------------------------------------
                 /*set mStatus to TO DO(0)*/
-                ContentValues values  = new ContentValues();
-                values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS , ItemContract.ItemEntry.STATUS_TODO);
-                String selection = ItemContract.ItemEntry._ID+ " LIKE ?";
-                String [] selectionArgs = {""+mId};
+                db = dbHelper.getWritableDatabase();
+                query = "UPDATE "+ ItemContract.ItemEntry.TABLE_NAME+" SET status = '"+ ItemContract.ItemEntry.STATUS_TODO+"' WHERE _ID = '"+mId+"';";
+                db.execSQL(query);
+                db.close();
+               /* ContentValues values = new ContentValues();
+                values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS, ItemContract.ItemEntry.STATUS_TODO);
+                String selection = "_ID='" + ItemContract.ItemEntry._ID + "'";
 
                 int count = db.update(
                         ItemContract.ItemEntry.TABLE_NAME,
                         values,
                         selection,
-                        selectionArgs
-                );
+                        new String[]{Integer.toString(mId)}
+                );*/
                 ////--------------------------------------------------------------------------------------------------------------
             }
         }
@@ -260,7 +273,7 @@ public class TimerFragment extends Fragment {
         Log.i("Fragment", "--------------------------------------------->startTimer()");
         //read mCountTimer
         SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-        mCountTimer=pref.getInt("COUNT",1);
+        mCountTimer = pref.getInt("COUNT", 1);
         ////end of read mCountTimer
         if (mCountTimer % 8 == 0) // assign time by work,short & long break
             runTime = Integer.parseInt(mLongBreakTime);
@@ -340,13 +353,14 @@ public class TimerFragment extends Fragment {
     }
 
     /**
-     * This function set item name in TextView(job_txt_view)*/
-    public void nameUpdate(){
+     * This function set item name in TextView(job_txt_view)
+     */
+    public void nameUpdate() {
         mItemNameText.setText(mName);
 
         // test code
         Toast.makeText(getContext(), "ID: " + mId + ", Name: " + mName + ", Status: " + mStatus +
-        ", Unit: " + mUnit, Toast.LENGTH_SHORT).show();
+                ", Unit: " + mUnit, Toast.LENGTH_SHORT).show();
     }
 
     /**
