@@ -161,7 +161,10 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                return dates.get((int) value).replace(".", "/").substring(5);
+                if(dates.size()>(int) value) {
+                    return dates.get((int) value).replace(".", "/").substring(5);
+                }
+                else return null;
             }
 
             @Override
