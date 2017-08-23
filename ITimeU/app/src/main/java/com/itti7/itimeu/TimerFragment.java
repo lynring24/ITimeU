@@ -102,7 +102,16 @@ public class TimerFragment extends Fragment {
                 editor.putInt("COUNT",mCountTimer);
                 editor.commit();
                 ////end of store mCountTimer
+                //////----------------------------------------------------------------------------------------------------------------------------------------
+                /*mUnit 증가++*/
+/*                if(mUnit==mTotalUnit){ // if the job is completed
+                    DB mStatus = 2
+                }
+                else {
+                    DB mStatus = 0
+                }*/
 
+                //////----------------------------------------------------------------------------------------------------------------------------------------
                 mStateBttn.setText("start");
                 if(mCountTimer%2==1) mStateBttn.setEnabled(false);
                 //If breakTime go back to List
@@ -162,6 +171,14 @@ public class TimerFragment extends Fragment {
         public void onClick(View v) {
             if (mStateBttn.getText().toString().equals("start")) { // checked
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Start");
+                ////--------------------------------------------------------------------------------------------------------------
+                /*mStatus DB로 set 1*/
+
+
+
+
+
+                ////--------------------------------------------------------------------------------------------------------------
                 if (mBound)
                     startTimer();
             } else {
@@ -175,7 +192,15 @@ public class TimerFragment extends Fragment {
                 progressBarValue = 0; //must be set 0
                 Log.i("TimerFragment", "----------------------->Service stop");
                 mStateBttn.setText(R.string.start);
-                /*go back to liSt*/
+                ////--------------------------------------------------------------------------------------------------------------
+                /*set mStatus =0*/
+
+
+
+
+
+                
+                ////--------------------------------------------------------------------------------------------------------------
             }
         }
     };
@@ -183,11 +208,8 @@ public class TimerFragment extends Fragment {
     public void startTimer() {
         Log.i("Fragment", "--------------------------------------------->startTimer()");
         //read mCountTimer
-
-
         SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         mCountTimer=pref.getInt("COUNT",1);
-
         ////end of read mCountTimer
         if (mCountTimer % 8 == 0) // assign time by work,short & long break
             runTime = Integer.parseInt(mLongBreakTime);
@@ -199,7 +221,7 @@ public class TimerFragment extends Fragment {
         mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
         handler = new TimerHandler();
         updateTimerText();
-       mTimerService.startTimer(runTime);
+        mTimerService.startTimer(runTime);
         mStateBttn.setText(R.string.stop);
         handler.sendEmptyMessage(0);
     }
@@ -265,6 +287,7 @@ public class TimerFragment extends Fragment {
             mBound = false;
         }
     }
+
     /**
      * This function set item name in TextView(job_txt_view)*/
     public void nameUpdate(){
