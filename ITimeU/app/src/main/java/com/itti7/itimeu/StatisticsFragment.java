@@ -247,7 +247,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
                         @Override
                         public void onClick(View view) {
                             checkClick(true, false);
-                            showDateDialog();
+                            showDateDialog(mCustomStart);
                         }
                     });
 
@@ -256,7 +256,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
                         @Override
                         public void onClick(View view) {
                             checkClick(false, true);
-                            showDateDialog();
+                            showDateDialog(mCustomEnd);
                         }
                     });
                 }
@@ -447,14 +447,25 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
     /**
      * Show date picker dialog
+     *
+     * @param dateStr      start or end date string
      */
-    void showDateDialog() {
+    @Nullable
+    void showDateDialog(String dateStr) {
         // ToDo: end date should not early than start date, and (end date) - (start date) >=  7
         Calendar calendar = Calendar.getInstance();
 
-        if (mTodayDate != null) {
-            calendar.setTime(mTodayDate);
-        } else calendar.setTime(new Date());
+        try {
+            if(dateStr!=null) {
+                Date date = mDateFormat.parse(dateStr);
+                calendar.setTime(date);
+            }
+            else {
+                calendar.setTime(new Date());
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         mYear = calendar.get(Calendar.YEAR);
         mMonth = calendar.get(Calendar.MONTH);
