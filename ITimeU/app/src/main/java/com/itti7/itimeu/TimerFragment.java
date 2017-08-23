@@ -62,7 +62,7 @@ public class TimerFragment extends Fragment {
     private String mName;
 
     // For access ITimeU database
-    ItemDbHelper  dbHelper;
+    ItemDbHelper dbHelper;
     SQLiteDatabase db;
     String query;
 
@@ -82,10 +82,9 @@ public class TimerFragment extends Fragment {
         String timerTag = getTag();
         ((MainActivity) getActivity()).setTimerTag(timerTag);
 
-        // list table db------------------------------------------------------------------------------------------------------------------------------------------------------------
-         dbHelper = new ItemDbHelper(getActivity());
-        // list table db-----------------------------------------------------------------------------------------------------------------------------------------------------------
-
+        //get ItemDbHelper to get SQLITEDB.getWritableDB()
+        dbHelper = new ItemDbHelper(getActivity());
+        
         mItemNameText = timerView.findViewById(R.id.job_name_txt);
         /*progressBar button init*/
         mProgressBar = (ProgressBar) timerView.findViewById(R.id.progressBar);
@@ -114,41 +113,21 @@ public class TimerFragment extends Fragment {
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putInt("COUNT", mCountTimer);
                 editor.commit();
-                ////end of store mCountTimer
-                //////----------------------------------------------------------------------------------------------------------------------------------------
+
+                //store
                 mUnit++;
                 db = dbHelper.getWritableDatabase();
-                query= "UPDATE "+ ItemContract.ItemEntry.TABLE_NAME+ " SET unit = '"+mUnit+"', status = '";
+                query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "', status = '";
                 if (mUnit == mTotalUnit) { // if the job is completed
                     //UPDATE DB  mStatus = 2
-                    query = query + ItemContract.ItemEntry.STATUS_DONE+"' WHERE _ID = '"+mId+"';";
+                    query = query + ItemContract.ItemEntry.STATUS_DONE + "' WHERE _ID = '" + mId + "';";
                 } else {
                     //UPDATE DB  mStatus = 0
-                    query = query + ItemContract.ItemEntry.STATUS_TODO+"' WHERE _ID = '"+mId+"';";
+                    query = query + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
                 }
                 db.execSQL(query);
                 db.close();
-                /*ContentValues values = new ContentValues();
-                mUnit++;
-                values.put(ItemContract.ItemEntry.COLUMN_ITEM_UNIT, mUnit);
 
-                if (mUnit == mTotalUnit) { // if the job is completed
-                    //UPDATE DB  mStatus = 2
-                    values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS, ItemContract.ItemEntry.STATUS_DONE);
-                } else {
-                    //UPDATE DB  mStatus = 0
-                    values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS, ItemContract.ItemEntry.STATUS_TODO);
-                }
-
-                String selection = "_ID='" + ItemContract.ItemEntry._ID + "'";
-
-                int count = db.update(
-                        ItemContract.ItemEntry.TABLE_NAME,
-                        values,
-                        selection,
-                        new String[]{Integer.toString(mId)}
-                );*/
-                //////----------------------------------------------------------------------------------------------------------------------------------------
                 mStateBttn.setText("start");
                 //if finished, set the button disable
                 //go back to list
@@ -220,20 +199,9 @@ public class TimerFragment extends Fragment {
                 if (mBound) {
                 /* set mStatus DB to DO(1)*/
                     db = dbHelper.getWritableDatabase();
-                    query = "UPDATE "+ ItemContract.ItemEntry.TABLE_NAME+" SET unit = '"+mUnit+"' WHERE _ID = '"+mId+"';";
+                    query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "' WHERE _ID = '" + mId + "';";
                     db.execSQL(query);
                     db.close();
-               /* ContentValues values  = new ContentValues();
-                values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS , ItemContract.ItemEntry.STATUS_DO);
-                String selection =  "_ID='" + ItemContract.ItemEntry._ID+ "'";
-
-                int count = db.update(
-                        ItemContract.ItemEntry.TABLE_NAME,
-                        values,
-                        selection,
-                        new String[] { Integer.toString(mId) }
-                );*/
-                    ////--------------------------------------------------------------------------------------------------------------
 
                     startTimer();
                 }
@@ -248,23 +216,13 @@ public class TimerFragment extends Fragment {
                 progressBarValue = 0; //must be set 0
                 Log.i("TimerFragment", "----------------------->Service stop");
                 mStateBttn.setText(R.string.start);
-                ////--------------------------------------------------------------------------------------------------------------
+
                 /*set mStatus to TO DO(0)*/
                 db = dbHelper.getWritableDatabase();
-                query = "UPDATE "+ ItemContract.ItemEntry.TABLE_NAME+" SET status = '"+ ItemContract.ItemEntry.STATUS_TODO+"' WHERE _ID = '"+mId+"';";
+                query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
                 db.execSQL(query);
                 db.close();
-               /* ContentValues values = new ContentValues();
-                values.put(ItemContract.ItemEntry.COLUMN_ITEM_STATUS, ItemContract.ItemEntry.STATUS_TODO);
-                String selection = "_ID='" + ItemContract.ItemEntry._ID + "'";
 
-                int count = db.update(
-                        ItemContract.ItemEntry.TABLE_NAME,
-                        values,
-                        selection,
-                        new String[]{Integer.toString(mId)}
-                );*/
-                ////--------------------------------------------------------------------------------------------------------------
             }
         }
     };
