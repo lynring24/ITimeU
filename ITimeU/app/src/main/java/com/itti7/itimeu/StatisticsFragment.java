@@ -2,12 +2,14 @@ package com.itti7.itimeu;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -199,7 +201,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 mSpinnerText = mStatSpinner.getSelectedItem().toString();
-
+                // ----------WEEK-----------
                 if (mSpinnerText.equals(getString(R.string.arrays_week))) {
                     // Get Date
                     getToday();
@@ -215,7 +217,9 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
                     // Add data
                     addData();
-                } else if (mSpinnerText.equals(getString(R.string.arrays_month))) {
+                }
+                // -----------MONTH-----------
+                else if (mSpinnerText.equals(getString(R.string.arrays_month))) {
                     // Get Date
                     getToday();
                     getAMonthAgo();
@@ -230,7 +234,9 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
                     // Add data
                     addData();
-                } else {
+                }
+                // -----------CUSTOM------------
+                else {
                     // initialize the chart
                     mChart.setData(null);
                     mChart.invalidate();
@@ -439,7 +445,21 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
             // If the two edit text is not empty then get statistics in selected period.
             if (mCustomStart != null && mCustomEnd != null) {
+                // Check date: start date <= end date ?
+                if(checkDate(mCustomStart, mCustomEnd)){
+                    // Reinitialize
+                    mCustomStart = null;
+                    mCustomEnd = null;
+                    mStatStartEditText.setText(null);
+                    mStatEndEditText.setText(null);
+                    return;
+                }
+
+                /* Get sum of unit/total unit each days, whole value of these,
+                       and set text result.*/
                 getPeriod(mCustomStart, mCustomEnd);
+
+                // Add data
                 addData();
             }
         }
@@ -502,6 +522,34 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Is the period invalid?
+     *
+     * @param start     start date
+     * @param end       end date
+     * @return          if the period is invalid then return true, else return false.
+     */
+    boolean checkDate(String start, String end) {
+        try {
+            Date startDate = mDateFormat.parse(start);
+            Date endDate = mDateFormat.parse(end);
+
+            if(startDate.compareTo(endDate) > 0) {
+                Toast.makeText(mStatisticsContext, getString(R.string.invalid_period1),
+                        Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            else if(startDate.compareTo(endDate) == 0) {
+                Toast.makeText(mStatisticsContext, getString(R.string.invalid_period2),
+                        Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
 
