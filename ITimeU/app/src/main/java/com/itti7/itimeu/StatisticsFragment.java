@@ -82,6 +82,8 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     private int mMonth;
     private int mDay;
     private String mDate;
+    private String mCustomStart;
+    private String mCustomEnd;
     private boolean isClickStartDate;
     private boolean isClickEndDate;
 
@@ -133,7 +135,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         // Unit data
         List<Entry> unitEntries = new ArrayList<>();
 
-        for(int i=0; i<sumOfDayUnit.size();i++) {
+        for (int i = 0; i < sumOfDayUnit.size(); i++) {
             unitEntries.add(new Entry(i, sumOfDayUnit.get(i)));
         }
 
@@ -145,7 +147,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         // Total unit data
         List<Entry> totalUnitEntries = new ArrayList<>();
 
-        for(int i=0; i<sumOfDayTotalUnit.size();i++) {
+        for (int i = 0; i < sumOfDayTotalUnit.size(); i++) {
             totalUnitEntries.add(new Entry(i, sumOfDayTotalUnit.get(i)));
         }
 
@@ -159,7 +161,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                return dates.get((int)value).replace(".","/").substring(5);
+                return dates.get((int) value).replace(".", "/").substring(5);
             }
 
             @Override
@@ -204,12 +206,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
                     /* Get sum of unit/total unit each days, whole value of these,
                        and set text result.*/
-                    try {
-                        getPeriodFromSql(mDateFormat.parse(mAWeekAgoStr)
-                                , mDateFormat.parse(mTodayStr));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
+                    getPeriod(mAWeekAgoStr, mTodayStr);
 
                     // Add data
                     addData();
@@ -224,20 +221,23 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
                     /* Get sum of unit/total unit each days, whole value of these,
                        and set text result.*/
-                    try {
-                        getPeriodFromSql(mDateFormat.parse(mAMonthAgoStr)
-                                , mDateFormat.parse(mTodayStr));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
+                    getPeriod(mAMonthAgoStr, mTodayStr);
 
                     // Add data
                     addData();
                 } else {
+                    // initialize the chart
+                    mChart.setData(null);
+                    mChart.invalidate();
+                    mStatResultText.setText(null);
+                    mStatStartEditText.setText(null);
+                    mStatEndEditText.setText(null);
+
                     // Can touch edit text, but focus is disabled.
                     mStatStartEditText.setClickable(true);
                     mStatEndEditText.setClickable(true);
 
+                    // Click start edit text
                     mStatStartEditText.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -246,6 +246,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
                         }
                     });
 
+                    // Click end edit text
                     mStatEndEditText.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -253,8 +254,6 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
                             showDateDialog();
                         }
                     });
-
-                    Toast.makeText(mStatisticsContext, "custom", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -296,8 +295,8 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     /**
      * This function gets the date corresponding to the period.
      *
-     * @param startDate     start date
-     * @param endDate       ~ end date
+     * @param startDate start date
+     * @param endDate   ~ end date
      */
     void getPeriodFromSql(Date startDate, Date endDate) {
         int itemUnit = 0;
@@ -356,17 +355,17 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     /**
      * This function get percent : sum of whole units in period / sum of whole total units in period
      *
-     * @param sumOfWholeTotalUnits  sum of whole total units in period
-     * @param sumOfWholeUnits       sum of whole units in period
-     * @return                      percent string set
+     * @param sumOfWholeTotalUnits sum of whole total units in period
+     * @param sumOfWholeUnits      sum of whole units in period
+     * @return percent string set
      */
-    String getPercent(int sumOfWholeTotalUnits, int sumOfWholeUnits){
+    String getPercent(int sumOfWholeTotalUnits, int sumOfWholeUnits) {
         if (sumOfWholeTotalUnits != 0) {
             mPercent = Math.round(((double) sumOfWholeUnits / sumOfWholeTotalUnits) * 100);
         } else {
             mPercent = 0;
         }
-        return mPercent + "% ( "+sumOfWholeUnits+" / "+sumOfWholeTotalUnits+ ")";
+        return mPercent + "% ( " + sumOfWholeUnits + " / " + sumOfWholeTotalUnits + ")";
     }
 
     /**
@@ -420,11 +419,24 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         calendar.set(mYear, mMonth, mDay);
         mDate = mDateFormat.format(calendar.getTime());
 
-        if(isClickStartDate && !isClickEndDate) {
-            mStatStartEditText.setText(mDate);
-        }
-        else {
-            mStatEndEditText.setText(mDate);
+        // Custom statistics
+        if (mSpinnerText.equals(getString(R.string.arrays_custom))) {
+            // Select start edit text
+            if (isClickStartDate && !isClickEndDate) {
+                mCustomStart = mDate;
+                mStatStartEditText.setText(mDate);
+            }
+            // Select end edit text
+            else {
+                mCustomEnd = mDate;
+                mStatEndEditText.setText(mDate);
+            }
+
+            // If the two edit text is not empty then get statistics in selected period.
+            if (mCustomStart != null && mCustomEnd != null) {
+                getPeriod(mCustomStart, mCustomEnd);
+                addData();
+            }
         }
     }
 
@@ -432,9 +444,13 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
      * Show date picker dialog
      */
     void showDateDialog() {
-        // ToDo: end date should not early than start date
+        // ToDo: end date should not early than start date, and (end date) - (start date) >=  7
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(mTodayDate);
+
+        if (mTodayDate != null) {
+            calendar.setTime(mTodayDate);
+        } else calendar.setTime(new Date());
+
         mYear = calendar.get(Calendar.YEAR);
         mMonth = calendar.get(Calendar.MONTH);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
@@ -455,6 +471,21 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     void checkClick(boolean start, boolean end) {
         isClickStartDate = start;
         isClickEndDate = end;
+    }
+
+    /**
+     * Call getPeriodFromSql function.
+     *
+     * @param start     start date string
+     * @param end       end date string
+     */
+    void getPeriod(String start, String end) {
+        try {
+            getPeriodFromSql(mDateFormat.parse(start)
+                    , mDateFormat.parse(end));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }
 
