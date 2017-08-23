@@ -158,6 +158,9 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
         // Set x-axis
         XAxis xAxis = mChart.getXAxis();
+        xAxis.setDrawGridLines(false);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularityEnabled(true);
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -172,7 +175,6 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
                 return 0;
             }
         });
-
         // Customize the chart
         customChart();
 
