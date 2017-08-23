@@ -23,6 +23,7 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -87,9 +88,24 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     private boolean isClickStartDate;
     private boolean isClickEndDate;
 
+    // ArrayList for units and total units in each days
     private ArrayList<Integer> sumOfDayUnit;
     private ArrayList<Integer> sumOfDayTotalUnit;
+
+    // Save date in selected period
     private ArrayList<String> dates;
+
+    // Accent color for drawing unit chart
+    private String mColorAccentStr = "#FF5722";
+    private int mColorAccentInt = Color.parseColor(mColorAccentStr);
+
+    // Primary dark color for text
+    private String mColorDarkStr = "#616161";
+    private int mColorDarkInt = Color.parseColor(mColorDarkStr);
+
+    // Primary color for drawing total unit chart
+    private String mColorStr = "#9E9E9E";
+    private int mColorInt = Color.parseColor(mColorStr);
 
     /*ToDo:
         5. UI 커스터마이징 하기
@@ -139,10 +155,9 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
             unitEntries.add(new Entry(i, sumOfDayUnit.get(i)));
         }
 
+        // Units line data set
         LineDataSet unitDataSet = new LineDataSet(unitEntries, "Units");
-        unitDataSet.setColor(Color.BLACK);
-        unitDataSet.setCircleColor(Color.BLACK);
-        unitDataSet.setValueTextColor(Color.BLACK);
+        customLineDataSet(unitDataSet, mColorAccentInt);
 
         // Total unit data
         List<Entry> totalUnitEntries = new ArrayList<>();
@@ -151,10 +166,9 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
             totalUnitEntries.add(new Entry(i, sumOfDayTotalUnit.get(i)));
         }
 
+        // Total units line data set
         LineDataSet totalUnitDataSet = new LineDataSet(totalUnitEntries, "Total Units");
-        totalUnitDataSet.setColor(Color.BLACK);
-        totalUnitDataSet.setCircleColor(Color.BLACK);
-        totalUnitDataSet.setValueTextColor(Color.BLACK);
+        customLineDataSet(totalUnitDataSet, mColorDarkInt);
 
         // Set x-axis
         XAxis xAxis = mChart.getXAxis();
@@ -369,26 +383,51 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         } else {
             mPercent = 0;
         }
-        return mPercent + "% ( " + sumOfWholeUnits + " / " + sumOfWholeTotalUnits + ")";
+        return mPercent + " %  ( " + sumOfWholeUnits + " / " + sumOfWholeTotalUnits + ")";
+    }
+
+    /**
+     * Set design to line data set object
+     *
+     * @param lineDataSet lineDataSet object
+     */
+    void customLineDataSet(LineDataSet lineDataSet, int color) {
+        lineDataSet.setLineWidth(2f);
+        lineDataSet.setValueTextSize(0);
+        lineDataSet.setCircleRadius(6f);
+        lineDataSet.setCircleColorHole(Color.WHITE);
+        lineDataSet.setColor(color);
+        lineDataSet.setCircleColor(color);
+        lineDataSet.setHighLightColor(color);
+        lineDataSet.setValueTextColor(color);
     }
 
     /**
      * Customizing line chart
      */
     void customChart() {
+        mChart.setBorderColor(mColorAccentInt);
+        mChart.setBackgroundColor(Color.WHITE);
         mChart.setDrawGridBackground(false);
         mChart.getDescription().setEnabled(false);
         mChart.setDrawBorders(false);
 
+        // Y - right - Axis
         mChart.getAxisRight().setEnabled(false);
-        mChart.getAxisRight().setDrawAxisLine(false);
-        mChart.getAxisRight().setDrawGridLines(false);
 
+        // X - Axis
+        mChart.getXAxis().setTextSize(11f);
+        mChart.getXAxis().setTextColor(mColorAccentInt);
         mChart.getXAxis().setDrawAxisLine(false);
         mChart.getXAxis().setDrawGridLines(false);
 
+        // Y - left - Axis
+        mChart.getAxisLeft().setTextSize(14f);
         mChart.getAxisLeft().setGranularity(1f);
         mChart.getAxisLeft().setAxisMinimum(0);
+        mChart.getAxisLeft().setTextColor(mColorInt);
+        mChart.getAxisLeft().setAxisLineColor(mColorInt);
+        mChart.getAxisLeft().setDrawGridLines(false);
 
         // enable touch gestures
         mChart.setTouchEnabled(true);
@@ -402,12 +441,6 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
         // Show dynamic animation
         mChart.animateXY(2000, 2000);
-
-        Legend l = mChart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        l.setDrawInside(false);
     }
 
     /**

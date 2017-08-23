@@ -128,8 +128,8 @@
 
     <!-- fragment_statistics.xml -->
     <string name="start_to_end">-</string>
-    <string name="result_txt_view">Result: </string>
-    <string name="period_txt_view">Period: </string>
+    <string name="result_txt_view">RESULT : </string>
+    <string name="period_txt_view">PERIOD : </string>
 
     <!-- StatisticsFragment.java -->
     <string name="invalid_period1">The period is invalid</string>
