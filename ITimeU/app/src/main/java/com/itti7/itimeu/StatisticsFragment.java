@@ -166,10 +166,9 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                if(dates.size()>(int) value) {
+                if (dates.size() > (int) value) {
                     return dates.get((int) value).replace(".", "/").substring(5);
-                }
-                else return null;
+                } else return null;
             }
 
             @Override
@@ -238,11 +237,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
                 // -----------CUSTOM------------
                 else {
                     // initialize the chart
-                    mChart.setData(null);
-                    mChart.invalidate();
-                    mStatResultText.setText(null);
-                    mStatStartEditText.setText(null);
-                    mStatEndEditText.setText(null);
+                    initializeChart();
 
                     // Can touch edit text, but focus is disabled.
                     mStatStartEditText.setClickable(true);
@@ -446,12 +441,11 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
             // If the two edit text is not empty then get statistics in selected period.
             if (mCustomStart != null && mCustomEnd != null) {
                 // Check date: start date <= end date ?
-                if(checkDate(mCustomStart, mCustomEnd)){
+                if (checkDate(mCustomStart, mCustomEnd)) {
                     // Reinitialize
                     mCustomStart = null;
                     mCustomEnd = null;
-                    mStatStartEditText.setText(null);
-                    mStatEndEditText.setText(null);
+                    initializeChart();
                     return;
                 }
 
@@ -468,7 +462,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     /**
      * Show date picker dialog
      *
-     * @param dateStr      start or end date string
+     * @param dateStr start or end date string
      */
     @Nullable
     void showDateDialog(String dateStr) {
@@ -476,11 +470,10 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         Calendar calendar = Calendar.getInstance();
 
         try {
-            if(dateStr!=null) {
+            if (dateStr != null) {
                 Date date = mDateFormat.parse(dateStr);
                 calendar.setTime(date);
-            }
-            else {
+            } else {
                 calendar.setTime(new Date());
             }
         } catch (ParseException e) {
@@ -512,8 +505,8 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     /**
      * Call getPeriodFromSql function.
      *
-     * @param start     start date string
-     * @param end       end date string
+     * @param start start date string
+     * @param end   end date string
      */
     void getPeriod(String start, String end) {
         try {
@@ -527,21 +520,20 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     /**
      * Is the period invalid?
      *
-     * @param start     start date
-     * @param end       end date
-     * @return          if the period is invalid then return true, else return false.
+     * @param start start date
+     * @param end   end date
+     * @return if the period is invalid then return true, else return false.
      */
     boolean checkDate(String start, String end) {
         try {
             Date startDate = mDateFormat.parse(start);
             Date endDate = mDateFormat.parse(end);
 
-            if(startDate.compareTo(endDate) > 0) {
+            if (startDate.compareTo(endDate) > 0) {
                 Toast.makeText(mStatisticsContext, getString(R.string.invalid_period1),
                         Toast.LENGTH_SHORT).show();
                 return true;
-            }
-            else if(startDate.compareTo(endDate) == 0) {
+            } else if (startDate.compareTo(endDate) == 0) {
                 Toast.makeText(mStatisticsContext, getString(R.string.invalid_period2),
                         Toast.LENGTH_SHORT).show();
                 return true;
@@ -550,6 +542,14 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
             e.printStackTrace();
         }
         return false;
+    }
+
+    void initializeChart() {
+        mChart.setData(null);
+        mChart.invalidate();
+        mStatResultText.setText(null);
+        mStatStartEditText.setText(null);
+        mStatEndEditText.setText(null);
     }
 }
 
