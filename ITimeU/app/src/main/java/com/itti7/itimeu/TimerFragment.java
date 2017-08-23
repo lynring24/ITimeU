@@ -105,8 +105,11 @@ public class TimerFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
-                //store mCountTimer
-                mCountTimer++;
+                //update mCountTimer
+                if(mCountTimer==9)
+                    mCountTimer=1;
+                else
+                    mCountTimer++;
                 SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putInt("COUNT", mCountTimer);
