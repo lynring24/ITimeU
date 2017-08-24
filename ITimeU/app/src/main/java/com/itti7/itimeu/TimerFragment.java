@@ -42,6 +42,7 @@ public class TimerFragment extends Fragment {
     private int mId;
     private int mStatus;
     private int mUnit;
+    private int mTotalUnit;
     private String mName;
 
     public TimerFragment() {
@@ -162,6 +163,10 @@ public class TimerFragment extends Fragment {
 
     public void setmUnit(int mUnit) {
         this.mUnit = mUnit;
+    }
+
+    public void setmTotalUnit(int mTotalUnit) {
+        this.mTotalUnit = mTotalUnit;
     }
 
     public void setmName(String mName) {

@@ -89,6 +89,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     private String mItemName;
     private String mItemDate;
     private int mItemUnit;
+    private int mItemTotalUnit;
     private int mItemStatus;
 
     // Sum total units, and units respectively.
@@ -132,7 +133,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 // Get item's primary id
                 mItemID = (int) id;
                 String[] idStr = {String.valueOf(mItemID)};
-                Cursor cursor = db.rawQuery("SELECT name, unit, status, date FROM list WHERE "
+
+                Cursor cursor = db.rawQuery("SELECT name, unit, totalUnit, status, date FROM list WHERE "
                         + BaseColumns._ID + " = ?", idStr);
 
                 // Get current item's info
@@ -143,6 +145,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                             cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE));
                     mItemUnit = cursor.getInt(
                             cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT));
+                    mItemTotalUnit = cursor.getInt(
+                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT));
                     mItemStatus = cursor.getInt(
                             cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS));
 
@@ -484,7 +488,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             timerFragment.setmName(mItemName);
             timerFragment.setmStatus(mItemStatus);
             timerFragment.setmUnit(mItemUnit);
-
+            timerFragment.setmTotalUnit(mItemTotalUnit);
             timerFragment.nameUpdate();
         }
 
