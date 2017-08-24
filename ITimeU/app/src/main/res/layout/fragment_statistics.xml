@@ -4,16 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@android:color/white"
     tools:context=".StatisticsFragment">
 
     <Spinner
         android:id="@+id/stat_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="4dp"
         android:layout_weight="1"
         android:dropDownWidth="wrap_content"
         android:entries="@array/stat_type"
@@ -58,12 +58,12 @@
         android:layout_height="0dp"
         android:layout_weight="2"
         android:orientation="horizontal"
-        android:paddingBottom="20dp">
+        android:paddingRight="12dp">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:gravity="center_vertical"
             android:paddingLeft="20dp"
             android:paddingTop="4dp"
@@ -73,12 +73,12 @@
 
         <EditText
             android:id="@+id/start_edit_txt"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:clickable="false"
             android:focusable="false"
             android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:textAlignment="center"
             android:textSize="14sp" />
 
@@ -92,10 +92,10 @@
 
         <EditText
             android:id="@+id/end_edit_txt"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginRight="12dp"
-            android:layout_weight="2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:clickable="false"
             android:focusable="false"
             android:textAlignment="center"
