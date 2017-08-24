@@ -107,12 +107,10 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     private String mColorStr = "#9E9E9E";
     private int mColorInt = Color.parseColor(mColorStr);
 
-    /*ToDo:
-        5. UI 커스터마이징 하기
-     */
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             Bundle savedInstanceState) {
         // Set identifier
         mStatisticsView = inflater.inflate(R.layout.fragment_statistics, container, false);
         mStatisticsActivity = getActivity();
@@ -156,7 +154,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         }
 
         // Units line data set
-        LineDataSet unitDataSet = new LineDataSet(unitEntries, "Units");
+        LineDataSet unitDataSet = new LineDataSet(unitEntries, getString(R.string.unit_label));
         customLineDataSet(unitDataSet, mColorAccentInt);
 
         // Total unit data
@@ -167,7 +165,8 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         }
 
         // Total units line data set
-        LineDataSet totalUnitDataSet = new LineDataSet(totalUnitEntries, "Total Units");
+        LineDataSet totalUnitDataSet = new LineDataSet(totalUnitEntries,
+                getString(R.string.total_unit_label));
         customLineDataSet(totalUnitDataSet, mColorDarkInt);
 
         // Set x-axis
@@ -191,12 +190,16 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         // Customize the chart
         customChart();
 
+        // Consist line data sets
         LineData data = new LineData();
         data.addDataSet(unitDataSet);
         data.addDataSet(totalUnitDataSet);
 
+        // Set data to chart view
         mChart.setData(data);
         mChart.invalidate();
+
+
     }
 
     @Override
@@ -406,8 +409,13 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
      * Customizing line chart
      */
     void customChart() {
+        // Set padding
+        mChart.setExtraRightOffset(40f);
+        mChart.setExtraBottomOffset(20f);
+        // Set color
         mChart.setBorderColor(mColorAccentInt);
         mChart.setBackgroundColor(Color.WHITE);
+        // Set line design
         mChart.setDrawGridBackground(false);
         mChart.getDescription().setEnabled(false);
         mChart.setDrawBorders(false);
@@ -416,12 +424,14 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         mChart.getAxisRight().setEnabled(false);
 
         // X - Axis
+        mChart.getXAxis().setYOffset(15f);
         mChart.getXAxis().setTextSize(11f);
         mChart.getXAxis().setTextColor(mColorAccentInt);
         mChart.getXAxis().setDrawAxisLine(false);
         mChart.getXAxis().setDrawGridLines(false);
 
         // Y - left - Axis
+        mChart.getAxisLeft().setXOffset(15f);
         mChart.getAxisLeft().setTextSize(14f);
         mChart.getAxisLeft().setGranularity(1f);
         mChart.getAxisLeft().setAxisMinimum(0);
@@ -441,6 +451,15 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
         // Show dynamic animation
         mChart.animateXY(2000, 2000);
+
+        // Customizing Legend label design
+        Legend l = mChart.getLegend();
+        l.setXEntrySpace(20f);
+        l.setTextSize(11f);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setDrawInside(false);
     }
 
     /**
@@ -498,9 +517,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
      *
      * @param dateStr start or end date string
      */
-    @Nullable
-    void showDateDialog(String dateStr) {
-        // ToDo: end date should not early than start date, and (end date) - (start date) >=  7
+    void showDateDialog(@Nullable String dateStr) {
         Calendar calendar = Calendar.getInstance();
 
         try {
@@ -578,6 +595,9 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         return false;
     }
 
+    /**
+     * Initialize Chart view -> Empty chart
+     */
     void initializeChart() {
         mChart.setData(null);
         mChart.invalidate();

@@ -24,9 +24,6 @@
         android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
         android:layout_weight="12" />
 
     <LinearLayout
@@ -41,7 +38,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:paddingLeft="30dp"
+            android:paddingLeft="20dp"
             android:text="@string/result_txt_view"
             android:textColor="@android:color/black"
             android:textSize="16sp" />
@@ -52,7 +49,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical|right"
-            android:paddingRight="30dp"
+            android:paddingRight="20dp"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -68,7 +65,7 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:gravity="center_vertical"
-            android:paddingLeft="30dp"
+            android:paddingLeft="20dp"
             android:paddingTop="4dp"
             android:text="@string/period_txt_view"
             android:textColor="@android:color/black"
@@ -97,7 +94,7 @@
             android:id="@+id/end_edit_txt"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="12dp"
             android:layout_weight="2"
             android:clickable="false"
             android:focusable="false"
