@@ -106,7 +106,8 @@ public class TimerFragment extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
                 //update mCountTimer
-                if(mCountTimer==9)
+                //mCountTimner range 1..8
+                if(mCountTimer==8)
                     mCountTimer=1;
                 else
                     mCountTimer++;
@@ -115,11 +116,11 @@ public class TimerFragment extends Fragment {
                 editor.putInt("COUNT", mCountTimer);
                 editor.commit();
 
-                //store
+                //store mUnit and mStatus
                 mUnit++;
                 db = dbHelper.getWritableDatabase();
                 query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "', status = '";
-                if (mUnit == mTotalUnit) { // if the job is completed
+                if (completeCheck()) { // if the job is completed
                     //UPDATE DB  mStatus = 2
                     query = query + ItemContract.ItemEntry.STATUS_DONE + "' WHERE _ID = '" + mId + "';";
                 } else {
@@ -127,6 +128,7 @@ public class TimerFragment extends Fragment {
                     query = query + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
                 }
                 db.execSQL(query);
+                db.endTransaction(); //commit();
                 db.close();
 
                 mStateBttn.setText("start");
@@ -140,7 +142,7 @@ public class TimerFragment extends Fragment {
 
                 //if finished, set the button disable
                 //go back to list
-                if (mUnit == mTotalUnit) {
+                if (completeCheck()) {
                     mStateBttn.setEnabled(false);
                     // Change Fragment ListItemFragment -> TimerFragment
                     MainActivity mainActivity = (MainActivity) getActivity();
@@ -151,6 +153,7 @@ public class TimerFragment extends Fragment {
         getActivity().registerReceiver(mReceiver, intentfilter);
         return timerView;
     }
+    public boolean completeCheck(){return mUnit==mTotalUnit? true:false; }
 
     private void init() {
         intent = new Intent(getActivity(), TimerService.class);
