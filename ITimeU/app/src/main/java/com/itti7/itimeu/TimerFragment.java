@@ -105,8 +105,9 @@ public class TimerFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
-                //update mCountTimer
-                //mCountTimner range 1..8
+
+                // UPDATE mCountTimner range 1..8
+                // if Long Break Time has just finished, change to 1
                 if(mCountTimer==8)
                     mCountTimer=1;
                 else
@@ -116,37 +117,47 @@ public class TimerFragment extends Fragment {
                 editor.putInt("COUNT", mCountTimer);
                 editor.commit();
 
+                //change the button text to 'start'
+                mStateBttn.setText("start");
+
+                //set the ListItemText for the next session
+                if (mCountTimer % 2 == 1)
+                    mItemNameText.setText(mName);
+                else {
+                    mUnit++; //if the last session WAS work ,increase mUnit
+                    if (mCountTimer % 8 == 0)
+                        mItemNameText.setText("Long Break Time");
+                    else
+                        mItemNameText.setText("Break Time");
+                }
+
                 //store mUnit and mStatus
-                mUnit++;
+
                 db = dbHelper.getWritableDatabase();
                 query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "', status = '";
                 if (completeCheck()) { // if the job is completed
                     //UPDATE DB  mStatus = 2
                     query = query + ItemContract.ItemEntry.STATUS_DONE + "' WHERE _ID = '" + mId + "';";
+                    mStateBttn.setEnabled(false);
+                    // Change Fragment TimerFragment -> ListItemFragment ->
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    (mainActivity).getViewPager().setCurrentItem(0);
                 } else {
                     //UPDATE DB  mStatus = 0
                     query = query + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
                 }
+
                 db.execSQL(query);
-                db.endTransaction(); //commit();
+                //db.endTransaction(); //commit();
                 db.close();
-
-                mStateBttn.setText("start");
-
-                if (mCountTimer % 8 == 0)
-                    mItemNameText.setText("Long Break Time");
-                else if (mCountTimer % 2 == 1)
-                    mItemNameText.setText(mName);
-                else
-                    mItemNameText.setText("Break Time");
 
                 //if finished, set the button disable
                 //go back to list
                 if (completeCheck()) {
-                    mStateBttn.setEnabled(false);
-                    // Change Fragment ListItemFragment -> TimerFragment
+                    /*mStateBttn.setEnabled(false);
+                    // Change Fragment TimerFragment -> ListItemFragment ->
                     MainActivity mainActivity = (MainActivity) getActivity();
-                    (mainActivity).getViewPager().setCurrentItem(0);
+                    (mainActivity).getViewPager().setCurrentItem(0);*/
                 }
             }
         };
