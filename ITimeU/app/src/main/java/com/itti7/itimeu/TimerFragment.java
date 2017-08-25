@@ -108,10 +108,11 @@ public class TimerFragment extends Fragment {
 
                 // UPDATE mCountTimner range 1..8
                 // if Long Break Time has just finished, change to 1
-                if(mCountTimer==8)
-                    mCountTimer=1;
+                if (mCountTimer == 8)
+                    mCountTimer = 1;
                 else
                     mCountTimer++;
+
                 SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putInt("COUNT", mCountTimer);
@@ -135,13 +136,18 @@ public class TimerFragment extends Fragment {
 
                 db = dbHelper.getWritableDatabase();
                 query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "', status = '";
-                if (completeCheck()) { // if the job is completed
+                // if all the units are  completed
+                if (completeCheck()) {
                     //UPDATE DB  mStatus = 2
                     query = query + ItemContract.ItemEntry.STATUS_DONE + "' WHERE _ID = '" + mId + "';";
-                    mStateBttn.setEnabled(false);
-                    // Change Fragment TimerFragment -> ListItemFragment ->
-                    MainActivity mainActivity = (MainActivity) getActivity();
-                    (mainActivity).getViewPager().setCurrentItem(0);
+                    // if the last break of the list just end go back to the listFragment
+                    if (mCountTimer == mUnit * 2) {
+                        //if finished, set the button disable
+                        mStateBttn.setEnabled(false);
+                        // Change Fragment TimerFragment -> ListItemFragment ->
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        (mainActivity).getViewPager().setCurrentItem(0);
+                    }
                 } else {
                     //UPDATE DB  mStatus = 0
                     query = query + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
@@ -151,20 +157,17 @@ public class TimerFragment extends Fragment {
                 //db.endTransaction(); //commit();
                 db.close();
 
-                //if finished, set the button disable
-                //go back to list
-                if (completeCheck()) {
-                    /*mStateBttn.setEnabled(false);
-                    // Change Fragment TimerFragment -> ListItemFragment ->
-                    MainActivity mainActivity = (MainActivity) getActivity();
-                    (mainActivity).getViewPager().setCurrentItem(0);*/
-                }
+
+
             }
         };
         getActivity().registerReceiver(mReceiver, intentfilter);
         return timerView;
     }
-    public boolean completeCheck(){return mUnit==mTotalUnit? true:false; }
+
+    public boolean completeCheck() {
+        return mUnit == mTotalUnit ? true : false;
+    }
 
     private void init() {
         intent = new Intent(getActivity(), TimerService.class);
