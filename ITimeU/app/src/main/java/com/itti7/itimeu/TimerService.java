@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -120,7 +121,7 @@ public class TimerService extends Service {
         // Set the info for the views that show in the notification panel.
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher))
                         .setContentTitle(getText(R.string.app_name))
                         .setContentText(text);
         mBuilder.setContentIntent(contentIntent);
