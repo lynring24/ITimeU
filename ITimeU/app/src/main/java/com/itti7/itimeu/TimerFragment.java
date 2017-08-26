@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -158,7 +159,6 @@ public class TimerFragment extends Fragment {
                 db.close();
 
 
-
             }
         };
         getActivity().registerReceiver(mReceiver, intentfilter);
@@ -272,13 +272,13 @@ public class TimerFragment extends Fragment {
             @Override
             public void run() {
                 while (true) {
-
                     try {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 mTimeText.setText(mTimerService.getTime());
                             }
+
                         });
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -312,21 +312,23 @@ public class TimerFragment extends Fragment {
     }
 
     @Override
+    public void onStop(){
+        super.onStop();
+        getActivity().unbindService(conn);
+        mBound = false;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mBound) {
-            getActivity().unbindService(conn);
-            mBound = false;
-        }
+        getActivity().unbindService(conn);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (mBound) {
-            getActivity().unregisterReceiver(mReceiver);
-            mBound = false;
-        }
+        getActivity().unregisterReceiver(mReceiver);
+        mBound = false;
     }
 
     /**

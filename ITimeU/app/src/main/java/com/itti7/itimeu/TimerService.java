@@ -65,8 +65,9 @@ public class TimerService extends Service {
             ///////////////////////////////////////////////// /*  Notification HERE*///////////////////////////////////////////////////////////////////////////////////////////////
         }
     };
+
     public void startTimer(int time) {
-        runTime=time;
+        runTime = time;
         timerSwitch = true;
         handler.post(runnable);
     }
@@ -88,7 +89,7 @@ public class TimerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("Timer", "------------------------------------------------------->Timer onStartCommand");
         runTime = intent.getIntExtra("RUNTIME", 1);
-        Log.i("RUNTIME", "------------------------------------------------------->RUNTIME : "+runTime);
+        Log.i("RUNTIME", "------------------------------------------------------->RUNTIME : " + runTime);
 //        timerSwitch = true;
 //        handler.post(runnable);
         return super.onStartCommand(intent, flags, startId);
