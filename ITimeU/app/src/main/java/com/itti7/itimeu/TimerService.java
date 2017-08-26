@@ -1,6 +1,9 @@
 package com.itti7.itimeu;
 
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -15,7 +18,7 @@ public class TimerService extends Service {
     private int runTime;
     private boolean timerSwitch = false;
     private CountDownTimer timer;
-
+    private NotificationManager mNM;
 
     public TimerService() {
 
@@ -33,7 +36,7 @@ public class TimerService extends Service {
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            Log.i("Timer", "------------------------------------------------------->Timer run()");
+            //Log.i("Timer", "------------------------------------------------------->Timer run()");
             timer = new CountDownTimer(runTime * 1000 * 60, 1000) { // minute
                 public void onTick(long millisUntilFinished) {
                     if (timerSwitch) {
@@ -62,36 +65,38 @@ public class TimerService extends Service {
                 }
             };
             timer.start();
-            ///////////////////////////////////////////////// /*  Notification HERE*///////////////////////////////////////////////////////////////////////////////////////////////
         }
     };
 
     public void startTimer(int time) {
         runTime = time;
         timerSwitch = true;
+        showNotification(mLeftTime);
         handler.post(runnable);
     }
 
     public void stopTimer() {
-        Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
+        //Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
         timer.cancel();
+        mNM.cancelAll();
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.i("Timer", "------------------------------------------------------->TimeronUnbind");
+        //Log.i("Timer", "------------------------------------------------------->TimeronUnbind");
         stopTimer();
         return true;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("Timer", "------------------------------------------------------->Timer onStartCommand");
+        //Log.i("Timer", "------------------------------------------------------->Timer onStartCommand");
         runTime = intent.getIntExtra("RUNTIME", 1);
-        Log.i("RUNTIME", "------------------------------------------------------->RUNTIME : " + runTime);
+       // Log.i("RUNTIME", "------------------------------------------------------->RUNTIME : " + runTime);
 //        timerSwitch = true;
 //        handler.post(runnable);
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -103,9 +108,27 @@ public class TimerService extends Service {
 
     @Override
     public void onCreate() {
+        mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         super.onCreate();
     }
+    private void showNotification(CharSequence text) {
+        // The PendingIntent to launch our activity if the user selects this notification
+        PendingIntent contentIntent = PendingIntent.getService(this, 0,
+                new Intent(this, TimerFragment.class), 0);
 
+        // Set the info for the views that show in the notification panel.
+        Notification notification = new Notification.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher_round)  // the status icon
+                .setWhen(System.currentTimeMillis())  // the time stamp
+                .setContentTitle(getText(R.string.app_name))  // the label of the entry
+                .setContentText(text)  // the contents of the entry
+                .setContentIntent(contentIntent)  // The intent to send when the entry is clicked
+                .build();
+
+        // Send the notification.
+        // We use a layout id because it is a unique number.  We use it later to cancel.
+        mNM.notify(0, notification);
+    }
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
@@ -114,7 +137,7 @@ public class TimerService extends Service {
 
     public class MyBinder extends Binder {
         public TimerService getService() {
-            Log.i("Timer", "------------------------------------------------------->Timer getService()");
+            //Log.i("Timer", "------------------------------------------------------->Timer getService()");
             return TimerService.this;
         }
     }
