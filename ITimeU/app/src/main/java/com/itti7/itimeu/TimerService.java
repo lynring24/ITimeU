@@ -10,6 +10,7 @@ import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class TimerService extends Service {
@@ -56,7 +57,7 @@ public class TimerService extends Service {
                     if (timerSwitch) {         //send only if it has finished
                         mLeftTime = "00:00";
                         /////////////////////////////////////////////////ALARM N VIBRATION//////////////////////////////////////////////////////////////////////////////////////////////
-                        stopTimer();
+                        timerSwitch = false;
                         Log.i("Timer", "------------------------------------------------------->Timer start send Intent");
                         Intent sendIntent = new Intent(getPackageName() + "SEND_BROAD_CAST");  // notice the end of Timer to Fragment
                         sendBroadcast(sendIntent);
@@ -78,8 +79,7 @@ public class TimerService extends Service {
     public void stopTimer() {
         //Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
-        timer.cancel();
-        mNM.cancelAll();
+        handler.removeMessages(0);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class TimerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         //Log.i("Timer", "------------------------------------------------------->Timer onStartCommand");
         runTime = intent.getIntExtra("RUNTIME", 1);
-       // Log.i("RUNTIME", "------------------------------------------------------->RUNTIME : " + runTime);
+        // Log.i("RUNTIME", "------------------------------------------------------->RUNTIME : " + runTime);
 //        timerSwitch = true;
 //        handler.post(runnable);
 
@@ -111,24 +111,24 @@ public class TimerService extends Service {
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         super.onCreate();
     }
+
     private void showNotification(CharSequence text) {
         // The PendingIntent to launch our activity if the user selects this notification
         PendingIntent contentIntent = PendingIntent.getService(this, 0,
                 new Intent(this, TimerFragment.class), 0);
 
         // Set the info for the views that show in the notification panel.
-        Notification notification = new Notification.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher_round)  // the status icon
-                .setWhen(System.currentTimeMillis())  // the time stamp
-                .setContentTitle(getText(R.string.app_name))  // the label of the entry
-                .setContentText(text)  // the contents of the entry
-                .setContentIntent(contentIntent)  // The intent to send when the entry is clicked
-                .build();
-
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(getText(R.string.app_name))
+                        .setContentText(text);
+        mBuilder.setContentIntent(contentIntent);
         // Send the notification.
         // We use a layout id because it is a unique number.  We use it later to cancel.
-        mNM.notify(0, notification);
+        mNM.notify(0, mBuilder.build());
     }
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
