@@ -234,7 +234,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         super.onResume();
         setAchievementRate();
         // Update List Date
-        getLoaderManager().restartLoader(0, null, this);
+        listUiUpdateFromDb();
     }
 
     /**
@@ -401,7 +401,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
         setAchievementRate();
         // Update List Date
-        getLoaderManager().restartLoader(0, null, this);
+        onResume();
     }
 
     /**
@@ -495,5 +495,15 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         // Change Fragment ListItemFragment -> TimerFragment
         (mainActivity).getViewPager().setCurrentItem(1);
         return false;
+    }
+
+    /**
+     * update UI in list view from database.
+     */
+    public void listUiUpdateFromDb() {
+        getLoaderManager().restartLoader(0, null, this);
+
+        // test code
+        Toast.makeText(getContext(), "Update list UI" , Toast.LENGTH_SHORT).show();
     }
 }
