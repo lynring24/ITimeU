@@ -57,8 +57,8 @@
     <string name="delete_item_success">Success to delete</string>
 
     <!-- activity_editor.xml -->
-    <string name="input_name_hint">name</string>
-    <string name="input_detail_hint">detail</string>
+    <string name="input_name_hint">name (essential)</string>
+    <string name="input_detail_hint">detail (optional)</string>
     <string name="unit_txt_view_editor">pomodoro</string>
     <string name="default_total_unit_editor">1</string>
     <string name="ok_btn">OK</string>
