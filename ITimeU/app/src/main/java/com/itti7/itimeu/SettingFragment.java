@@ -1,11 +1,21 @@
 package com.itti7.itimeu;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.SeekBar;
 
-public class SettingActivity extends AppCompatActivity {
+public class SettingFragment extends Fragment {
+
+    private View mSettingView;
+    private Activity mSettingActivity;
+    private Context mSettingContext;
 
     private SeekBar mworksb, mbreaksb, mlongBreaksb, msessionNumsb; //시크바
     private static EditText mworket, mbreaket, mlongBreaket, msessionNumet; //에디트텍스트 뷰
@@ -26,21 +36,25 @@ public class SettingActivity extends AppCompatActivity {
         return msessionNumet;
     }
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             Bundle savedInstanceState) {
+        mSettingView = inflater.inflate(R.layout.fragment_setting, container, false);
+        mSettingActivity = getActivity();
+        mSettingContext = mSettingView.getContext();
 
-        mworksb = (SeekBar) findViewById(R.id.work_seek);
-        mbreaksb = (SeekBar) findViewById(R.id.break_seek);
-        mlongBreaksb = (SeekBar) findViewById(R.id.long_break_seek);
-        msessionNumsb = (SeekBar) findViewById(R.id.session_number_seek);
+
+        mworksb = mSettingView.findViewById(R.id.work_seek);
+        mbreaksb = mSettingView.findViewById(R.id.break_seek);
+        mlongBreaksb = mSettingView.findViewById(R.id.long_break_seek);
+        msessionNumsb = mSettingView.findViewById(R.id.session_number_seek);
         /////////각 시크바
 
-        mworket = (EditText) findViewById(R.id.work_time);
-        mbreaket = (EditText) findViewById(R.id.break_time);
-        mlongBreaket = (EditText) findViewById(R.id.long_break_time);
-        msessionNumet = (EditText) findViewById(R.id.session_number);
+        mworket = mSettingView.findViewById(R.id.work_time);
+        mbreaket = mSettingView.findViewById(R.id.break_time);
+        mlongBreaket = mSettingView.findViewById(R.id.long_break_time);
+        msessionNumet = mSettingView.findViewById(R.id.session_number);
         ///////각 에디트텍스트
 
         mworksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -86,6 +100,13 @@ public class SettingActivity extends AppCompatActivity {
                 doAfterTrack(seekBar);
             }
         }); //세션 수 시크바 리스너
+
+        return mSettingView;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     public void printSelected(SeekBar bar, int value) { // 이용자가 바를 누르고 있을 때의 숫자 출력
@@ -117,6 +138,5 @@ public class SettingActivity extends AppCompatActivity {
             msessionNumet.setText(msessionNumet.getText());
         }
     }
-
 
 }
