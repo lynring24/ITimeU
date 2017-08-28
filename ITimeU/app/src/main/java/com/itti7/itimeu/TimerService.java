@@ -122,6 +122,7 @@ public class TimerService extends Service {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.mipmap.ic_launcher)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                         .setContentTitle(getText(R.string.app_name))
                         .setContentText(text);
         mBuilder.setContentIntent(contentIntent);
