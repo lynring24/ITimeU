@@ -151,6 +151,9 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         // When click task item, then check item's information.
         getTaskItemInfoAndCheck();
 
+        // get List tag and set to ListTag
+        ((MainActivity) getActivity()).setListTag(getTag());
+
         // show today's date
         mCurrentListDate = new Date();
         mCurrentListDateStr = getStringFromDate(mCurrentListDate);

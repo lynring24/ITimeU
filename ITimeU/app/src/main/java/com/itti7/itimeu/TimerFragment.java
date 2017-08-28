@@ -178,7 +178,10 @@ public class TimerFragment extends Fragment {
                 db.close();
 
                 /*List Item unit count update*/
-
+                MainActivity mainActivity = (MainActivity) getActivity();
+                String listTag = mainActivity.getListTag();
+                ListItemFragment listItemFragment = (ListItemFragment)mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
+                listItemFragment.listUiUpdateFromDb();
             }
         };
         getActivity().registerReceiver(mReceiver, intentfilter);
@@ -241,7 +244,6 @@ public class TimerFragment extends Fragment {
                     query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "' WHERE _ID = '" + mId + "';";
                     db.execSQL(query);
                     db.close();
-
                     startTimer();
                 }
             } else {

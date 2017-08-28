@@ -11,9 +11,9 @@ public class MainActivity extends AppCompatActivity {
     // ViewPager for movement between tabs
     ViewPager viewPager;
 
-    // Tag of TimerFragment
+    // Tags of Fragments
     String mTimerTag;
-
+    String mListTag;
     /** Getter/Setter of TimerTag */
     public void setTimerTag(String timerTag) {
         mTimerTag = timerTag;
@@ -21,6 +21,18 @@ public class MainActivity extends AppCompatActivity {
 
     public String getTimerTag(){
         return mTimerTag;
+    }
+    /** Getter/Setter of ListTag */
+    public void setListTag(String listTag) {
+        mListTag = listTag;
+    }
+
+    public String getListTag(){
+        return mListTag;
+    }
+
+    public void callUiUpdate(){
+
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
