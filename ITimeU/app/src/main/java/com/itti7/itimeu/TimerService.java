@@ -121,7 +121,7 @@ public class TimerService extends Service {
         // Set the info for the views that show in the notification panel.
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher))
+                        .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle(getText(R.string.app_name))
                         .setContentText(text);
         mBuilder.setContentIntent(contentIntent);
