@@ -62,7 +62,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     ListView mListView;
 
     // Show date text
-    Button mDateButton;
+    TextView mDateTextView;
 
     // Simple date format
     public static final String DATE_FORMAT = "yyyy.MM.dd";
@@ -160,13 +160,13 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         // show today's date
         mListDate = new Date();
         mDate = getDate(mListDate);
-        mDateButton = mListItemView.findViewById(R.id.date_btn);
-        mDateButton.setText(mDate);
+        mDateTextView = mListItemView.findViewById(R.id.date_btn);
+        mDateTextView.setText(mDate);
 
         setAchievementRate();
 
         // If click date TextView
-        mDateButton.setOnClickListener(new View.OnClickListener() {
+        mDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Date date;
@@ -396,7 +396,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         calendar.set(mYear, mMonth, mDay);
         mListDate = calendar.getTime();
         mDate = getDate(mListDate);
-        mDateButton.setText(mDate);
+        mDateTextView.setText(mDate);
 
         setAchievementRate();
         // Update List Date
