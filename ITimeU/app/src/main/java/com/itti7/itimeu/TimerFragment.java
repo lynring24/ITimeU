@@ -77,6 +77,25 @@ public class TimerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View timerView = inflater.inflate(R.layout.fragment_timer, container, false);
 
+        /*TimerService connection*/
+        intent = new Intent(getActivity(), TimerService.class);
+        conn = new ServiceConnection() {
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mTimerService = null;
+                mBound = false;
+            }
+
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onServiceConnected()");
+                mTimerService = ((TimerService.MyBinder) service).getService();
+                mBound = true;
+            }
+        };
+        /*TimerService Intent Listener*/
+        getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
+
         // get Timer tag and set to TimerTag
         String timerTag = getTag();
         ((MainActivity) getActivity()).setTimerTag(timerTag);
@@ -158,6 +177,7 @@ public class TimerFragment extends Fragment {
                 //db.endTransaction(); //commit();
                 db.close();
 
+                /*List Item unit count update*/
 
             }
         };
@@ -170,7 +190,7 @@ public class TimerFragment extends Fragment {
     }
 
     private void init() {
-        intent = new Intent(getActivity(), TimerService.class);
+   /*     intent = new Intent(getActivity(), TimerService.class);*/
         /*init timer count */
         mCountTimer = 1;
         //work time  inflater
@@ -182,7 +202,7 @@ public class TimerFragment extends Fragment {
         mWorkTime = "1";
         mBreakTime = "1";
         mLongBreakTime = "1";
-        /*TimerService connection*/
+/*        *//*TimerService connection*//*
         conn = new ServiceConnection() {
             @Override
             public void onServiceDisconnected(ComponentName name) {
@@ -197,8 +217,8 @@ public class TimerFragment extends Fragment {
                 mBound = true;
             }
         };
-        /*TimerService Intent Listener*/
-        getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
+        *//*TimerService Intent Listener*//*
+        getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);*/
 
         /*init shared prefernce*/
         SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
@@ -271,7 +291,7 @@ public class TimerFragment extends Fragment {
         mReadThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
+                while (mBound) {
                     try {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
@@ -321,14 +341,19 @@ public class TimerFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getActivity().unbindService(conn);
+        if(mBound) {
+            getActivity().unbindService(conn);
+            mBound = false;
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        if(mBound){
         getActivity().unregisterReceiver(mReceiver);
         mBound = false;
+        }
     }
 
     /**
