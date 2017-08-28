@@ -64,7 +64,7 @@
     <string name="ok_btn">OK</string>
     <string name="editor_date_txt_view">date</string>
 
-    <!-- list_item.xml -->
+    <!-- item.xml -->
     <string name="unit_divider">/</string>
 
     <!-- activity_list.xml -->
@@ -83,7 +83,7 @@
     <string name="about_version">Version</string>
     <string name="about_licenses">Open licenses</string>
     <string name="about_feedback">Feedback</string>
-
+    
     <!-- activity_licenses.xml -->
     <string name="back">Back</string>
     <string name="datepicker_name">Material Date Time Picker</string>
