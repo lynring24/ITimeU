@@ -132,8 +132,21 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         // Find the ListView which will be populated with the item data
         mTaskItemListView = mListItemView.findViewById(R.id.item_list_view);
 
-        // When task list view is empty, than show this view
+////<<<<<<< HEAD
+//        // When task list view is empty, than show this view
         setEmptyView();
+////=======
+//        // When click item, access to the list table in DB
+//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+//                // Get item's primary id
+//                mItemID = (int) id;
+//                String[] idStr = {String.valueOf(mItemID)};
+//
+//                Cursor cursor = db.rawQuery("SELECT name, unit, totalUnit, status, date FROM list WHERE "
+//                        + BaseColumns._ID + " = ?", idStr);
+////>>>>>>> statistics
 
         // When click task item, then check item's information.
         getTaskItemInfoAndCheck();
@@ -404,7 +417,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                String rate = animation.getAnimatedValue().toString()+" %";
+                String rate = animation.getAnimatedValue().toString() + " %";
                 mAchievementTextView.setText(rate);
             }
         });
@@ -456,7 +469,6 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             timerFragment.setmStatus(mItemStatus);
             timerFragment.setmUnit(mItemUnit);
             timerFragment.setmTotalUnit(mItemTotalUnit);
-
             timerFragment.nameUpdate();
         }
 
@@ -624,7 +636,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
     /**
      * When click add floating action button, then start EditorActivity.
-     * @param addFab    floating action button for add task item.
+     *
+     * @param addFab floating action button for add task item.
      */
     void clickAddFab(FloatingActionButton addFab) {
         addFab.setOnClickListener(new View.OnClickListener() {
