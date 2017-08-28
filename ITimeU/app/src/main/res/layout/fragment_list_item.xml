@@ -1,8 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.itti7.itimeu.ListItemFragment">
 
     <GridLayout
@@ -25,20 +25,42 @@
             android:textColor="@color/colorPrimary"
             android:textSize="16sp" />
 
-        <Button
-            android:id="@+id/date_btn"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@color/colorAccent"
-            android:drawableLeft="@drawable/ic_date_left"
-            android:drawableRight="@drawable/ic_date_right"
-            android:drawablePadding="10dp"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp"
-            android:textAllCaps="true"
-            android:textColor="#ffffff"
-            android:textSize="16sp" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/date_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/colorAccent"
+                android:drawablePadding="10dp"
+                android:padding="12dp"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+
+            <ImageButton
+                android:id="@+id/listitem_previous_date_imgbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/listitem_previous_date_description"
+                android:paddingRight="12dp"
+                android:src="@drawable/ic_date_left" />
+
+            <ImageButton
+                android:id="@+id/listitem_next_date_imgbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/listitem_next_date_description"
+                android:paddingLeft="12dp"
+                android:src="@drawable/ic_date_right" />
+        </FrameLayout>
     </GridLayout>
 
     <ListView
@@ -57,8 +79,8 @@
         android:id="@+id/empty_relative_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="140dp"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:paddingTop="140dp">
 
         <ImageView
             android:id="@+id/empty_shelter_image"
@@ -95,8 +117,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
         android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
         android:src="@drawable/ic_add_white"
         app:fabSize="normal" />
 
