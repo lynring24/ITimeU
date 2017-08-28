@@ -57,7 +57,7 @@
     <string name="delete_item_success">Success to delete</string>
 
     <!-- Period hint -->
-    <string name="statistics_startdate_hint">select an start date</string>
+    <string name="statistics_startdate_hint">select a start date</string>
     <string name="statistics_enddate_hint">select an end date</string>
 
     <!-- activity_editor.xml -->
