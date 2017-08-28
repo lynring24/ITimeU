@@ -1,5 +1,6 @@
 package com.itti7.itimeu;
 
+import android.animation.ValueAnimator;
 import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -22,7 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ import com.itti7.itimeu.data.ItemContract;
 import com.itti7.itimeu.data.ItemDbHelper;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,23 +60,29 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     // TextView for showing detail for achievement rate
     TextView mDetailRateTextView;
 
-    // ListView
-    ListView mListView;
+    // List View
+    ListView mTaskItemListView;
+
+    // Empty view
+    View mEmptyView;
 
     // Show date text
-    Button mDateButton;
+    TextView mDateTextView;
+
+    // date image button
+    ImageButton mPreviousDateImgBtn, mNextDateImgBtn;
 
     // Simple date format
     public static final String DATE_FORMAT = "yyyy.MM.dd";
 
     // List's date
-    private Date mListDate;
+    private Date mCurrentListDate;
 
     // Date convert to String
-    private String mDate;
+    private String mCurrentListDateStr;
 
     // Today's date
-    private String mToday = getDate(new Date());
+    private String mToday = getStringFromDate(new Date());
 
     /**
      * Adapter for the ListView
@@ -94,9 +102,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
     // Sum total units, and units respectively.
     private int mSumOfTotalUnits, mSumOfUnits;
-    private double mPercent;
+    private int mPercent;
 
-    private String mPercentStr;
     private String mDetail;
 
     public ListItemFragment() {
@@ -116,94 +123,41 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         dbHelper = new ItemDbHelper(mListItemContext);
         db = dbHelper.getReadableDatabase();
 
+        // Find previous / next date image button
+        mPreviousDateImgBtn = mListItemView.findViewById(R.id.listitem_previous_date_imgbtn);
+        mNextDateImgBtn = mListItemView.findViewById(R.id.listitem_next_date_imgbtn);
+
+        loadingPreviousOrNextDateList();
+
         // Find the ListView which will be populated with the item data
-        mListView = mListItemView.findViewById(R.id.item_list_view);
+        mTaskItemListView = mListItemView.findViewById(R.id.item_list_view);
 
-        // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
-        View emptyView = mListItemView.findViewById(R.id.empty_relative_view);
-        mListView.setEmptyView(emptyView);
+        // When task list view is empty, than show this view
+        setEmptyView();
 
-        mCursorAdapter = new ItemCursorAdapter(mListItemContext, null);
-        mListView.setAdapter(mCursorAdapter);
+        // When click task item, then check item's information.
+        getTaskItemInfoAndCheck();
 
-        // When click item, access to the list table in DB
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                // Get item's primary id
-                mItemID = (int) id;
-                String[] idStr = {String.valueOf(mItemID)};
-                Cursor cursor = db.rawQuery("SELECT name, unit, totalUnit, status, date FROM list WHERE "
-                        + BaseColumns._ID + " = ?", idStr);
-
-                // Get current item's info
-                if (cursor.moveToFirst()) {
-                    mItemName = cursor.getString(
-                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME));
-                    mItemDate = cursor.getString(
-                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE));
-                    mItemUnit = cursor.getInt(
-                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT));
-                    mItemTotalUnit = cursor.getInt(
-                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT));
-                    mItemStatus = cursor.getInt(
-                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS));
-
-                    // Check selected item's date is today
-                    if(checkDate()) return;
-
-                    // Check selected item's status
-                    if(checkStatus()) return;
-                }
-            }
-        });
         // show today's date
-        mListDate = new Date();
-        mDate = getDate(mListDate);
-        mDateButton = mListItemView.findViewById(R.id.date_btn);
-        mDateButton.setText(mDate);
+        mCurrentListDate = new Date();
+        mCurrentListDateStr = getStringFromDate(mCurrentListDate);
+        mDateTextView = mListItemView.findViewById(R.id.date_btn);
+        mDateTextView.setText(mCurrentListDateStr);
 
+        // set achievement rate in current date
         setAchievementRate();
 
         // If click date TextView
-        mDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Date date;
-                if (mDate != null) {
-                    date = mListDate;
-                } else {
-                    date = new Date();
-                }
-
-                // Setting calender -> list's date
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                mYear = calendar.get(Calendar.YEAR);
-                mMonth = calendar.get(Calendar.MONTH);
-                mDay = calendar.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog datePickerDialog
-                        = DatePickerDialog.newInstance(ListItemFragment.this, mYear, mMonth, mDay);
-                datePickerDialog.show(mListItemActivity.getFragmentManager(), "DateFragment");
-            }
-        });
+        showDialogForSelectDate();
 
         //when user click add FloatingActionButton for add a item in the list.
         final FloatingActionButton addFab
                 = mListItemView.findViewById(R.id.add_fab_btn);
-        addFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mListItemContext, EditorActivity.class);
-                intent.putExtra("date", mDate);
-                startActivity(intent);
-            }
-        });
+        clickAddFab(addFab);
 
         // displayListByDate();
         // Touch and hold the item to display the context menu (modify/delete).
-        registerForContextMenu(mListView);
+        registerForContextMenu(mTaskItemListView);
 
         //Kick off the loader
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
@@ -232,9 +186,6 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     @Override
     public void onResume() {
         super.onResume();
-        setAchievementRate();
-        // Update List Date
-        getLoaderManager().restartLoader(0, null, this);
     }
 
     /**
@@ -287,7 +238,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT,
                 ItemContract.ItemEntry.COLUMN_ITEM_UNIT};
 
-        String[] date = {mDate};
+        String[] date = {mCurrentListDateStr};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(mListItemContext,   // Parent activity context
@@ -310,7 +261,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Delete" button, so delete the item.
                 deleteItem(index);
-                onResume();
+                // Update List Date
+                listUiUpdateFromDb();
             }
         });
         builder.setNegativeButton(getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
@@ -370,12 +322,21 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     }
 
     /**
-     * It is a function of today's date.
+     * Date -> String
      *
-     * @return Return the current month and day.
+     * @return Date type date
      */
-    public String getDate(Date date) {
+    public String getStringFromDate(Date date) {
         return new SimpleDateFormat(DATE_FORMAT, Locale.KOREA).format(date);
+    }
+
+    /**
+     * String -> Date
+     *
+     * @return String type date
+     */
+    public Date getDateFromString(String date) throws ParseException {
+        return new SimpleDateFormat(DATE_FORMAT, Locale.KOREA).parse(date);
     }
 
     /**
@@ -395,13 +356,12 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
         // Set Date in List
         calendar.set(mYear, mMonth, mDay);
-        mListDate = calendar.getTime();
-        mDate = getDate(mListDate);
-        mDateButton.setText(mDate);
+        mCurrentListDate = calendar.getTime();
+        mCurrentListDateStr = getStringFromDate(mCurrentListDate);
+        mDateTextView.setText(mCurrentListDateStr);
 
-        setAchievementRate();
         // Update List Date
-        getLoaderManager().restartLoader(0, null, this);
+        listUiUpdateFromDb();
     }
 
     /**
@@ -410,7 +370,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     void calculateAchievementRate() {
         mSumOfTotalUnits = 0;
         mSumOfUnits = 0;
-        String[] date = {mDate};
+        String[] date = {mCurrentListDateStr};
         Cursor cursor = db.rawQuery("SELECT totalUnit, unit FROM list WHERE date = ?", date);
 
         if (cursor.moveToFirst()) {
@@ -420,14 +380,13 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             } while (cursor.moveToNext());
 
             if (mSumOfTotalUnits != 0) {
-                mPercent = Math.round(((double) mSumOfUnits / mSumOfTotalUnits) * 100);
+                mPercent = Math.round(((float) mSumOfUnits / mSumOfTotalUnits) * 100);
             } else {
                 mPercent = 0;
             }
         }
         cursor.close();
 
-        mPercentStr = "  " + mPercent + " %";
         mDetail = "( " + mSumOfUnits + " / " + mSumOfTotalUnits + " )";
     }
 
@@ -438,7 +397,18 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         calculateAchievementRate();
         // Find the TextView which will show sum of units / sum of total units in list's date
         mAchievementTextView = mListItemView.findViewById(R.id.achievement_rate_txt_view);
-        mAchievementTextView.setText(mPercentStr);
+
+        // Show increasing percent animation
+        ValueAnimator animator = ValueAnimator.ofInt(0, mPercent);
+        animator.setDuration(1000);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                String rate = animation.getAnimatedValue().toString()+" %";
+                mAchievementTextView.setText(rate);
+            }
+        });
+        animator.start();
         mDetailRateTextView = mListItemView.findViewById(R.id.rate_detail_txt_view);
         mDetailRateTextView.setText(mDetail);
     }
@@ -446,36 +416,34 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     /**
      * Check item's date
      *
-     * @return when item's date == today then return false, but date != today then return true.
+     * @return when item's date == today then return true, but date != today then return false.
      */
     boolean checkDate() {
-        if(!mItemDate.equals(mToday)) {
+        if (mItemDate.equals(mToday)) {
+            return true;
+        } else {
             Toast.makeText(mListItemContext, R.string.not_today, Toast.LENGTH_SHORT)
                     .show();
-            return true;
+            return false;
         }
-        return false;
     }
 
     /**
      * Check item's status.
-     *
-     * @return
-     * status == To do then set item's info to Timer and change view List to Timer, return false.
-     * status == Do then just change view List to Timer, return false.
-     * status == Done then show toast message and return true.
+     * <p>
+     * * status == To do then set item's info to Timer and change view List to Timer.
+     * status == Do then just change view List to Timer.
+     * status == Done then show toast message.
      */
-    boolean checkStatus() {
+    void checkStatus() {
         // Get MainActivity
         MainActivity mainActivity = (MainActivity) getActivity();
 
         // If selected item's status == Done, then stop action
-        if(mItemStatus == ItemContract.ItemEntry.STATUS_DONE){
+        if (mItemStatus == ItemContract.ItemEntry.STATUS_DONE) {
             Toast.makeText(mListItemContext, R.string.already_done, Toast.LENGTH_SHORT)
                     .show();
-            return true;
-        }
-        else if(mItemStatus == ItemContract.ItemEntry.STATUS_TODO) {
+        } else if (mItemStatus == ItemContract.ItemEntry.STATUS_TODO) {
             // Set item name text to job_txt_view in TimerFragment
             String tabOfTimerFragment = mainActivity.getTimerTag();
             TimerFragment timerFragment = (TimerFragment) getActivity()
@@ -494,6 +462,178 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
         // Change Fragment ListItemFragment -> TimerFragment
         (mainActivity).getViewPager().setCurrentItem(1);
-        return false;
+    }
+
+    /**
+     * update UI in list view from database.
+     */
+    public void listUiUpdateFromDb() {
+        getLoaderManager().restartLoader(0, null, this);
+        setAchievementRate();
+        // test code
+        Toast.makeText(getContext(), "Update list UI", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Get previous date from current date in list fragment view
+     *
+     * @param simpleCurrentDate The date selected by user in list view
+     * @return previous date string via simple date format
+     */
+    String getPreviousDateFromCurrentDate(String simpleCurrentDate) throws ParseException {
+        Date currentDate = getDateFromString(simpleCurrentDate);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DATE, -1);
+
+        mCurrentListDate = calendar.getTime();
+
+        return getStringFromDate(mCurrentListDate);
+    }
+
+    /**
+     * Get next date from current date in list fragment view
+     *
+     * @param simpleCurrentDate The date selected by user in list view
+     * @return next date string via simple date format
+     */
+    String getNextDateFromCurrentDate(String simpleCurrentDate) throws ParseException {
+        Date currentDate = getDateFromString(simpleCurrentDate);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DATE, 1);
+
+
+        mCurrentListDate = calendar.getTime();
+
+        return getStringFromDate(mCurrentListDate);
+    }
+
+    /**
+     * Update list date in list view
+     */
+    void loadingPreviousOrNextDateList() {
+        mPreviousDateImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    String previousDate = getPreviousDateFromCurrentDate(mCurrentListDateStr);
+                    mCurrentListDateStr = previousDate;
+                    mDateTextView.setText(previousDate);
+                    listUiUpdateFromDb();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        mNextDateImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    String nextDate = getNextDateFromCurrentDate(mCurrentListDateStr);
+                    mCurrentListDateStr = nextDate;
+                    mDateTextView.setText(nextDate);
+                    listUiUpdateFromDb();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     * Find and set empty view on the ListView, so that it only shows when the list has 0 items.
+     */
+    void setEmptyView() {
+        mEmptyView = mListItemView.findViewById(R.id.empty_relative_view);
+        mTaskItemListView.setEmptyView(mEmptyView);
+    }
+
+    /**
+     * When click task item, than get information from the item.
+     *
+     * @return selected item's data is today? true / false
+     */
+    void getTaskItemInfoAndCheck() {
+        mCursorAdapter = new ItemCursorAdapter(mListItemContext, null);
+        mTaskItemListView.setAdapter(mCursorAdapter);
+
+        // When click item, access to the list table in DB
+        mTaskItemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                // Get item's primary id
+                mItemID = (int) id;
+                String[] idStr = {String.valueOf(mItemID)};
+                Cursor cursor = db.rawQuery("SELECT name, unit, totalUnit, status, date FROM list WHERE "
+                        + BaseColumns._ID + " = ?", idStr);
+
+                // Get current item's info
+                if (cursor.moveToFirst()) {
+                    mItemName = cursor.getString(
+                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME));
+                    mItemDate = cursor.getString(
+                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DATE));
+                    mItemUnit = cursor.getInt(
+                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT));
+                    mItemTotalUnit = cursor.getInt(
+                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT));
+                    mItemStatus = cursor.getInt(
+                            cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS));
+
+                    // Check selected item's date is today
+                    if (checkDate()) {
+                        // Check selected item's status
+                        checkStatus();
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Show data picker dialog, then user can change current list date.
+     */
+    void showDialogForSelectDate() {
+        mDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Date date;
+                if (mCurrentListDateStr != null) {
+                    date = mCurrentListDate;
+                } else {
+                    date = new Date();
+                }
+
+                // Setting calender -> list's date
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                mYear = calendar.get(Calendar.YEAR);
+                mMonth = calendar.get(Calendar.MONTH);
+                mDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog
+                        = DatePickerDialog.newInstance(ListItemFragment.this, mYear, mMonth, mDay);
+                datePickerDialog.show(mListItemActivity.getFragmentManager(), "DateFragment");
+            }
+        });
+    }
+
+    /**
+     * When click add floating action button, then start EditorActivity.
+     * @param addFab    floating action button for add task item.
+     */
+    void clickAddFab(FloatingActionButton addFab) {
+        addFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mListItemContext, EditorActivity.class);
+                intent.putExtra("date", mCurrentListDateStr);
+                startActivity(intent);
+            }
+        });
     }
 }

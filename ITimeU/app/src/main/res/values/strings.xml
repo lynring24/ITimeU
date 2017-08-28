@@ -57,14 +57,14 @@
     <string name="delete_item_success">Success to delete</string>
 
     <!-- activity_editor.xml -->
-    <string name="input_name_hint">name</string>
-    <string name="input_detail_hint">detail</string>
+    <string name="input_name_hint">name (essential)</string>
+    <string name="input_detail_hint">detail (optional)</string>
     <string name="unit_txt_view_editor">pomodoro</string>
     <string name="default_total_unit_editor">1</string>
     <string name="ok_btn">OK</string>
     <string name="editor_date_txt_view">date</string>
 
-    <!-- list_item.xml -->
+    <!-- item.xml -->
     <string name="unit_divider">/</string>
 
     <!-- activity_list.xml -->
@@ -84,6 +84,10 @@
     <string name="about_licenses">Open licenses</string>
     <string name="about_feedback">Feedback</string>
 
+    <!-- fragment_list_item -->
+    <string name="listitem_previous_date_description">get date from previous date</string>
+    <string name="listitem_next_date_description">get date from next date</string>
+    
     <!-- activity_licenses.xml -->
     <string name="back">Back</string>
     <string name="datepicker_name">Material Date Time Picker</string>
