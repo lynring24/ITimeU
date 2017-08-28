@@ -22,7 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +31,7 @@ import com.itti7.itimeu.data.ItemContract;
 import com.itti7.itimeu.data.ItemDbHelper;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -64,6 +65,9 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     // Show date text
     TextView mDateTextView;
 
+    // date image button
+    ImageButton mPreviousDateImgBtn, mNextDateImgBtn;
+
     // Simple date format
     public static final String DATE_FORMAT = "yyyy.MM.dd";
 
@@ -74,7 +78,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     private String mDate;
 
     // Today's date
-    private String mToday = getDate(new Date());
+    private String mToday = getStringFromDate(new Date());
 
     /**
      * Adapter for the ListView
@@ -115,6 +119,12 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         // list table db
         dbHelper = new ItemDbHelper(mListItemContext);
         db = dbHelper.getReadableDatabase();
+
+        // Find previous / next date image button
+        mPreviousDateImgBtn = mListItemView.findViewById(R.id.listitem_previous_date_imgbtn);
+        mNextDateImgBtn = mListItemView.findViewById(R.id.listitem_next_date_imgbtn);
+
+        loadingPreviousOrNextDateList();
 
         // Find the ListView which will be populated with the item data
         mListView = mListItemView.findViewById(R.id.item_list_view);
@@ -159,7 +169,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         });
         // show today's date
         mListDate = new Date();
-        mDate = getDate(mListDate);
+        mDate = getStringFromDate(mListDate);
         mDateTextView = mListItemView.findViewById(R.id.date_btn);
         mDateTextView.setText(mDate);
 
@@ -373,8 +383,12 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
      *
      * @return Return the current month and day.
      */
-    public String getDate(Date date) {
+    public String getStringFromDate(Date date) {
         return new SimpleDateFormat(DATE_FORMAT, Locale.KOREA).format(date);
+    }
+
+    public Date getDateFromString(String date) throws ParseException {
+        return new SimpleDateFormat(DATE_FORMAT, Locale.KOREA).parse(date);
     }
 
     /**
@@ -395,12 +409,12 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         // Set Date in List
         calendar.set(mYear, mMonth, mDay);
         mListDate = calendar.getTime();
-        mDate = getDate(mListDate);
+        mDate = getStringFromDate(mListDate);
         mDateTextView.setText(mDate);
 
         setAchievementRate();
         // Update List Date
-        onResume();
+        listUiUpdateFromDb();
     }
 
     /**
@@ -504,5 +518,76 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
         // test code
         Toast.makeText(getContext(), "Update list UI" , Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Get previous date from current date in list fragment view
+     *
+     * @return previous date string via simple date format
+     *
+     * @param simpleCurrentDate   The date selected by user in list view
+     */
+    String getPreviousDateFromCurrentDate(String simpleCurrentDate) throws ParseException {
+        Date currentDate = getDateFromString(simpleCurrentDate);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DATE, -1);
+
+        mListDate = calendar.getTime();
+
+        return getStringFromDate(mListDate);
+    }
+
+    /**
+     * Get next date from current date in list fragment view
+     *
+     * @return next date string via simple date format
+     *
+     * @param simpleCurrentDate   The date selected by user in list view
+     */
+    String getNextDateFromCurrentDate(String simpleCurrentDate) throws ParseException {
+        Date currentDate = getDateFromString(simpleCurrentDate);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DATE, 1);
+
+        mListDate = calendar.getTime();
+
+        return getStringFromDate(mListDate);
+    }
+
+    /**
+     * Update list date in list view
+     */
+    void loadingPreviousOrNextDateList() {
+        mPreviousDateImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    String previousDate = getPreviousDateFromCurrentDate(mDate);
+                    mDate = previousDate;
+                    mDateTextView.setText(previousDate);
+                    listUiUpdateFromDb();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        mNextDateImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    String nextDate = getNextDateFromCurrentDate(mDate);
+                    mDate = nextDate;
+                    mDateTextView.setText(nextDate);
+                    listUiUpdateFromDb();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }
