@@ -610,8 +610,12 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         mChart.setData(null);
         mChart.invalidate();
         mStatResultText.setText(null);
+
         mStatStartEditText.setText(null);
         mStatEndEditText.setText(null);
+
+        mCustomStart = null;
+        mCustomEnd = null;
     }
 }
 
