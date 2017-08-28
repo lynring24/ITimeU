@@ -16,12 +16,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StatisticsActivity">
+        <activity android:name=".EditorActivity" />
+        <activity android:name=".LicensesActivity"/>
+        
+        <provider
+            android:name=".data.ItemProvider"
+            android:authorities="com.itti7.itimeu"
+            android:exported="false" />
 
-        </activity>
-        <activity android:name=".SettingActivity">
 
-        </activity>
     </application>
 
 </manifest>
