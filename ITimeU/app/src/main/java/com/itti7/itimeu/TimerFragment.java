@@ -361,8 +361,12 @@ public class TimerFragment extends Fragment {
     @Override
     public void onStop(){
         super.onStop();
-        getActivity().unbindService(conn);
-        mBound = false;
+        if(mNM!=null)
+            mNM.cancelAll();
+        if(mBound) {
+            getActivity().unbindService(conn);
+            mBound = false;
+        }
     }
 
     @Override
