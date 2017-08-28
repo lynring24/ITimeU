@@ -60,7 +60,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     TextView mDetailRateTextView;
 
     // ListView
-    ListView mListView;
+    ListView mTaskItemListView;
 
     // Show date text
     TextView mDateTextView;
@@ -72,10 +72,10 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     public static final String DATE_FORMAT = "yyyy.MM.dd";
 
     // List's date
-    private Date mListDate;
+    private Date mCurrentListDate;
 
     // Date convert to String
-    private String mDate;
+    private String mCurrentListDateStr;
 
     // Today's date
     private String mToday = getStringFromDate(new Date());
@@ -127,17 +127,17 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         loadingPreviousOrNextDateList();
 
         // Find the ListView which will be populated with the item data
-        mListView = mListItemView.findViewById(R.id.item_list_view);
+        mTaskItemListView = mListItemView.findViewById(R.id.item_list_view);
 
         // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
         View emptyView = mListItemView.findViewById(R.id.empty_relative_view);
-        mListView.setEmptyView(emptyView);
+        mTaskItemListView.setEmptyView(emptyView);
 
         mCursorAdapter = new ItemCursorAdapter(mListItemContext, null);
-        mListView.setAdapter(mCursorAdapter);
+        mTaskItemListView.setAdapter(mCursorAdapter);
 
         // When click item, access to the list table in DB
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mTaskItemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 // Get item's primary id
@@ -168,10 +168,10 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             }
         });
         // show today's date
-        mListDate = new Date();
-        mDate = getStringFromDate(mListDate);
+        mCurrentListDate = new Date();
+        mCurrentListDateStr = getStringFromDate(mCurrentListDate);
         mDateTextView = mListItemView.findViewById(R.id.date_btn);
-        mDateTextView.setText(mDate);
+        mDateTextView.setText(mCurrentListDateStr);
 
         setAchievementRate();
 
@@ -180,8 +180,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             @Override
             public void onClick(View view) {
                 Date date;
-                if (mDate != null) {
-                    date = mListDate;
+                if (mCurrentListDateStr != null) {
+                    date = mCurrentListDate;
                 } else {
                     date = new Date();
                 }
@@ -206,14 +206,14 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mListItemContext, EditorActivity.class);
-                intent.putExtra("date", mDate);
+                intent.putExtra("date", mCurrentListDateStr);
                 startActivity(intent);
             }
         });
 
         // displayListByDate();
         // Touch and hold the item to display the context menu (modify/delete).
-        registerForContextMenu(mListView);
+        registerForContextMenu(mTaskItemListView);
 
         //Kick off the loader
         getLoaderManager().initLoader(ITEM_LOADER, null, this);
@@ -295,7 +295,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT,
                 ItemContract.ItemEntry.COLUMN_ITEM_UNIT};
 
-        String[] date = {mDate};
+        String[] date = {mCurrentListDateStr};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(mListItemContext,   // Parent activity context
@@ -408,9 +408,9 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
         // Set Date in List
         calendar.set(mYear, mMonth, mDay);
-        mListDate = calendar.getTime();
-        mDate = getStringFromDate(mListDate);
-        mDateTextView.setText(mDate);
+        mCurrentListDate = calendar.getTime();
+        mCurrentListDateStr = getStringFromDate(mCurrentListDate);
+        mDateTextView.setText(mCurrentListDateStr);
 
         setAchievementRate();
         // Update List Date
@@ -423,7 +423,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     void calculateAchievementRate() {
         mSumOfTotalUnits = 0;
         mSumOfUnits = 0;
-        String[] date = {mDate};
+        String[] date = {mCurrentListDateStr};
         Cursor cursor = db.rawQuery("SELECT totalUnit, unit FROM list WHERE date = ?", date);
 
         if (cursor.moveToFirst()) {
@@ -534,9 +534,9 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         calendar.setTime(currentDate);
         calendar.add(Calendar.DATE, -1);
 
-        mListDate = calendar.getTime();
+        mCurrentListDate = calendar.getTime();
 
-        return getStringFromDate(mListDate);
+        return getStringFromDate(mCurrentListDate);
     }
 
     /**
@@ -553,9 +553,10 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         calendar.setTime(currentDate);
         calendar.add(Calendar.DATE, 1);
 
-        mListDate = calendar.getTime();
 
-        return getStringFromDate(mListDate);
+        mCurrentListDate = calendar.getTime();
+
+        return getStringFromDate(mCurrentListDate);
     }
 
     /**
@@ -566,8 +567,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             @Override
             public void onClick(View view) {
                 try {
-                    String previousDate = getPreviousDateFromCurrentDate(mDate);
-                    mDate = previousDate;
+                    String previousDate = getPreviousDateFromCurrentDate(mCurrentListDateStr);
+                    mCurrentListDateStr = previousDate;
                     mDateTextView.setText(previousDate);
                     listUiUpdateFromDb();
                 } catch (ParseException e) {
@@ -580,8 +581,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             @Override
             public void onClick(View view) {
                 try {
-                    String nextDate = getNextDateFromCurrentDate(mDate);
-                    mDate = nextDate;
+                    String nextDate = getNextDateFromCurrentDate(mCurrentListDateStr);
+                    mCurrentListDateStr = nextDate;
                     mDateTextView.setText(nextDate);
                     listUiUpdateFromDb();
                 } catch (ParseException e) {
