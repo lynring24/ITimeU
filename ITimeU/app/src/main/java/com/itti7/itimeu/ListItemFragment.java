@@ -233,8 +233,6 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     public void onResume() {
         super.onResume();
         setAchievementRate();
-        // Update List Date
-        listUiUpdateFromDb();
     }
 
     /**
@@ -310,7 +308,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Delete" button, so delete the item.
                 deleteItem(index);
-                onResume();
+                // Update List Date
+                listUiUpdateFromDb();
             }
         });
         builder.setNegativeButton(getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
