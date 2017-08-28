@@ -1,5 +1,6 @@
 package com.itti7.itimeu;
 
+import android.animation.ValueAnimator;
 import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -101,9 +102,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
     // Sum total units, and units respectively.
     private int mSumOfTotalUnits, mSumOfUnits;
-    private double mPercent;
+    private int mPercent;
 
-    private String mPercentStr;
     private String mDetail;
 
     public ListItemFragment() {
@@ -186,7 +186,6 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     @Override
     public void onResume() {
         super.onResume();
-        setAchievementRate();
     }
 
     /**
@@ -361,7 +360,6 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         mCurrentListDateStr = getStringFromDate(mCurrentListDate);
         mDateTextView.setText(mCurrentListDateStr);
 
-        setAchievementRate();
         // Update List Date
         listUiUpdateFromDb();
     }
@@ -382,14 +380,13 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             } while (cursor.moveToNext());
 
             if (mSumOfTotalUnits != 0) {
-                mPercent = Math.round(((double) mSumOfUnits / mSumOfTotalUnits) * 100);
+                mPercent = Math.round(((float) mSumOfUnits / mSumOfTotalUnits) * 100);
             } else {
                 mPercent = 0;
             }
         }
         cursor.close();
 
-        mPercentStr = "  " + mPercent + " %";
         mDetail = "( " + mSumOfUnits + " / " + mSumOfTotalUnits + " )";
     }
 
@@ -400,7 +397,18 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         calculateAchievementRate();
         // Find the TextView which will show sum of units / sum of total units in list's date
         mAchievementTextView = mListItemView.findViewById(R.id.achievement_rate_txt_view);
-        mAchievementTextView.setText(mPercentStr);
+
+        // Show increasing percent animation
+        ValueAnimator animator = ValueAnimator.ofInt(0, mPercent);
+        animator.setDuration(1000);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                String rate = animation.getAnimatedValue().toString()+" %";
+                mAchievementTextView.setText(rate);
+            }
+        });
+        animator.start();
         mDetailRateTextView = mListItemView.findViewById(R.id.rate_detail_txt_view);
         mDetailRateTextView.setText(mDetail);
     }
@@ -461,7 +469,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
      */
     public void listUiUpdateFromDb() {
         getLoaderManager().restartLoader(0, null, this);
-
+        setAchievementRate();
         // test code
         Toast.makeText(getContext(), "Update list UI", Toast.LENGTH_SHORT).show();
     }
