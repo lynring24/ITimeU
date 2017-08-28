@@ -1,5 +1,7 @@
 package com.itti7.itimeu;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -9,11 +11,13 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,6 +70,8 @@ public class TimerFragment extends Fragment {
     SQLiteDatabase db;
     String query;
 
+    //notification
+    private NotificationManager mNM;
     public TimerFragment() {
         // Required empty public constructor
     }
@@ -185,6 +191,7 @@ public class TimerFragment extends Fragment {
             }
         };
         getActivity().registerReceiver(mReceiver, intentfilter);
+
         return timerView;
     }
 
@@ -245,6 +252,7 @@ public class TimerFragment extends Fragment {
                     db.execSQL(query);
                     db.close();
                     startTimer();
+                    showNotification();
                 }
             } else {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Stop");
@@ -254,6 +262,7 @@ public class TimerFragment extends Fragment {
                 mTimerService.stopTimer();
                 mProgressBar.setProgress(0);
                 handler.removeMessages(0);
+                mNM.cancelAll();
                 progressBarValue = 0; //must be set 0
                 Log.i("TimerFragment", "----------------------->Service stop");
                 mStateBttn.setText(R.string.start);
@@ -332,7 +341,23 @@ public class TimerFragment extends Fragment {
             }
         }
     }
+    private void showNotification() {
+        // The PendingIntent to launch our activity if the user selects this notification
+        //PendingIntent contentIntent = PendingIntent.getService(this, 0,new Intent(this, TimerFragment.class), 0);
 
+        // Set the info for the views that show in the notification panel.
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(getActivity())
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                        .setContentTitle(mItemNameText.getText())
+                        .setContentText(mTimeText.getText());
+       // mBuilder.setContentIntent(contentIntent);
+        // Send the notification.
+        // We use a layout id because it is a unique number.  We use it later to cancel.
+        mNM = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        mNM.notify(0, mBuilder.build());
+    }
     @Override
     public void onStop(){
         super.onStop();
@@ -343,6 +368,8 @@ public class TimerFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if(mNM!=null)
+            mNM.cancelAll();
         if(mBound) {
             getActivity().unbindService(conn);
             mBound = false;

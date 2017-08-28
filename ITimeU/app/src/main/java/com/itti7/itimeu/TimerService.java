@@ -73,7 +73,7 @@ public class TimerService extends Service {
     public void startTimer(int time) {
         runTime = time;
         timerSwitch = true;
-        showNotification(mLeftTime);
+       // showNotification(mLeftTime);
         handler.post(runnable);
     }
 
@@ -109,7 +109,7 @@ public class TimerService extends Service {
 
     @Override
     public void onCreate() {
-        mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+       // mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         super.onCreate();
     }
 
