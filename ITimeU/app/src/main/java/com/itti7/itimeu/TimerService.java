@@ -24,7 +24,6 @@ public class TimerService extends Service {
     private int runTime;
     private boolean timerSwitch = false;
     private CountDownTimer timer;
-    private NotificationManager mNM;
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
     public TimerService() {
@@ -33,8 +32,6 @@ public class TimerService extends Service {
     public void setRunTime(int time) {
         runTime = time;
         timerSwitch = true;
-        // showNotification(mLeftTime);
-        // handler.post(runnable);
     }
     public String getTime() {
         return timerSwitch ? mLeftTime : "00:00";
@@ -63,7 +60,7 @@ public class TimerService extends Service {
             stopSelf(msg.arg1);
         }
     }
-    //Handler handler = new Handler();
+
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -99,18 +96,14 @@ public class TimerService extends Service {
         }
     };
 
-
-
     public void stopTimer() {
         //Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
-        //handler.removeMessages(0);
         mServiceHandler.removeMessages(0);
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        //Log.i("Timer", "------------------------------------------------------->TimeronUnbind");
         stopTimer();
         return true;
     }
@@ -155,24 +148,6 @@ public class TimerService extends Service {
         // Get the HandlerThread's Looper and use it for our Handler
         mServiceLooper = thread.getLooper();
         mServiceHandler = new ServiceHandler(mServiceLooper);
-    }
-
-    private void showNotification(CharSequence text) {
-        // The PendingIntent to launch our activity if the user selects this notification
-        PendingIntent contentIntent = PendingIntent.getService(this, 0,
-                new Intent(this, TimerFragment.class), 0);
-
-        // Set the info for the views that show in the notification panel.
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                        .setContentTitle(getText(R.string.app_name))
-                        .setContentText(text);
-        mBuilder.setContentIntent(contentIntent);
-        // Send the notification.
-        // We use a layout id because it is a unique number.  We use it later to cancel.
-        mNM.notify(0, mBuilder.build());
     }
 
     @Override
