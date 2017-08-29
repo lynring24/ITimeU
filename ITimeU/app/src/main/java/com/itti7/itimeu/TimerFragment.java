@@ -50,7 +50,7 @@ public class TimerFragment extends Fragment {
     boolean mBound = false;
     private TimerHandler handler;
     private int progressBarValue = 0;
-    public int runTime; // minute
+
     /*timer calc*/
     private Intent intent;
     private ServiceConnection conn;
@@ -72,6 +72,9 @@ public class TimerFragment extends Fragment {
 
     //notification
     private NotificationManager mNM;
+    private final int NOTIFYID= 001;
+    private NotificationCompat.Builder mBuilder;
+
     public TimerFragment() {
         // Required empty public constructor
     }
@@ -283,6 +286,7 @@ public class TimerFragment extends Fragment {
         SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         mCountTimer = pref.getInt("COUNT", 1);
         ////end of read mCountTimer
+        int runTime=0; // minute
         if (mCountTimer % 8 == 0) // assign time by work,short & long break
             runTime = Integer.parseInt(mLongBreakTime);
         else if (mCountTimer % 2 == 1)
@@ -308,6 +312,8 @@ public class TimerFragment extends Fragment {
                             @Override
                             public void run() {
                                 mTimeText.setText(mTimerService.getTime());
+                                mBuilder.setContentText(mTimerService.getTime());
+                                mNM.notify(NOTIFYID, mBuilder.build());
                             }
 
                         });
@@ -346,7 +352,7 @@ public class TimerFragment extends Fragment {
         //PendingIntent contentIntent = PendingIntent.getService(this, 0,new Intent(this, TimerFragment.class), 0);
 
         // Set the info for the views that show in the notification panel.
-        NotificationCompat.Builder mBuilder =
+        mBuilder =
                 new NotificationCompat.Builder(getActivity())
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
@@ -356,7 +362,7 @@ public class TimerFragment extends Fragment {
         // Send the notification.
         // We use a layout id because it is a unique number.  We use it later to cancel.
         mNM = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        mNM.notify(0, mBuilder.build());
+        mNM.notify(NOTIFYID, mBuilder.build());
     }
     @Override
     public void onStop(){
