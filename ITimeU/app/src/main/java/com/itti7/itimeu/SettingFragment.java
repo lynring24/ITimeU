@@ -2,6 +2,7 @@ package com.itti7.itimeu;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.SeekBar;
 
+
+import static android.content.Context.MODE_PRIVATE;
+
 public class SettingFragment extends Fragment {
 
     private View mSettingView;
@@ -19,6 +23,13 @@ public class SettingFragment extends Fragment {
 
     private SeekBar mworksb, mbreaksb, mlongBreaksb, msessionNumsb; //시크바
     private static EditText mworket, mbreaket, mlongBreaket, msessionNumet; //에디트텍스트 뷰
+
+    public static final String PREFNAME = "SETTING_PREFERENCE";
+    public static final String WORKTIME = "worktime";
+    public static final String BREAKTIME = "breaktime";
+    public static final String LONGBREAKTIME = "longbreaktime";
+    public static final String SESSION = "session";
+    //설정 저장에 필요한 상수(이름)
 
     public static EditText getMworket() {
         return mworket;
@@ -44,7 +55,6 @@ public class SettingFragment extends Fragment {
         mSettingActivity = getActivity();
         mSettingContext = mSettingView.getContext();
 
-
         mworksb = mSettingView.findViewById(R.id.work_seek);
         mbreaksb = mSettingView.findViewById(R.id.break_seek);
         mlongBreaksb = mSettingView.findViewById(R.id.long_break_seek);
@@ -56,6 +66,12 @@ public class SettingFragment extends Fragment {
         mlongBreaket = mSettingView.findViewById(R.id.long_break_time);
         msessionNumet = mSettingView.findViewById(R.id.session_number);
         ///////각 에디트텍스트
+
+        SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
+        mworket.setText(String.valueOf(pref.getInt(WORKTIME, 25)));
+        mbreaket.setText(String.valueOf(pref.getInt(BREAKTIME, 5)));
+        mlongBreaket.setText(String.valueOf(pref.getInt(LONGBREAKTIME, 20)));
+        msessionNumet.setText(String.valueOf(pref.getInt(SESSION, 4)));
 
         mworksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -107,6 +123,7 @@ public class SettingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     public void printSelected(SeekBar bar, int value) { // 이용자가 바를 누르고 있을 때의 숫자 출력
@@ -125,18 +142,26 @@ public class SettingFragment extends Fragment {
     }
 
     public void doAfterTrack(SeekBar bar) { // 이용자가 손을 뗐을 때의 숫자 출력
+        SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
         if (bar.equals(mworksb)) {
             mworket.setText(mworket.getText());
+            editor.putInt(WORKTIME, Integer.valueOf(mworket.getText().toString()));
         }
         else if (bar.equals(mbreaksb)) {
             mbreaket.setText(mbreaket.getText());
+            editor.putInt(BREAKTIME, Integer.valueOf(mbreaket.getText().toString()));
         }
         else if (bar.equals(mlongBreaksb)) {
             mlongBreaket.setText(mlongBreaket.getText());
+            editor.putInt(LONGBREAKTIME, Integer.valueOf(mlongBreaket.getText().toString()));
         }
         else if (bar.equals(msessionNumsb)) {
             msessionNumet.setText(msessionNumet.getText());
+            editor.putInt(SESSION, Integer.valueOf(msessionNumet.getText().toString()));
         }
+        editor.commit();
     }
 
-}
+} //end of class
