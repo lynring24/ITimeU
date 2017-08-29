@@ -85,7 +85,7 @@ public class TimerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View timerView = inflater.inflate(R.layout.fragment_timer, container, false);
-
+        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onCreateView()");
         /*TimerService connection*/
         intent = new Intent(getActivity(), TimerService.class);
         conn = new ServiceConnection() {
@@ -116,13 +116,30 @@ public class TimerFragment extends Fragment {
         /*progressBar button init*/
         mProgressBar = (ProgressBar) timerView.findViewById(R.id.progressBar);
         mStateBttn = (Button) timerView.findViewById(R.id.state_bttn_view);
-        init();
+        //init();
         mStateBttn.setOnClickListener(stateChecker);
         /*Time Text Initialize */
         mTimeText = (TextView) timerView.findViewById(R.id.time_txt_view);
         /*progressBar button init*/
         mProgressBar = (ProgressBar) timerView.findViewById(R.id.progressBar);
         mProgressBar.bringToFront(); // bring the progressbar to the top
+         /* intent = new Intent(getActivity(), TimerService.class);*/
+        /*init timer count */
+        mCountTimer = 1;
+        //work time  inflater
+
+        header = getActivity().getLayoutInflater().inflate(R.layout.fragment_setting, null, false);
+       /* mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
+        mBreakTime = ((EditText) header.findViewById(R.id.break_time)).getText().toString();
+        mLongBreakTime = ((EditText) header.findViewById(R.id.long_break_time)).getText().toString();*/
+        mWorkTime = "1";
+        mBreakTime = "1";
+        mLongBreakTime = "1";
+        /*init shared prefernce*/
+        SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("COUNT", 1);
+        editor.commit();
 
         /* 브로드캐스트의 액션을 등록하기 위한 인텐트 필터 */
         /* iIntentFilter to register Broadcast Receiver */
@@ -202,51 +219,32 @@ public class TimerFragment extends Fragment {
         return mUnit == mTotalUnit ? true : false;
     }
 
-    private void init() {
-   /*     intent = new Intent(getActivity(), TimerService.class);*/
-        /*init timer count */
+   /* private void init() {
+        *//* intent = new Intent(getActivity(), TimerService.class);*//*
+        *//*init timer count *//*
         mCountTimer = 1;
         //work time  inflater
 
         header = getActivity().getLayoutInflater().inflate(R.layout.fragment_setting, null, false);
-       /* mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
+       *//* mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
         mBreakTime = ((EditText) header.findViewById(R.id.break_time)).getText().toString();
-        mLongBreakTime = ((EditText) header.findViewById(R.id.long_break_time)).getText().toString();*/
+        mLongBreakTime = ((EditText) header.findViewById(R.id.long_break_time)).getText().toString();*//*
         mWorkTime = "1";
         mBreakTime = "1";
         mLongBreakTime = "1";
-/*        *//*TimerService connection*//*
-        conn = new ServiceConnection() {
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mTimerService = null;
-                mBound = false;
-            }
-
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onServiceConnected()");
-                mTimerService = ((TimerService.MyBinder) service).getService();
-                mBound = true;
-            }
-        };
-        *//*TimerService Intent Listener*//*
-        getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);*/
-
-        /*init shared prefernce*/
+        *//*init shared prefernce*//*
         SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt("COUNT", 1);
         editor.commit();
 
-    }
+    }*/
 
     Button.OnClickListener stateChecker = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mStateBttn.getText().toString().equals("start")) { // checked
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Start");
-                ////--------------------------------------------------------------------------------------------------------------
                 //mUnit will be intialize when list item is clicked
                 if (mBound) {
                 /* set mStatus DB to DO(1)*/
@@ -254,7 +252,10 @@ public class TimerFragment extends Fragment {
                     query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "' WHERE _ID = '" + mId + "';";
                     db.execSQL(query);
                     db.close();
-                    startTimer();
+                    //set the timer setting
+                    setTimer();
+                    //startService
+                    getActivity().startService(intent);
                     showNotification();
                 }
             } else {
@@ -280,7 +281,7 @@ public class TimerFragment extends Fragment {
         }
     };
 
-    public void startTimer() {
+    public void setTimer() {
         Log.i("Fragment", "--------------------------------------------->startTimer()");
         //read mCountTimer
         SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
@@ -297,7 +298,7 @@ public class TimerFragment extends Fragment {
         mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
         handler = new TimerHandler();
         updateTimerText();
-        mTimerService.startTimer(runTime);
+        mTimerService.setRunTime(runTime);
         mStateBttn.setText(R.string.stop);
         handler.sendEmptyMessage(0);
     }

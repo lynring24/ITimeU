@@ -31,9 +31,6 @@ public class MainActivity extends AppCompatActivity {
         return mListTag;
     }
 
-    public void callUiUpdate(){
-
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
