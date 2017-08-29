@@ -1,10 +1,8 @@
 package com.itti7.itimeu;
 
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -36,13 +34,12 @@ import com.itti7.itimeu.data.ItemDbHelper;
 public class TimerFragment extends Fragment {
 
     /*Setting UI*/
-    private View header;
-
+    //private View header;
     private TextView mTimeText;
     private TextView mItemNameText;
-    private String mWorkTime; //R.id.work_time
-    private String mBreakTime; //R.id.work_time
-    private String mLongBreakTime; //R.id.work_time
+    //private String mWorkTime; //R.id.work_time
+    //private String mBreakTime; //R.id.work_time
+    //private String mLongBreakTime; //R.id.work_time
     private ProgressBar mProgressBar;
     private Button mStateBttn;
     /*timer Service Component*/
@@ -111,19 +108,13 @@ public class TimerFragment extends Fragment {
         mCountTimer = 1;
         //work time  inflater
 
-        header = getActivity().getLayoutInflater().inflate(R.layout.fragment_setting, null, false);
-       /* mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
-        mBreakTime = ((EditText) header.findViewById(R.id.break_time)).getText().toString();
-        mLongBreakTime = ((EditText) header.findViewById(R.id.long_break_time)).getText().toString();*/
-        mWorkTime = "1";
-        mBreakTime = "1";
-        mLongBreakTime = "1";
+
         /*init shared prefernce*/
         SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt("COUNT", 1);
         editor.commit();
-        
+
         return timerView;
     }
     @Override
@@ -207,7 +198,13 @@ public class TimerFragment extends Fragment {
         //read mCountTimer
         SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         mCountTimer = pref.getInt("COUNT", 1);
-        ////end of read mCountTimer
+        View header = getActivity().getLayoutInflater().inflate(R.layout.fragment_setting, null, false);
+       /* mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
+        mBreakTime = ((EditText) header.findViewById(R.id.break_time)).getText().toString();
+        mLongBreakTime = ((EditText) header.findViewById(R.id.long_break_time)).getText().toString();*/
+        String mWorkTime = "1";
+        String mBreakTime = "1";
+        String mLongBreakTime = "1";
         int runTime=0; // minute
         if (mCountTimer % 8 == 0) // assign time by work,short & long break
             runTime = Integer.parseInt(mLongBreakTime);
