@@ -48,7 +48,7 @@ public class TimerFragment extends Fragment {
     /*timer Service Component*/
     private TimerService mTimerService;
     boolean mBound = false;
-    private TimerHandler mProgressHandler;
+    private ProgressHandler mProgressHandler;
     private int progressBarValue = 0;
 
     /*timer calc*/
@@ -75,35 +75,18 @@ public class TimerFragment extends Fragment {
     private final int NOTIFYID= 001;
     private NotificationCompat.Builder mBuilder;
 
+    //BroadcastReceiver mReceiver;
+    TimerServiceBroadcastReceiver mReceiver;
+
     public TimerFragment() {
         // Required empty public constructor
     }
 
-    //BroadcastReceiver mReceiver;
-    TimerServiceBroadcastReceiver mReceiver;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View timerView = inflater.inflate(R.layout.fragment_timer, container, false);
         Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onCreateView()");
-        /*TimerService connection*/
-        intent = new Intent(getActivity(), TimerService.class);
-        conn = new ServiceConnection() {
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mTimerService = null;
-                mBound = false;
-            }
-
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onServiceConnected()");
-                mTimerService = ((TimerService.MyBinder) service).getService();
-                mBound = true;
-            }
-        };
-        /*TimerService Intent Listener*/
-        getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
         // get Timer tag and set to TimerTag
         String timerTag = getTag();
@@ -140,7 +123,31 @@ public class TimerFragment extends Fragment {
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt("COUNT", 1);
         editor.commit();
+        
+        return timerView;
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        //TimerService connection
+        // Bind to LocalService
+        intent = new Intent(getActivity(), TimerService.class);
+        conn = new ServiceConnection() {
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mTimerService = null;
+                mBound = false;
+            }
 
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onServiceConnected()");
+                mTimerService = ((TimerService.MyBinder) service).getService();
+                mBound = true;
+            }
+        };
+        /*TimerService Intent Listener*/
+        getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
         /* 브로드캐스트의 액션을 등록하기 위한 인텐트 필터 */
         /* iIntentFilter to register Broadcast Receiver */
         IntentFilter intentfilter = new IntentFilter();
@@ -148,12 +155,8 @@ public class TimerFragment extends Fragment {
 
         /*동적 리시버 구현 */
         mReceiver = new TimerServiceBroadcastReceiver();
-
         getActivity().registerReceiver(mReceiver, intentfilter);
-
-        return timerView;
     }
-
     public boolean completeCheck() {
         return mUnit == mTotalUnit ? true : false;
     }
@@ -214,14 +217,14 @@ public class TimerFragment extends Fragment {
             runTime = Integer.parseInt(mBreakTime);
         // set the progressbar max and run
         mProgressBar.setMax(runTime * 60 + 2);
-        mProgressHandler = new TimerHandler();
-        updateTimerText();
+        mProgressHandler = new ProgressHandler();
+        updateLeftTime();
         mTimerService.setRunTime(runTime);
         mStateBttn.setText(R.string.stop);
         mProgressHandler.sendEmptyMessage(0);
     }
 
-    public void updateTimerText() {
+    public void updateLeftTime() {
         mReadThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -248,8 +251,8 @@ public class TimerFragment extends Fragment {
     }
 
 
-    public class TimerHandler extends Handler {
-        TimerHandler() {
+    public class ProgressHandler extends Handler {
+        ProgressHandler() {
             super();
         }
 
@@ -320,10 +323,9 @@ public class TimerFragment extends Fragment {
             }
 
             db.execSQL(query);
-            //db.endTransaction(); //commit();
             db.close();
 
-                /*List Item unit count update*/
+            /*List Item unit count update*/
             MainActivity mainActivity = (MainActivity) getActivity();
             String listTag = mainActivity.getListTag();
             ListItemFragment listItemFragment = (ListItemFragment)mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
@@ -383,15 +385,9 @@ public class TimerFragment extends Fragment {
      */
     public void nameUpdate() {
         mItemNameText.setText(mName);
-
-        // test code
-        Toast.makeText(getContext(), "ID: " + mId + ", Name: " + mName + ", Status: " + mStatus +
-                ", Unit: " + mUnit, Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * Setter
-     */
+    /* Setter used by List*/
     public void setmId(int mId) {
         this.mId = mId;
     }
