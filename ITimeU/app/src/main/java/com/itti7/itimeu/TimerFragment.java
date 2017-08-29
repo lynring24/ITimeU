@@ -34,12 +34,8 @@ import com.itti7.itimeu.data.ItemDbHelper;
 public class TimerFragment extends Fragment {
 
     /*Setting UI*/
-    //private View header;
     private TextView mTimeText;
     private TextView mItemNameText;
-    //private String mWorkTime; //R.id.work_time
-    //private String mBreakTime; //R.id.work_time
-    //private String mLongBreakTime; //R.id.work_time
     private ProgressBar mProgressBar;
     private Button mStateBttn;
     /*timer Service Component*/
@@ -106,8 +102,6 @@ public class TimerFragment extends Fragment {
          /* intent = new Intent(getActivity(), TimerService.class);*/
         /*init timer count */
         mCountTimer = 1;
-        //work time  inflater
-
 
         /*init shared prefernce*/
         SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
@@ -117,6 +111,7 @@ public class TimerFragment extends Fragment {
 
         return timerView;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -148,9 +143,7 @@ public class TimerFragment extends Fragment {
         mReceiver = new TimerServiceBroadcastReceiver();
         getActivity().registerReceiver(mReceiver, intentfilter);
     }
-    public boolean completeCheck() {
-        return mUnit == mTotalUnit ? true : false;
-    }
+
 
     Button.OnClickListener stateChecker = new View.OnClickListener() {
         @Override
@@ -188,7 +181,6 @@ public class TimerFragment extends Fragment {
                 query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
                 db.execSQL(query);
                 db.close();
-
             }
         }
     };
@@ -266,6 +258,9 @@ public class TimerFragment extends Fragment {
             }
         }
     }
+    public boolean completeCheck() {
+        return mUnit == mTotalUnit ? true : false;
+    }
 
     public class TimerServiceBroadcastReceiver extends BroadcastReceiver{
         @Override
@@ -332,7 +327,6 @@ public class TimerFragment extends Fragment {
     private void showNotification() {
         // The PendingIntent to launch our activity if the user selects this notification
         //PendingIntent contentIntent = PendingIntent.getService(this, 0,new Intent(this, TimerFragment.class), 0);
-
         // Set the info for the views that show in the notification panel.
         mBuilder =
                 new NotificationCompat.Builder(getActivity())

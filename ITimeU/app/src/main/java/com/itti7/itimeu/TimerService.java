@@ -111,10 +111,6 @@ public class TimerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("Timer", "------------------------------------------------------->Timer onStartCommand");
-        runTime = intent.getIntExtra("RUNTIME", 1);
-        Log.i("RUNTIME", "------------------------------------------------------->RUNTIME : " + runTime);
-//        timerSwitch = true;
-//        handler.post(runnable);
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
         Message msg = mServiceHandler.obtainMessage();
