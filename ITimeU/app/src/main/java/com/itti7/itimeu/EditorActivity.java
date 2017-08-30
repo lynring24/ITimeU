@@ -11,7 +11,9 @@ import android.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,37 +40,68 @@ import java.util.Locale;
 public class EditorActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    /** Identifier for the item data loader */
+    /**
+     * Identifier for the item data loader
+     */
     private static final int EXISTING_ITEM_LOADER = 0;
 
-    /** Content URI for the existing item (null if it's a new item) */
+    private static final int NAME_MAX_COUNT = 15;
+    private static final int DETAIL_MAX_COUNT = 20;
+
+    /**
+     * Content URI for the existing item (null if it's a new item)
+     */
     private Uri mCurrentItemUri;
 
-    /** EditText field to enter the item's name */
+    /**
+     * EditText field to enter the item's name
+     */
     private EditText mNameEditText;
 
-    /** EditText field to enter the item's detail */
+    /**
+     * EditText field to enter the item's detail
+     */
     private EditText mDetailEditText;
 
-    /** EditText field to enter the item's date */
+    /**
+     * Count view EditText's Character
+     */
+    private TextView mNameCountTextView;
+    private TextView mDetailCountTextView;
+
+    /**
+     * EditText field to enter the item's date
+     */
     private EditText mDateEditText;
 
-    /** TextView field to enter the item's total unit */
+    /**
+     * TextView field to enter the item's total unit
+     */
     private TextView mTotalUnitTextView;
 
-    /** ImageButton to increase total unit number */
+    /**
+     * ImageButton to increase total unit number
+     */
     private ImageButton mUnitPlusImageButton;
 
-    /** ImageButton to decrease total unit number */
+    /**
+     * ImageButton to decrease total unit number
+     */
     private ImageButton mUnitMinusImageButton;
 
-    /** Total unit convert integer value */
+    /**
+     * Total unit convert integer value
+     */
     private int mTotalUnitNumber;
 
-    /** Total unit convert string value */
+    /**
+     * Total unit convert string value
+     */
     private String mTotalUnitString;
 
-    /** Creation date */
+    /**
+     * Creation date
+     */
     private String mDate;
 
     // Simple date format
@@ -80,10 +113,12 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     /**
      * Status of the item. The possible valid values are in the ItemContract.java file:
      * {@link ItemEntry#STATUS_TODO}, {@link ItemEntry#STATUS_DO}, {@link ItemEntry#STATUS_DONE}
-     * */
+     */
     private int mStatus = ItemEntry.STATUS_TODO;
 
-    /** Boolean flag that keeps track of whether the item has been edited (true) or not (false) */
+    /**
+     * Boolean flag that keeps track of whether the item has been edited (true) or not (false)
+     */
     private boolean mItemHasChanged = false;
 
     /**
@@ -124,9 +159,14 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             getLoaderManager().initLoader(EXISTING_ITEM_LOADER, null, this);
         }
 
-        // Find all relevant views that we will need to read user input from
         mNameEditText = (EditText) findViewById(R.id.name_edit_txt);
         mDetailEditText = (EditText) findViewById(R.id.detail_edit_txt);
+        mNameCountTextView = (TextView) findViewById(R.id.editor_name_count_txt);
+        mDetailCountTextView = (TextView) findViewById(R.id.editor_detail_count_txt);
+
+        countNameCharAndShow();
+        countDetailCharAndShow();
+
         mTotalUnitTextView = (TextView) findViewById(R.id.get_total_unit_txt_view);
         mDate = intent.getStringExtra("date");
         mDateEditText = (EditText) findViewById(R.id.editor_date_edit_txt);
@@ -176,7 +216,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         mDateEditText.setText(mDate);
     }
 
-    void dateSelection(){
+    void dateSelection() {
         mDateEditText.setFocusable(false);
         mDateEditText.setOnTouchListener(mTouchListener);
         mDateEditText.setText(mDate);
@@ -198,8 +238,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                     DatePickerDialog datePickerDialog
                             = DatePickerDialog.newInstance(EditorActivity.this, mYear, mMonth, mDay);
                     datePickerDialog.show(getFragmentManager(), "DateFragment");
-                }
-                catch (ParseException e) {
+                } catch (ParseException e) {
                     Log.e("EditorActivity", "ParseException: " + e);
                 }
             }
@@ -310,8 +349,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
 
                     // Show a dialog that notifies the user they have unsaved changes
                     showUnsavedChangesDialog(discardButtonClickListener);
-                }
-                else finish();
+                } else finish();
             }
         });
     }
@@ -497,4 +535,45 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         return new SimpleDateFormat(DATE_FORMAT, Locale.KOREA).format(date);
     }
 
+    /**
+     * This function count name character in edit text view and show on text view
+     */
+    public void countNameCharAndShow() {
+        mNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                int length = charSequence.length();
+                mNameCountTextView.setText(length+" / "+NAME_MAX_COUNT);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+    }
+
+    /**
+     * This function count detail character in edit text view and show on text view
+     */
+    public void countDetailCharAndShow() {
+        mDetailEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                int length = charSequence.length();
+                mDetailCountTextView.setText(length+" / "+DETAIL_MAX_COUNT);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+    }
 }
