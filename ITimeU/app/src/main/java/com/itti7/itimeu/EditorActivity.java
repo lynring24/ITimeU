@@ -15,10 +15,12 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -165,7 +167,9 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         mDetailCountTextView = (TextView) findViewById(R.id.editor_detail_count_txt);
 
         countNameCharAndShow();
+        nameCursorVisibility();
         countDetailCharAndShow();
+        detailCursorAndCountCharVisibility();
 
         mTotalUnitTextView = (TextView) findViewById(R.id.get_total_unit_txt_view);
         mDate = intent.getStringExtra("date");
@@ -547,11 +551,29 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 int length = charSequence.length();
-                mNameCountTextView.setText(length+" / "+NAME_MAX_COUNT);
+
+                if (length == 0) {
+                    mNameCountTextView.setVisibility(View.INVISIBLE);
+                } else {
+                    mNameCountTextView.setVisibility(View.VISIBLE);
+                    mNameCountTextView.setText(length + " / " + NAME_MAX_COUNT);
+                }
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        // focus change
+        mNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    mNameCountTextView.setVisibility(View.INVISIBLE);
+                } else {
+                    mNameCountTextView.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
@@ -568,11 +590,70 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 int length = charSequence.length();
-                mDetailCountTextView.setText(length+" / "+DETAIL_MAX_COUNT);
+                mDetailCountTextView.setText(length + " / " + DETAIL_MAX_COUNT);
+
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        mDetailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    mDetailCountTextView.setVisibility(View.INVISIBLE);
+                } else {
+                    mDetailCountTextView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
+    /**
+     * This function change name cursor visibility.
+     */
+    public void nameCursorVisibility() {
+        mNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(i == EditorInfo.IME_ACTION_DONE) {
+                    mNameEditText.setCursorVisible(false);
+                }
+                return false;
+            }
+        });
+
+        mNameEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                mNameEditText.setCursorVisible(true);
+                return false;
+            }
+        });
+    }
+
+    /**
+     * This function change detail cursor visibility.
+     */
+    public void detailCursorAndCountCharVisibility() {
+        mDetailEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(i == EditorInfo.IME_ACTION_DONE) {
+                    mDetailEditText.setCursorVisible(false);
+                    mDetailCountTextView.setVisibility(View.INVISIBLE);
+                }
+                return false;
+            }
+        });
+
+        mDetailEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                mDetailEditText.setCursorVisible(true);
+                return false;
             }
         });
     }
