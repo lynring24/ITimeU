@@ -100,10 +100,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     private int mItemTotalUnit;
     private int mItemStatus;
 
-    // Sum total units, and units respectively.
-    private int mSumOfTotalUnits, mSumOfUnits;
     private int mPercent;
-
     private String mDetail;
 
     public ListItemFragment() {
@@ -370,8 +367,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
      * Calculate Percentage: sum of units / sum of total-units
      */
     void calculateAchievementRate() {
-        mSumOfTotalUnits = 0;
-        mSumOfUnits = 0;
+        int mSumOfTotalUnits = 0;
+        int mSumOfUnits = 0;
         String[] date = {mCurrentListDateStr};
         Cursor cursor = db.rawQuery("SELECT totalUnit, unit FROM list WHERE date = ?", date);
 
@@ -380,14 +377,14 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 mSumOfTotalUnits += cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT));
                 mSumOfUnits += cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT));
             } while (cursor.moveToNext());
-
-            if (mSumOfTotalUnits != 0) {
-                mPercent = Math.round(((float) mSumOfUnits / mSumOfTotalUnits) * 100);
-            } else {
-                mPercent = 0;
-            }
         }
         cursor.close();
+
+        if (mSumOfTotalUnits != 0) {
+            mPercent = Math.round(((float) mSumOfUnits / mSumOfTotalUnits) * 100);
+        } else {
+            mPercent = 0;
+        }
 
         mDetail = "( " + mSumOfUnits + " / " + mSumOfTotalUnits + " )";
     }
