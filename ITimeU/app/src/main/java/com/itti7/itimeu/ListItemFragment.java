@@ -186,6 +186,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     @Override
     public void onResume() {
         super.onResume();
+        // refresh achievement rate
+        setAchievementRate();
     }
 
     /**
