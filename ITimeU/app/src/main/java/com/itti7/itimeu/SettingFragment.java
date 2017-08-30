@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
 
@@ -23,6 +24,7 @@ public class SettingFragment extends Fragment {
 
     private SeekBar mworksb, mbreaksb, mlongBreaksb, msessionNumsb; //시크바
     private static EditText mworket, mbreaket, mlongBreaket, msessionNumet; //에디트텍스트 뷰
+    private static CheckBox msoundOn, mvibrateOn, monScreen;
 
     public static final String PREFNAME = "SETTING_PREFERENCE";
     public static final String WORKTIME = "worktime";
@@ -67,11 +69,21 @@ public class SettingFragment extends Fragment {
         msessionNumet = mSettingView.findViewById(R.id.session_number);
         ///////각 에디트텍스트
 
+        monScreen = mSettingView.findViewById(R.id.screen_check);
+        msoundOn = mSettingView.findViewById(R.id.sound_check);
+        mvibrateOn = mSettingView.findViewById(R.id.vibrate_check);
+
+        //저장해둔 설정 불러오기
         SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
         mworket.setText(String.valueOf(pref.getInt(WORKTIME, 25)));
         mbreaket.setText(String.valueOf(pref.getInt(BREAKTIME, 5)));
         mlongBreaket.setText(String.valueOf(pref.getInt(LONGBREAKTIME, 20)));
         msessionNumet.setText(String.valueOf(pref.getInt(SESSION, 4)));
+
+        mworksb.setProgress(pref.getInt(WORKTIME, 25));
+        mbreaksb.setProgress(pref.getInt(BREAKTIME, 5));
+        mlongBreaksb.setProgress(pref.getInt(LONGBREAKTIME, 20));
+        msessionNumsb.setProgress(pref.getInt(SESSION, 4));
 
         mworksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
