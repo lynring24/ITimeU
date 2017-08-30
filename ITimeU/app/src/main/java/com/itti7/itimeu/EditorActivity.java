@@ -153,6 +153,13 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         submit();
     }
 
+
+    /**
+     * @param view          DatePickerDialog
+     * @param selectedYear  Year selected by the user
+     * @param selectedMonth Month selected by the user
+     * @param selectedDay   Date selected by the user
+     */
     @Override
     public void onDateSet(DatePickerDialog view, int selectedYear, int selectedMonth, int selectedDay) {
         Calendar calendar = Calendar.getInstance();
@@ -490,10 +497,4 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         return new SimpleDateFormat(DATE_FORMAT, Locale.KOREA).format(date);
     }
 
-    /**
-     * @param view          DatePickerDialog
-     * @param selectedYear  Year selected by the user
-     * @param selectedMonth Month selected by the user
-     * @param selectedDay   Date selected by the user
-     */
 }
