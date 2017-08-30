@@ -443,6 +443,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         if (mItemStatus == ItemContract.ItemEntry.STATUS_DONE) {
             Toast.makeText(mListItemContext, R.string.already_done, Toast.LENGTH_SHORT)
                     .show();
+            return ;
         } else if (mItemStatus == ItemContract.ItemEntry.STATUS_TODO) {
             // Set item name text to job_txt_view in TimerFragment
             String tabOfTimerFragment = mainActivity.getTimerTag();
