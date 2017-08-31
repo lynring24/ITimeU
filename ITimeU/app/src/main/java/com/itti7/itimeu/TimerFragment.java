@@ -117,7 +117,7 @@ public class TimerFragment extends Fragment {
 
                 //change the button text to 'start'
                 mStateBttn.setText("start");
-                
+
                 //store
                 mUnit++;
                 db = dbHelper.getWritableDatabase();
@@ -134,13 +134,16 @@ public class TimerFragment extends Fragment {
 
                 mStateBttn.setText("start");
 
-                if (mCountTimer % 8 == 0)
-                    mItemNameText.setText("Long Break Time");
-                else if (mCountTimer % 2 == 1)
+                //set the ListItemText for the next session
+                if (mCountTimer % 2 == 1)
                     mItemNameText.setText(mName);
-                else
-                    mItemNameText.setText("Break Time");
-
+                else {
+                    mUnit++; //if the last session WAS work ,increase mUnit
+                    if (mCountTimer % 8 == 0)
+                        mItemNameText.setText("Long Break Time");
+                    else
+                        mItemNameText.setText("Break Time");
+                }
                 //if finished, set the button disable
                 //go back to list
                 if (mUnit*2 == mTotalUnit) {
