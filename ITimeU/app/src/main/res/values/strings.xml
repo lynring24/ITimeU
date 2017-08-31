@@ -128,6 +128,9 @@
         limitations under the License.</string>
     <string name="mp_chart_link"><a href="https://github.com/PhilJay/MPAndroidChart">
         MPAndroidChart</a></string>
+    <string name="statistics_name">Image of statistics</string>
+    <string name="licenses_statistics">Free for commercial use (Include link to authors website)</string>
+    <string name="statistics_link"><a href="https://makoto.dunked.com/">Mariano Tardon</a></string>
 
     <!-- arrays.xml : spinner items -->
     <string name="arrays_week">WEEK</string>
