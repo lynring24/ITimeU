@@ -253,6 +253,9 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
                     // initialize the chart
                     initializeChart();
 
+                    mStatStartEditText.setHint(R.string.statistics_startdate_hint);
+                    mStatEndEditText.setHint(R.string.statistics_enddate_hint);
+
                     // Can touch edit text, but focus is disabled.
                     mStatStartEditText.setClickable(true);
                     mStatEndEditText.setClickable(true);
@@ -607,8 +610,12 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         mChart.setData(null);
         mChart.invalidate();
         mStatResultText.setText(null);
+
         mStatStartEditText.setText(null);
         mStatEndEditText.setText(null);
+
+        mCustomStart = null;
+        mCustomEnd = null;
     }
 }
 

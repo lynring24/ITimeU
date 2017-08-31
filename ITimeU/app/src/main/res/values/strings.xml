@@ -56,6 +56,10 @@
     <string name="delete_item_fail">Fail to delete</string>
     <string name="delete_item_success">Success to delete</string>
 
+    <!-- Period hint -->
+    <string name="statistics_startdate_hint">select a start date</string>
+    <string name="statistics_enddate_hint">select an end date</string>
+
     <!-- activity_editor.xml -->
     <string name="input_name_hint">name (essential)</string>
     <string name="input_detail_hint">detail (optional)</string>
