@@ -1,12 +1,16 @@
 package com.itti7.itimeu;
 
 
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class TimerService extends Service {
@@ -15,7 +19,9 @@ public class TimerService extends Service {
     private int runTime;
     private boolean timerSwitch = false;
     private CountDownTimer timer;
-
+    private NotificationCompat.Builder mBuilder;
+    private NotificationManager mNM;
+    private final int NOTIFYID=001;
 
     public TimerService() {
 
@@ -46,6 +52,7 @@ public class TimerService extends Service {
                             mLeftTime = hour + ":" + mLeftTime;
                         }
                     }
+                    mNM.notify(NOTIFYID, mBuilder.build());
                 }
 
                 public void onFinish() {
@@ -62,15 +69,29 @@ public class TimerService extends Service {
                 }
             };
             timer.start();
-            ///////////////////////////////////////////////// /*  Notification HERE*///////////////////////////////////////////////////////////////////////////////////////////////
         }
     };
     public void setTimeName(int time,String name) {
         runTime=time;
         timerSwitch = true;
         handler.post(runnable);
+        showNotification(name);
     }
-
+    private void showNotification(String name) {
+        // The PendingIntent to launch our activity if the user selects this notification
+        //PendingIntent contentIntent = PendingIntent.getService(this, 0,new Intent(this, TimerFragment.class), 0);
+        // Set the info for the views that show in the notification panel.
+         mBuilder = new NotificationCompat.Builder(TimerService.this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                .setContentTitle(name)
+                .setContentText(mLeftTime);
+        // mBuilder.setContentIntent(contentIntent);
+        // Send the notification.
+        // We use a layout id because it is a unique number.  We use it later to cancel.
+        mNM = (NotificationManager)TimerService.this.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNM.notify(NOTIFYID, mBuilder.build());
+    }
     public void stopTimer() {
         Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
