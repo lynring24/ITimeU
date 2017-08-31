@@ -26,6 +26,7 @@ public class ItemDbHelper extends SQLiteOpenHelper {
      *
      * @param context of the app
      */
+
     public ItemDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }

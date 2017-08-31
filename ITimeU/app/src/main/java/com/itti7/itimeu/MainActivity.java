@@ -1,5 +1,6 @@
 package com.itti7.itimeu;
 
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -10,9 +11,9 @@ public class MainActivity extends AppCompatActivity {
     // ViewPager for movement between tabs
     ViewPager viewPager;
 
-    // Tag of TimerFragment
+    // Tags of Fragments
     String mTimerTag;
-
+    String mListTag;
     /** Getter/Setter of TimerTag */
     public void setTimerTag(String timerTag) {
         mTimerTag = timerTag;
@@ -21,12 +22,19 @@ public class MainActivity extends AppCompatActivity {
     public String getTimerTag(){
         return mTimerTag;
     }
+    /** Getter/Setter of ListTag */
+    public void setListTag(String listTag) {
+        mListTag = listTag;
+    }
+
+    public String getListTag(){
+        return mListTag;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         // Add tabs
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.list).setText(R.string.tab_list));

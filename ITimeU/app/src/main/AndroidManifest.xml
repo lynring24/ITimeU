@@ -24,7 +24,10 @@
             android:authorities="com.itti7.itimeu"
             android:exported="false" />
 
-
+        <service
+            android:name=".TimerService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

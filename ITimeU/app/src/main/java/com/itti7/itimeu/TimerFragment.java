@@ -1,42 +1,55 @@
 package com.itti7.itimeu;
 
-
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.itti7.itimeu.data.ItemContract;
+import com.itti7.itimeu.data.ItemDbHelper;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class TimerFragment extends Fragment {
-    /*timer components*/
-    private View header;
-    private TextView mItemNameText;
+
+    /*Setting UI*/
     private TextView mTimeText;
-    private String mWorkTime; //R.id.work_time
-    private String mBreakTime; //R.id.work_time
-    private String mLongBreakTime; //R.id.work_time
+    private TextView mItemNameText;
     private ProgressBar mProgressBar;
     private Button mStateBttn;
-    /*button state value*/
-    final boolean STATE_PLAY=true;
-    final boolean STATE_STOP=false;
-    private boolean state=STATE_STOP;
-    /*progressBar state value*/
-    private TimerHandler handler;
+    /*timer Service Component*/
+    private TimerService mTimerService;
+    boolean mBound = false;
+    private ProgressHandler mProgressHandler;
     private int progressBarValue = 0;
-    /*timer calc*/
 
-    private Timer mCalcTimer;
+    /*timer calc*/
+    private Intent intent;
+    private ServiceConnection conn;
+    private Thread mReadThread;
+    /*store  time count*/
+    private int mCountTimer;
 
     // Item info come from ListView
     private int mId;
@@ -44,6 +57,19 @@ public class TimerFragment extends Fragment {
     private int mUnit;
     private int mTotalUnit;
     private String mName;
+
+    // For access ITimeU database
+    ItemDbHelper dbHelper;
+    SQLiteDatabase db;
+    String query;
+
+    //notification
+    private NotificationManager mNM;
+    private final int NOTIFYID= 001;
+    private NotificationCompat.Builder mBuilder;
+
+    //BroadcastReceiver mReceiver;
+    TimerServiceBroadcastReceiver mReceiver;
 
     public TimerFragment() {
         // Required empty public constructor
@@ -53,106 +79,306 @@ public class TimerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View timerView = inflater.inflate(R.layout.fragment_timer, container, false);
+        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onCreateView()");
 
         // get Timer tag and set to TimerTag
         String timerTag = getTag();
-        ((MainActivity)getActivity()).setTimerTag(timerTag);
+        ((MainActivity) getActivity()).setTimerTag(timerTag);
 
-        // Job name
+        //get ItemDbHelper to get SQLITEDB.getWritableDB()
+        dbHelper = new ItemDbHelper(getActivity());
+
         mItemNameText = timerView.findViewById(R.id.job_name_txt);
-
         /*progressBar button init*/
-        mProgressBar = (ProgressBar)timerView.findViewById(R.id.progressBar);
-        mStateBttn = (Button)timerView.findViewById(R.id.state_bttn_view);
+        mProgressBar = (ProgressBar) timerView.findViewById(R.id.progressBar);
+        mStateBttn = (Button) timerView.findViewById(R.id.state_bttn_view);
+        //init();
         mStateBttn.setOnClickListener(stateChecker);
-
         /*Time Text Initialize */
-        mTimeText = (TextView)timerView.findViewById(R.id.time_txt_view);
+        mTimeText = (TextView) timerView.findViewById(R.id.time_txt_view);
+        /*progressBar button init*/
+        mProgressBar = (ProgressBar) timerView.findViewById(R.id.progressBar);
+        mProgressBar.bringToFront(); // bring the progressbar to the top
+         /* intent = new Intent(getActivity(), TimerService.class);*/
+        /*init timer count */
+        mCountTimer = 1;
 
-        /*work time 을 갖고 오기위해 inflater*/
-        header = getActivity().getLayoutInflater().inflate(R.layout.fragment_setting, null, false);
+        /*init shared prefernce*/
+        SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("COUNT", 1);
+        editor.commit();
 
-        mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
-        mBreakTime= ((EditText) header.findViewById(R.id.break_time)).getText().toString();
-        mLongBreakTime= ((EditText) header.findViewById(R.id.long_break_time)).getText().toString();
-
-        final int time = Integer.parseInt(mWorkTime);
-        mCalcTimer = new Timer(2*1000*60,1000);
-
-        handler = new TimerHandler();
-        handler.sendEmptyMessage(0);
         return timerView;
     }
 
-    Button.OnClickListener stateChecker =new View.OnClickListener(){
+    @Override
+    public void onStart() {
+        super.onStart();
+        //TimerService connection
+        // Bind to LocalService
+        intent = new Intent(getActivity(), TimerService.class);
+        conn = new ServiceConnection() {
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mTimerService = null;
+                mBound = false;
+            }
+
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onServiceConnected()");
+                mTimerService = ((TimerService.MyBinder) service).getService();
+                mBound = true;
+            }
+        };
+        /*TimerService Intent Listener*/
+        getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
+        /* 브로드캐스트의 액션을 등록하기 위한 인텐트 필터 */
+        /* iIntentFilter to register Broadcast Receiver */
+        IntentFilter intentfilter = new IntentFilter();
+        intentfilter.addAction(getActivity().getPackageName() + "SEND_BROAD_CAST");
+
+        /*동적 리시버 구현 */
+        mReceiver = new TimerServiceBroadcastReceiver();
+        getActivity().registerReceiver(mReceiver, intentfilter);
+    }
+
+
+    Button.OnClickListener stateChecker = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            state=!state;
-            if(state==STATE_PLAY){
-                mCalcTimer.start();
-                mStateBttn.setText(R.string.stop);
-            }
-            else{
-                progressBarValue=0;
-                mTimeText.setText("");
-                mCalcTimer.cancel();
+            if (mStateBttn.getText().toString().equals("start")) { // checked
+                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Start");
+                //mUnit will be intialize when list item is clicked
+                if (mBound) {
+                /* set mStatus DB to DO(1)*/
+                    db = dbHelper.getWritableDatabase();
+                    query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "' WHERE _ID = '" + mId + "';";
+                    db.execSQL(query);
+                    db.close();
+                    //set the timer setting
+                    setTimer();
+                    //startService
+                    getActivity().startService(intent);
+                    showNotification();
+                }
+            } else {
+                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Stop");
+                Log.i("TimerFragment", "----------------------->Timer Stopped");
+                getActivity().stopService(intent); //stop service
+                mReadThread.interrupt();
+                mTimerService.stopTimer();
+                mProgressBar.setProgress(0);
+                mProgressHandler.removeMessages(0);
+                mNM.cancelAll();
+                progressBarValue = 0; //must be set 0
+                Log.i("TimerFragment", "----------------------->Service stop");
                 mStateBttn.setText(R.string.start);
+
+                /*set mStatus to TO DO(0)*/
+                db = dbHelper.getWritableDatabase();
+                query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
+                db.execSQL(query);
+                db.close();
             }
         }
     };
 
-    public class Timer extends CountDownTimer{
-        Timer(long total,long interval){
-            super(total,interval);
-        }
-        @Override
-        public void onTick(long millisUntilFinished) {
-            String hour = String.format("%02d",(millisUntilFinished / (1000*60*60)) );
-            String min = String.format("%02d",(millisUntilFinished) / (1000*60) );
-            String sec = String.format("%02d",(millisUntilFinished/1000) %60);
-            mTimeText.setText(hour+":"+min+":"+sec);
-        }
-        @Override
-        public void onFinish() {
-                        /*alarm or vibration*/
-            // We want the alarm to go off 30 seconds from now.
-            handler.removeMessages(0);
-            final int time = Integer.parseInt(mBreakTime);
-            mCalcTimer = new Timer(time*1000*60,1000);
-
-        }
+    public void setTimer() {
+        Log.i("Fragment", "--------------------------------------------->startTimer()");
+        //read mCountTimer
+        SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        mCountTimer = pref.getInt("COUNT", 1);
+        View header = getActivity().getLayoutInflater().inflate(R.layout.fragment_setting, null, false);
+       /* mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
+        mBreakTime = ((EditText) header.findViewById(R.id.break_time)).getText().toString();
+        mLongBreakTime = ((EditText) header.findViewById(R.id.long_break_time)).getText().toString();*/
+        String mWorkTime = "1";
+        String mBreakTime = "1";
+        String mLongBreakTime = "1";
+        int runTime=0; // minute
+        if (mCountTimer % 8 == 0) // assign time by work,short & long break
+            runTime = Integer.parseInt(mLongBreakTime);
+        else if (mCountTimer % 2 == 1)
+            runTime = Integer.parseInt(mWorkTime);
+        else
+            runTime = Integer.parseInt(mBreakTime);
+        // set the progressbar max and run
+        mProgressBar.setMax(runTime * 60 + 2);
+        mProgressHandler = new ProgressHandler();
+        updateLeftTime();
+        mTimerService.setRunTime(runTime);
+        mStateBttn.setText(R.string.stop);
+        mProgressHandler.sendEmptyMessage(0);
     }
-    public class TimerHandler extends Handler{
-        TimerHandler(){
+
+    public void updateLeftTime() {
+        mReadThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (mBound) {
+                    try {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mTimeText.setText(mTimerService.getTime());
+                                mBuilder.setContentText(mTimerService.getTime());
+                                mNM.notify(NOTIFYID, mBuilder.build());
+                            }
+
+                        });
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace(); //back to list
+                    }
+                }
+            }
+        });
+        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment ReadThreadStart()");
+        mReadThread.start();
+    }
+
+
+    public class ProgressHandler extends Handler {
+        ProgressHandler() {
             super();
         }
+
         @Override
-        public void handleMessage(android.os.Message msg)
-        {
-            if(state)
-            {
-                progressBarValue++; // match to sec
+        public void handleMessage(android.os.Message msg) {
+            if (mTimerService.getRun()) {
+                progressBarValue++;
+                mProgressBar.bringToFront();
+                mProgressBar.setProgress(progressBarValue);
+                mProgressHandler.sendEmptyMessageDelayed(0, 1000); //increase by sec
+            } else { // Timer must be finished
+                mProgressBar.setProgress(0);
+                progressBarValue = 0;
+            }
+        }
+    }
+    public boolean completeCheck() {
+        return mUnit == mTotalUnit ? true : false;
+    }
+
+    public class TimerServiceBroadcastReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
+
+            // UPDATE mCountTimner range 1..8
+            // if Long Break Time has just finished, change to 1
+            if (mCountTimer == 8)
+                mCountTimer = 1;
+            else
+                mCountTimer++;
+
+            SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putInt("COUNT", mCountTimer);
+            editor.commit();
+
+            //change the button text to 'start'
+            mStateBttn.setText("start");
+
+            //set the ListItemText for the next session
+            if (mCountTimer % 2 == 1)
+                mItemNameText.setText(mName);
+            else {
+                mUnit++; //if the last session WAS work ,increase mUnit
+                if (mCountTimer % 8 == 0)
+                    mItemNameText.setText("Long Break Time");
+                else
+                    mItemNameText.setText("Break Time");
             }
 
-            mProgressBar.bringToFront(); // bring the progressbar to the top
-            mProgressBar.setProgress(progressBarValue);
-            handler.sendEmptyMessageDelayed(0, 1000); //increase by sec
+            //store mUnit and mStatus
+
+            db = dbHelper.getWritableDatabase();
+            query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "', status = '";
+            // if all the units are  completed
+            if (completeCheck()) {
+                //UPDATE DB  mStatus = 2
+                query = query + ItemContract.ItemEntry.STATUS_DONE + "' WHERE _ID = '" + mId + "';";
+                // if the last break of the list just end go back to the listFragment
+                if (mCountTimer == mUnit * 2) {
+                    //if finished, set the button disable
+                    mStateBttn.setEnabled(false);
+                    // Change Fragment TimerFragment -> ListItemFragment ->
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    (mainActivity).getViewPager().setCurrentItem(0);
+                }
+            } else {
+                //UPDATE DB  mStatus = 0
+                query = query + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
+            }
+
+            db.execSQL(query);
+            db.close();
+
+            /*List Item unit count update*/
+            MainActivity mainActivity = (MainActivity) getActivity();
+            String listTag = mainActivity.getListTag();
+            ListItemFragment listItemFragment = (ListItemFragment)mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
+            listItemFragment.listUiUpdateFromDb();
+        }
+    }
+    private void showNotification() {
+        // The PendingIntent to launch our activity if the user selects this notification
+        //PendingIntent contentIntent = PendingIntent.getService(this, 0,new Intent(this, TimerFragment.class), 0);
+        // Set the info for the views that show in the notification panel.
+        mBuilder =
+                new NotificationCompat.Builder(getActivity())
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                        .setContentTitle(mItemNameText.getText())
+                        .setContentText(mTimeText.getText());
+       // mBuilder.setContentIntent(contentIntent);
+        // Send the notification.
+        // We use a layout id because it is a unique number.  We use it later to cancel.
+        mNM = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        mNM.notify(NOTIFYID, mBuilder.build());
+    }
+    @Override
+    public void onStop(){
+        super.onStop();
+        if(mNM!=null)
+            mNM.cancelAll();
+        if(mBound) {
+            getActivity().unbindService(conn);
+            mBound = false;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mNM!=null)
+            mNM.cancelAll();
+        if(mBound) {
+            getActivity().unbindService(conn);
+            mBound = false;
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mBound){
+        getActivity().unregisterReceiver(mReceiver);
+        mBound = false;
         }
     }
 
     /**
-     * This function set item name in TextView(job_txt_view)*/
-    public void nameUpdate(){
+     * This function set item name in TextView(job_txt_view)
+     */
+    public void nameUpdate() {
         mItemNameText.setText(mName);
-
-        // test code
-        Toast.makeText(getContext(), "ID: " + mId + ", Name: " + mName + ", Status: " + mStatus +
-        ", Unit: " + mUnit, Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * Setter
-     */
+    /* Setter used by List*/
     public void setmId(int mId) {
         this.mId = mId;
     }
@@ -173,3 +399,4 @@ public class TimerFragment extends Fragment {
         this.mName = mName;
     }
 }
+
