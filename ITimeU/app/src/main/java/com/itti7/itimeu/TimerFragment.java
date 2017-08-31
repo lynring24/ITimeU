@@ -89,6 +89,7 @@ public class TimerFragment extends Fragment {
         mProgressBar = (ProgressBar) timerView.findViewById(R.id.progressBar);
         mStateBttn = (Button) timerView.findViewById(R.id.state_bttn_view);
         mStateBttn.setOnClickListener(stateChecker);
+        mStateBttn.setEnabled(false);
         /*Time Text Initialize */
         mTimeText = (TextView) timerView.findViewById(R.id.time_txt_view);
         /*progressBar button init*/
@@ -362,6 +363,9 @@ public class TimerFragment extends Fragment {
 
     public void setmName(String mName) {
         this.mName = mName;
+    }
+    public void setButton(Boolean flag){
+        this.mStateBttn.setEnabled(flag);
     }
 }
 

@@ -473,6 +473,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             timerFragment.setmUnit(mItemUnit);
             timerFragment.setmTotalUnit(mItemTotalUnit);
             timerFragment.nameUpdate();
+            timerFragment.setButton(true);
         }
 
         // Change Fragment ListItemFragment -> TimerFragment
