@@ -63,13 +63,13 @@ class ItemCursorAdapter extends CursorAdapter {
 
         // Find the columns of item attributes that we're interested in
         int nameColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME);
-        int quantityColumnIdex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DETAIL);
+        int quantityColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DETAIL);
         int totalUnitColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT);
         int unitColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT);
 
         // Read the item attributes from the Cursor for the current item
         String itemName = cursor.getString(nameColumnIndex);
-        String itemQuantity = cursor.getString(quantityColumnIdex);
+        String itemQuantity = cursor.getString(quantityColumnIndex);
         int itemTotalUnit = cursor.getInt(totalUnitColumnIndex);
         int itemUnit = cursor.getInt(unitColumnIndex);
 
