@@ -553,6 +553,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 int length = charSequence.length();
 
                 if (length == 0) {
+                    mNameCountTextView.setText(null);
                     mNameCountTextView.setVisibility(View.INVISIBLE);
                 } else {
                     mNameCountTextView.setVisibility(View.VISIBLE);
@@ -592,6 +593,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 int length = charSequence.length();
 
                 if (length == 0) {
+                    mDetailCountTextView.setText(null);
                     mDetailCountTextView.setVisibility(View.INVISIBLE);
                 } else {
                     mDetailCountTextView.setVisibility(View.VISIBLE);
