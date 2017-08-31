@@ -98,7 +98,7 @@ public class TimerFragment extends Fragment {
         /* 브로드캐스트의 액션을 등록하기 위한 인텐트 필터 */
         /* iIntentFilter to register Broadcast Receiver */
         IntentFilter intentfilter = new IntentFilter();
-        intentfilter.addAction(getActivity().getPackageName() + "SEND_BROAD_CAST");
+        intentfilter.addAction(getActivity().getPackageName());
 
         /*동적 리시버 구현 */
         mReceiver =  new BroadcastReceiver() {
@@ -319,7 +319,12 @@ public class TimerFragment extends Fragment {
             mBound = false;
         }
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(mReceiver,new IntentFilter(getActivity().getPackageName()));
 
+    }
     @Override
     public void onPause() {
         super.onPause();

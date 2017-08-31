@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class TimerService extends Service {
-
     private String mLeftTime;
     private int runTime;
     private boolean timerSwitch = false;
