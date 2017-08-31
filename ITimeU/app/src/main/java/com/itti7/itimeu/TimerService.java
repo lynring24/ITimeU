@@ -1,21 +1,12 @@
 package com.itti7.itimeu;
 
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
-import android.os.Message;
-import android.os.Process;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class TimerService extends Service {
@@ -24,15 +15,12 @@ public class TimerService extends Service {
     private int runTime;
     private boolean timerSwitch = false;
     private CountDownTimer timer;
-    private Looper mServiceLooper;
-    private ServiceHandler mServiceHandler;
+
+
     public TimerService() {
 
     }
-    public void setRunTime(int time) {
-        runTime = time;
-        timerSwitch = true;
-    }
+
     public String getTime() {
         return timerSwitch ? mLeftTime : "00:00";
     }
@@ -40,31 +28,12 @@ public class TimerService extends Service {
     public boolean getRun() {
         return timerSwitch;
     }
-    // Handler that receives messages from the thread
-    private final class ServiceHandler extends Handler {
-        public ServiceHandler(Looper looper) {
-            super(looper);
-        }
-        @Override
-        public void handleMessage(Message msg) {
-            // Normally we would do some work here, like download a file.
-            // For our sample, we just sleep for 5 seconds.
-            try {
-                this.post(runnable);
-            } catch (Exception e) {
-                // Restore interrupt status.
-                Thread.currentThread().interrupt();
-            }
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
-            stopSelf(msg.arg1);
-        }
-    }
 
+    Handler handler = new Handler();
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            //Log.i("Timer", "------------------------------------------------------->Timer run()");
+            Log.i("Timer", "------------------------------------------------------->Timer run()");
             timer = new CountDownTimer(runTime * 1000 * 60, 1000) { // minute
                 public void onTick(long millisUntilFinished) {
                     if (timerSwitch) {
@@ -83,20 +52,8 @@ public class TimerService extends Service {
                     Log.i("Timer", "------------------------------------------------------->Timer onFinish");
                     if (timerSwitch) {         //send only if it has finished
                         mLeftTime = "00:00";
-//----------------------------------------------------------------------------------------------------ALARM N VIBRATION----------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-//----------------------------------------------------------------------------------------------------ALARM N VIBRATION----------------------------------------------------------------------------------------------------
-                        timerSwitch = false;
+                        /////////////////////////////////////////////////ALARM N VIBRATION//////////////////////////////////////////////////////////////////////////////////////////////
+                        stopTimer();
                         Log.i("Timer", "------------------------------------------------------->Timer start send Intent");
                         Intent sendIntent = new Intent(getPackageName() + "SEND_BROAD_CAST");  // notice the end of Timer to Fragment
                         sendBroadcast(sendIntent);
@@ -105,17 +62,24 @@ public class TimerService extends Service {
                 }
             };
             timer.start();
+            ///////////////////////////////////////////////// /*  Notification HERE*///////////////////////////////////////////////////////////////////////////////////////////////
         }
     };
+    public void startTimer(int time) {
+        runTime=time;
+        timerSwitch = true;
+        handler.post(runnable);
+    }
 
     public void stopTimer() {
-        //Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
+        Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
-        mServiceHandler.removeMessages(0);
+        timer.cancel();
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
+        Log.i("Timer", "------------------------------------------------------->TimeronUnbind");
         stopTimer();
         return true;
     }
@@ -123,14 +87,10 @@ public class TimerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("Timer", "------------------------------------------------------->Timer onStartCommand");
-        // For each start request, send a message to start a job and deliver the
-        // start ID so we know which request we're stopping when we finish the job
-        Message msg = mServiceHandler.obtainMessage();
-        msg.arg1 = startId;
-        mServiceHandler.sendMessage(msg); //start
-
-        // If we get killed, after returning from here, restart
-        // return START_STICKY;
+        runTime = intent.getIntExtra("RUNTIME", 1);
+        Log.i("RUNTIME", "------------------------------------------------------->RUNTIME : "+runTime);
+//        timerSwitch = true;
+//        handler.post(runnable);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -142,20 +102,7 @@ public class TimerService extends Service {
 
     @Override
     public void onCreate() {
-        Log.i("TimerService", "------------------------------------------------------->TimerService onCreate()");
-       // mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         super.onCreate();
-        // Start up the thread running the service.  Note that we create a
-        // separate thread because the service normally runs in the process's
-        // main thread, which we don't want to block.  We also make it
-        // background priority so CPU-intensive work will not disrupt our UI.
-        HandlerThread thread = new HandlerThread("ServiceStartArguments",
-                Process.THREAD_PRIORITY_BACKGROUND);
-        thread.start();
-
-        // Get the HandlerThread's Looper and use it for our Handler
-        mServiceLooper = thread.getLooper();
-        mServiceHandler = new ServiceHandler(mServiceLooper);
     }
 
     @Override
@@ -166,7 +113,7 @@ public class TimerService extends Service {
 
     public class MyBinder extends Binder {
         public TimerService getService() {
-            //Log.i("Timer", "------------------------------------------------------->Timer getService()");
+            Log.i("Timer", "------------------------------------------------------->Timer getService()");
             return TimerService.this;
         }
     }
