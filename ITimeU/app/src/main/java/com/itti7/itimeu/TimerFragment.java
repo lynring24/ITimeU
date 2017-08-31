@@ -42,7 +42,7 @@ public class TimerFragment extends Fragment {
     private Button mStateBttn;
     /*timer Service Component*/
     private TimerService mTimerService;
-    boolean mBound = false;
+    boolean mBound = true;
     private TimerHandler handler;
     private int progressBarValue = 0;
     public int runTime; // minute
@@ -230,6 +230,8 @@ public class TimerFragment extends Fragment {
                 mTimerService.stopTimer();
                 mProgressBar.setProgress(0);
                 handler.removeMessages(0);
+                mItemNameText.setText("");
+                mStateBttn.setEnabled(false);
                 progressBarValue = 0; //must be set 0
                 Log.i("TimerFragment", "----------------------->Service stop");
                 mStateBttn.setText(R.string.start);
@@ -260,7 +262,7 @@ public class TimerFragment extends Fragment {
         mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
         handler = new TimerHandler();
         updateTimerText();
-        mTimerService.startTimer(runTime);
+        mTimerService.setTimeName(runTime,mName);
         mStateBttn.setText(R.string.stop);
         handler.sendEmptyMessage(0);
     }

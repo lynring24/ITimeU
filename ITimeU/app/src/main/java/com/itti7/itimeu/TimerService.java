@@ -65,7 +65,7 @@ public class TimerService extends Service {
             ///////////////////////////////////////////////// /*  Notification HERE*///////////////////////////////////////////////////////////////////////////////////////////////
         }
     };
-    public void startTimer(int time) {
+    public void setTimeName(int time,String name) {
         runTime=time;
         timerSwitch = true;
         handler.post(runnable);
