@@ -264,7 +264,7 @@ public class TimerFragment extends Fragment {
         mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
         handler = new TimerHandler();
         updateTimerText();
-        mTimerService.setTimeName(runTime,mName);
+        mTimerService.setTimeName(runTime,mItemNameText.getText().toString());
         mStateBttn.setText(R.string.stop);
         handler.sendEmptyMessage(0);
     }
