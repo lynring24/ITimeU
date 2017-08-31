@@ -162,7 +162,6 @@ public class TimerFragment extends Fragment {
                 listItemFragment.listUiUpdateFromDb();
             }
         };
-        getActivity().registerReceiver(mReceiver,new IntentFilter(mTimerService.strReceiver));
         return timerView;
     }
 
@@ -324,8 +323,6 @@ public class TimerFragment extends Fragment {
     public void onResume() {
         Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onResume()");
         super.onResume();
-        init();
-        getActivity().registerReceiver(mReceiver,new IntentFilter(mTimerService.strReceiver));
     }@Override
     public void onStart() {
         Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onStart()");
