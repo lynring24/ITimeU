@@ -31,13 +31,13 @@ import com.itti7.itimeu.data.ItemDbHelper;
 public class TimerFragment extends Fragment {
 
     /*Setting UI*/
-    private View header;
+    //private View header;
 
     private TextView mTimeText;
     private TextView mItemNameText;
-    private String mWorkTime; //R.id.work_time
-    private String mBreakTime; //R.id.work_time
-    private String mLongBreakTime; //R.id.work_time
+   // private String mWorkTime; //R.id.work_time
+    //private String mBreakTime; //R.id.work_time
+    //private String mLongBreakTime; //R.id.work_time
     private ProgressBar mProgressBar;
     private Button mStateBttn;
     /*timer Service Component*/
@@ -88,16 +88,12 @@ public class TimerFragment extends Fragment {
         /*progressBar button init*/
         mProgressBar = (ProgressBar) timerView.findViewById(R.id.progressBar);
         mStateBttn = (Button) timerView.findViewById(R.id.state_bttn_view);
-        init();
         mStateBttn.setOnClickListener(stateChecker);
         /*Time Text Initialize */
         mTimeText = (TextView) timerView.findViewById(R.id.time_txt_view);
         /*progressBar button init*/
         mProgressBar = (ProgressBar) timerView.findViewById(R.id.progressBar);
         mProgressBar.bringToFront(); // bring the progressbar to the top
-
-        /* 브로드캐스트의 액션을 등록하기 위한 인텐트 필터 */
-        /* iIntentFilter to register Broadcast Receiver */
 
         /*동적 리시버 구현 */
         mReceiver =  new BroadcastReceiver() {
@@ -164,20 +160,13 @@ public class TimerFragment extends Fragment {
         };
         return timerView;
     }
-
-    private void init() {
+    @Override
+    public void onStart() {
+        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onStart()");
+        super.onStart();
         intent = new Intent(getActivity(), TimerService.class);
         /*init timer count */
         mCountTimer = 1;
-        //work time  inflater
-
-        header = getActivity().getLayoutInflater().inflate(R.layout.fragment_setting, null, false);
-       /* mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
-        mBreakTime = ((EditText) header.findViewById(R.id.break_time)).getText().toString();
-        mLongBreakTime = ((EditText) header.findViewById(R.id.long_break_time)).getText().toString();*/
-        mWorkTime = "1";
-        mBreakTime = "1";
-        mLongBreakTime = "1";
         /*TimerService connection*/
         conn = new ServiceConnection() {
             @Override
@@ -204,11 +193,15 @@ public class TimerFragment extends Fragment {
         /*init shared prefernce*/
         SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("COUNT", 1);
+        editor.putInt("COUNT", mCountTimer);
         editor.commit();
-
     }
-
+    @Override
+    public void onResume() {
+        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onResume()");
+        super.onResume();
+        getActivity().registerReceiver(mReceiver,new IntentFilter(mTimerService.strReceiver));
+    }
     Button.OnClickListener stateChecker = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -245,13 +238,21 @@ public class TimerFragment extends Fragment {
             }
         }
     };
-
     public void startTimer() {
         Log.i("Fragment", "--------------------------------------------->startTimer()");
         //read mCountTimer
         SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         mCountTimer = pref.getInt("COUNT", 1);
-        ////end of read mCountTimer
+
+       /*
+        View header = getActivity().getLayoutInflater().inflate(R.layout.fragment_setting, null, false);
+        mWorkTime = ((EditText) header.findViewById(R.id.work_time)).getText().toString();
+        String mBreakTime = ((EditText) header.findViewById(R.id.break_time)).getText().toString();
+        String mLongBreakTime = ((EditText) header.findViewById(R.id.long_break_time)).getText().toString();
+        */
+        String mWorkTime = "1";
+        String mBreakTime = "1";
+        String mLongBreakTime = "1";
         if (mCountTimer % 8 == 0) // assign time by work,short & long break
             runTime = Integer.parseInt(mLongBreakTime);
         else if (mCountTimer % 2 == 1)
@@ -319,17 +320,7 @@ public class TimerFragment extends Fragment {
             mBound = false;
         }
     }
-    @Override
-    public void onResume() {
-        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onResume()");
-        super.onResume();
-    }@Override
-    public void onStart() {
-        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onStart()");
-        super.onStart();
-        init();
-        getActivity().registerReceiver(mReceiver,new IntentFilter(mTimerService.strReceiver));
-    }
+
     @Override
     public void onPause() {
         super.onPause();
