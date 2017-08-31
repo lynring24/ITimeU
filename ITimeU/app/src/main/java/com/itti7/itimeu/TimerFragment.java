@@ -140,12 +140,17 @@ public class TimerFragment extends Fragment {
 
                 //if finished, set the button disable
                 //go back to list
-                if (mUnit == mTotalUnit) {
+                if (mUnit*2 == mTotalUnit) {
                     mStateBttn.setEnabled(false);
                     // Change Fragment ListItemFragment -> TimerFragment
                     MainActivity mainActivity = (MainActivity) getActivity();
                     (mainActivity).getViewPager().setCurrentItem(0);
                 }
+                /*List Item unit count update*/
+                MainActivity mainActivity = (MainActivity) getActivity();
+                String listTag = mainActivity.getListTag();
+                ListItemFragment listItemFragment = (ListItemFragment)mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
+                listItemFragment.listUiUpdateFromDb();
             }
         };
         getActivity().registerReceiver(mReceiver, intentfilter);
