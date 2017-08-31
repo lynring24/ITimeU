@@ -65,6 +65,7 @@
     <string name="editor_date_txt_view">date</string>
 
     <!-- item.xml -->
+    <string name="item_status_imageview">show status of the item</string>
     <string name="unit_divider">/</string>
 
     <!-- activity_list.xml -->

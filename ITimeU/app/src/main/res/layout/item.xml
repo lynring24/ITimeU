@@ -17,10 +17,12 @@
         android:useDefaultMargins="false">
 
         <ImageView
+            android:id="@+id/item_status_imageview"
             android:layout_columnSpan="2"
             android:layout_rowSpan="2"
             android:layout_gravity="fill"
-            android:src="@drawable/ic_start_btn"/>
+            android:src="@drawable/ic_start_btn"
+            android:contentDescription="@string/item_status_imageview"/>
 
         <TextView
             android:id="@+id/name_txt_view"

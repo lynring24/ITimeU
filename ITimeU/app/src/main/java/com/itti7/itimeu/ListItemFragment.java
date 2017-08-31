@@ -636,4 +636,11 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             }
         });
     }
+
+    /**
+     * This function set status of item.
+     */
+    void setItemStatus() {
+        // ToDo: get status and change item view image when timer is started, ended
+    }
 }
