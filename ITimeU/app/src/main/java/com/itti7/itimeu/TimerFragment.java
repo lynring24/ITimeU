@@ -74,6 +74,7 @@ public class TimerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onCreateView()");
         View timerView = inflater.inflate(R.layout.fragment_timer, container, false);
 
         // get Timer tag and set to TimerTag
@@ -97,8 +98,6 @@ public class TimerFragment extends Fragment {
 
         /* 브로드캐스트의 액션을 등록하기 위한 인텐트 필터 */
         /* iIntentFilter to register Broadcast Receiver */
-       // IntentFilter intentfilter = new IntentFilter();
-        //intentfilter.addAction(getActivity().getPackageName());
 
         /*동적 리시버 구현 */
         mReceiver =  new BroadcastReceiver() {
@@ -186,6 +185,11 @@ public class TimerFragment extends Fragment {
             public void onServiceDisconnected(ComponentName name) {
                 mTimerService = null;
                 mBound = false;
+                mTimerService.stopTimer();
+                mProgressBar.setProgress(0);
+                handler.removeMessages(0);
+                mItemNameText.setText("");
+                mStateBttn.setEnabled(false);
             }
 
             @Override
@@ -230,8 +234,6 @@ public class TimerFragment extends Fragment {
                 mTimerService.stopTimer();
                 mProgressBar.setProgress(0);
                 handler.removeMessages(0);
-                mItemNameText.setText("");
-                mStateBttn.setEnabled(false);
                 progressBarValue = 0; //must be set 0
                 Log.i("TimerFragment", "----------------------->Service stop");
                 mStateBttn.setText(R.string.start);
@@ -241,7 +243,6 @@ public class TimerFragment extends Fragment {
                 query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
                 db.execSQL(query);
                 db.close();
-
             }
         }
     };
@@ -321,7 +322,15 @@ public class TimerFragment extends Fragment {
     }
     @Override
     public void onResume() {
+        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onResume()");
         super.onResume();
+        init();
+        getActivity().registerReceiver(mReceiver,new IntentFilter(mTimerService.strReceiver));
+    }@Override
+    public void onStart() {
+        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onStart()");
+        super.onStart();
+        init();
         getActivity().registerReceiver(mReceiver,new IntentFilter(mTimerService.strReceiver));
     }
     @Override

@@ -55,7 +55,7 @@ public class TimerService extends Service {
                         /////////////////////////////////////////////////ALARM N VIBRATION//////////////////////////////////////////////////////////////////////////////////////////////
                         stopTimer();
                         Log.i("Timer", "------------------------------------------------------->Timer start send Intent");
-                        Intent sendIntent = new Intent(getPackageName() + "SEND_BROAD_CAST");  // notice the end of Timer to Fragment
+                        Intent sendIntent = new Intent(strReceiver);  // notice the end of Timer to Fragment
                         sendBroadcast(sendIntent);
                         Log.i("Timer", "------------------------------------------------------->Timer finish send Intent");
                     }
