@@ -106,7 +106,7 @@ public class TimerFragment extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
                 //update mCountTimer
-                if(mCountTimer==9)
+                if(mCountTimer==8)
                     mCountTimer=1;
                 else
                     mCountTimer++;
@@ -115,6 +115,9 @@ public class TimerFragment extends Fragment {
                 editor.putInt("COUNT", mCountTimer);
                 editor.commit();
 
+                //change the button text to 'start'
+                mStateBttn.setText("start");
+                
                 //store
                 mUnit++;
                 db = dbHelper.getWritableDatabase();
