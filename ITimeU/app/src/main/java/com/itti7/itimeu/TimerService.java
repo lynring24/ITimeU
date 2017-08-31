@@ -52,6 +52,7 @@ public class TimerService extends Service {
                             mLeftTime = hour + ":" + mLeftTime;
                         }
                     }
+                    mBuilder.setContentText(mLeftTime);
                     mNM.notify(NOTIFYID, mBuilder.build());
                 }
 
