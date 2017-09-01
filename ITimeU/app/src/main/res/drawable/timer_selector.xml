@@ -5,10 +5,10 @@
 
     <item
         android:state_selected="true"
-        android:drawable="@drawable/ic_clock_selected" />
+        android:drawable="@drawable/ic_timer_selected" />
 
     <item
         android:state_selected="false"
-        android:drawable="@drawable/ic_clock_unselected" />
+        android:drawable="@drawable/ic_timer_unselected" />
 
 </selector>
