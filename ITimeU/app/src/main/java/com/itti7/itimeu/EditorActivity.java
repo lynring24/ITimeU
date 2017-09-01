@@ -92,6 +92,11 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     private ImageButton mUnitMinusImageButton;
 
     /**
+     * Unit convert integer value
+     */
+    private int mUnitNumber;
+
+    /**
      * Total unit convert integer value
      */
     private int mTotalUnitNumber;
@@ -266,7 +271,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             Toast.makeText(this, getString(R.string.input_name_toast), Toast.LENGTH_SHORT).show();
             return false;
         } else {
-            Log.v("EditorActivity", mDate);
             // Determine if this is a new or existing item by checking
             // if mCurrentItemUri is null or not
             if (mCurrentItemUri == null) {
@@ -277,7 +281,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 createValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
                 createValues.put(ItemEntry.COLUMN_ITEM_STATUS, mStatus);
                 createValues.put(ItemEntry.COLUMN_ITEM_DATE, mDate);
-                Log.v("EditorActivity", mDate);
 
                 // This is a NEW item, so insert a new item into the provider,
                 // returning the content URI for the new item.
@@ -297,6 +300,19 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 editValues.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
                 editValues.put(ItemEntry.COLUMN_ITEM_DETAIL, detailString);
                 editValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
+
+                // Set status
+                if (mTotalUnitNumber > mUnitNumber) {
+                    mStatus = ItemEntry.STATUS_TODO;
+                }
+                else if (mTotalUnitNumber == mUnitNumber){
+                    mStatus = ItemEntry.STATUS_DONE;
+                }
+                else {
+                    Toast.makeText(this, "Invalid status", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                editValues.put(ItemEntry.COLUMN_ITEM_STATUS, mStatus);
                 editValues.put(ItemEntry.COLUMN_ITEM_DATE, mDate);
 
                 // Otherwise this is an EXISTING item, so update the item with content URI: mCurrentItemUri
@@ -397,13 +413,12 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 ItemEntry.COLUMN_ITEM_STATUS
         };
 
-        String[] date = {mDate};
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
                 mCurrentItemUri,         // Query the content URI for the current item
                 projection,             // Columns to include in the resulting Cursor
-                "date = ?",                   // No selection clause
-                date,                   // No selection arguments
+                null,                   // No selection clause
+                null,                   // No selection arguments
                 null);                  // Default sort order
     }
 
@@ -417,7 +432,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         if (cursor.moveToFirst()) {
             int nameColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_NAME);
             int detailColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DETAIL);
-            //int unitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_UNIT);
+            int unitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_UNIT);
             int totalUnitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_TOTAL_UNIT);
             //int statusColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_STATUS);
             int dateColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DATE);
@@ -425,7 +440,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             String name = cursor.getString(nameColumnIndex);
             String detail = cursor.getString(detailColumnIndex);
             String date = cursor.getString(dateColumnIndex);
-            //int unit = cursor.getInt(unitColumnIndex);
+            mUnitNumber = cursor.getInt(unitColumnIndex);
             int totalUnit = cursor.getInt(totalUnitColumnIndex);
             //int status = cursor.getInt(statusColumnIndex);
 
@@ -503,7 +518,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         mUnitMinusImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mTotalUnitNumber > 1) {
+                if (mTotalUnitNumber > 1 && mTotalUnitNumber > mUnitNumber) {
                     mTotalUnitNumber--;
                     mTotalUnitString = Integer.toString(mTotalUnitNumber);
                     mTotalUnitTextView.setText(mTotalUnitString);
@@ -518,7 +533,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
      * This function change plus/minus imageButton src according to Unit number range
      */
     private void getUnitImageButtonSrc() {
-        if (mTotalUnitNumber <= 1) {
+        if (mTotalUnitNumber <= 1 || mTotalUnitNumber == mUnitNumber) {
             mUnitMinusImageButton.setImageResource(R.drawable.ic_unit_minus_false);
             mUnitPlusImageButton.setImageResource(R.drawable.ic_unit_plus_true);
         } else if (mTotalUnitNumber < 20) {
