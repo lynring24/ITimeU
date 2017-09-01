@@ -472,8 +472,6 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     public void listUiUpdateFromDb() {
         getLoaderManager().restartLoader(0, null, this);
         setAchievementRate();
-        // test code
-        Toast.makeText(getContext(), "Update list UI", Toast.LENGTH_SHORT).show();
     }
 
     /**
