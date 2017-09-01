@@ -1,5 +1,6 @@
 package com.itti7.itimeu;
 
+import android.graphics.Color;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -37,16 +38,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         // Add tabs
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.list).setText(R.string.tab_list));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.clock).setText(R.string.tab_timer));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.statistics).
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.list_selector).setText(R.string.tab_list));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.timer_selector).setText(R.string.tab_timer));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.statistics_selector).
                 setText(R.string.tab_statistics));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.setting).
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.setting_selector).
                 setText(R.string.tab_setting));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.about).setText(R.string.tab_about));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.about_selector).setText(R.string.tab_about));
 
         // ViewPager for swiping and navigation to the selected tab
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setBackgroundColor(Color.WHITE);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

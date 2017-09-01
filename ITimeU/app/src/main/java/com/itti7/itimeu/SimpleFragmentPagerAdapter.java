@@ -1,36 +1,45 @@
 package com.itti7.itimeu;
 
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.*;
-import android.support.v4.app.ListFragment;
 
-/**
- * Created by hyemin on 17. 8. 16.
- */
+class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
+    final static int ITEM_LIST = 0;
+    final static int ITEM_TIMER = 1;
+    final static int ITEM_STATISTICS = 2;
+    final static int ITEM_SETTING = 3;
+    final static int ITEM_ABOUT = 4;
 
-public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
+    private int mNumbOfTabs;
 
-    int mNumbOfTabs;
-
-    public SimpleFragmentPagerAdapter(FragmentManager fm, int NumbOfTabs){
+    SimpleFragmentPagerAdapter(FragmentManager fm, int NumbOfTabs) {
         super(fm);
         this.mNumbOfTabs = NumbOfTabs;
     }
 
-    /** return the fragment for each position */
+    /**
+     * return the fragment for each position
+     */
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            case 0: return new ListItemFragment();
-            case 1: return new TimerFragment();
-            case 2: return new StatisticsFragment();
-            case 3: return new SettingFragment();
-            case 4: return new AboutFragment();
-            default: return null;
+            case ITEM_LIST:
+                return new ListItemFragment();
+            case ITEM_TIMER:
+                return new TimerFragment();
+            case ITEM_STATISTICS:
+                return new StatisticsFragment();
+            case ITEM_SETTING:
+                return new SettingFragment();
+            case ITEM_ABOUT:
+                return new AboutFragment();
+            default:
+                return null;
         }
     }
 
-    /** return number of tabs*/
+    /**
+     * return number of tabs
+     */
     @Override
     public int getCount() {
         return mNumbOfTabs;
