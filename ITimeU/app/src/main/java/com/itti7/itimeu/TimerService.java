@@ -60,7 +60,7 @@ public class TimerService extends Service {
                     Log.i("Timer", "------------------------------------------------------->Timer onFinish");
                     if (timerSwitch) {         //send only if it has finished
                         mLeftTime = "00:00";
-                        /////////////////////////////////////////////////ALARM N VIBRATION//////////////////////////////////////////////////////////////////////////////////////////////
+                        mNM.cancel(NOTIFYID);
                         stopTimer();
                         Log.i("Timer", "------------------------------------------------------->Timer start send Intent");
                         Intent sendIntent = new Intent(strReceiver);  // notice the end of Timer to Fragment

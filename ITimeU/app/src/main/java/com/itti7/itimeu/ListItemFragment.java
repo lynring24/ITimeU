@@ -132,21 +132,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         // Find the ListView which will be populated with the item data
         mTaskItemListView = mListItemView.findViewById(R.id.item_list_view);
 
-////<<<<<<< HEAD
 //        // When task list view is empty, than show this view
         setEmptyView();
-////=======
-//        // When click item, access to the list table in DB
-//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-//                // Get item's primary id
-//                mItemID = (int) id;
-//                String[] idStr = {String.valueOf(mItemID)};
-//
-//                Cursor cursor = db.rawQuery("SELECT name, unit, totalUnit, status, date FROM list WHERE "
-//                        + BaseColumns._ID + " = ?", idStr);
-////>>>>>>> statistics
 
         // When click task item, then check item's information.
         getTaskItemInfoAndCheck();
