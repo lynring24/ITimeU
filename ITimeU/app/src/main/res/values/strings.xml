@@ -128,9 +128,11 @@
         limitations under the License.</string>
     <string name="mp_chart_link"><a href="https://github.com/PhilJay/MPAndroidChart">
         MPAndroidChart</a></string>
-    <string name="statistics_name">Image of statistics</string>
+
+    <string name="statistics_name">Image of statistics, timer</string>
     <string name="licenses_statistics">Free for commercial use (Include link to authors website)</string>
     <string name="statistics_link"><a href="https://makoto.dunked.com/">Mariano Tardon</a></string>
+
     <string name="emptyimage_name">Empty image</string>
     <string name="licenses_emptyimage">Free for commercial use (Include link to authors website)</string>
     <string name="emptyimage_link"><a href="https://www.iconfinder.com/webhostingmedia">David Cross</a></string>
