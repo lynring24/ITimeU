@@ -250,6 +250,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 ItemContract.ItemEntry._ID,
                 ItemContract.ItemEntry.COLUMN_ITEM_NAME,
                 ItemContract.ItemEntry.COLUMN_ITEM_DETAIL,
+                ItemContract.ItemEntry.COLUMN_ITEM_STATUS,
                 ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT,
                 ItemContract.ItemEntry.COLUMN_ITEM_UNIT};
 
