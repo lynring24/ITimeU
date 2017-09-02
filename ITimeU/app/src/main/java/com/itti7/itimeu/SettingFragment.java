@@ -29,7 +29,7 @@ public class SettingFragment extends Fragment {
     private static EditText mworket, mbreaket, mlongBreaket, msessionNumet; //에디트텍스트 뷰
     private static CheckBox msoundOncb, mvibrateOncb, monScreencb; //체크박스
 
-    public static final String PREFNAME = "SETTING_PREFERENCE";
+    public static final String PREFNAME = "pref";
     public static final String WORKTIME = "worktime";
     public static final String BREAKTIME = "breaktime";
     public static final String LONGBREAKTIME = "longbreaktime";
