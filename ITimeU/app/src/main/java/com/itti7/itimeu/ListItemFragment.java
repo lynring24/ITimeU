@@ -451,7 +451,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             return;
         } else if (mItemStatus == ItemContract.ItemEntry.STATUS_TODO) {
             // Is other task is started?
-            if(isOtherItemSelected) {
+            if (isOtherItemSelected) {
                 // re-initialize
                 isOtherItemSelected = false;
                 return;
@@ -582,6 +582,12 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 Cursor cursor = db.rawQuery("SELECT name, unit, totalUnit, status, date FROM list WHERE "
                         + BaseColumns._ID + " = ?", idStr);
 
+                // Check the timer is started
+                if (isOtherTaskStarted(mItemID)) {
+                    timerIsAlreadyStarted();
+                    return;
+                }
+
                 // Get current item's info
                 if (cursor.moveToFirst()) {
                     mItemName = cursor.getString(
@@ -599,11 +605,6 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                     if (checkDate()) {
                         // Check selected item's status
                         checkStatus();
-                    }
-
-                    // Check the timer is started
-                    if (isOtherTaskStarted(mItemID)) {
-                        timerIsAlreadyStarted();
                     }
                 }
             }
@@ -666,9 +667,10 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         if (cursor.moveToFirst()) {
             do {
                 if (cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS))
-                        == ItemContract.ItemEntry.STATUS_DO
-                        && cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry._ID)) != id) {
-                    return true;
+                        == ItemContract.ItemEntry.STATUS_DO) {
+                    if (cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry._ID)) == id) {
+                        return false;
+                    } else return true;
                 }
             } while (cursor.moveToNext());
         }
