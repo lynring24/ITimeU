@@ -84,6 +84,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     // Today's date
     private String mToday = getStringFromDate(new Date());
 
+    private boolean isOtherItemSelected = false;
+
     /**
      * Adapter for the ListView
      */
@@ -445,8 +447,15 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         if (mItemStatus == ItemContract.ItemEntry.STATUS_DONE) {
             Toast.makeText(mListItemContext, R.string.already_done, Toast.LENGTH_SHORT)
                     .show();
-            return ;
+            return;
         } else if (mItemStatus == ItemContract.ItemEntry.STATUS_TODO) {
+            // Is other task is started?
+            if(isOtherItemSelected) {
+                // re-initialize
+                isOtherItemSelected = false;
+                return;
+            }
+
             // Set item name text to job_txt_view in TimerFragment
             String tabOfTimerFragment = mainActivity.getTimerTag();
             TimerFragment timerFragment = (TimerFragment) getActivity()
@@ -589,9 +598,19 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                         // Check selected item's status
                         checkStatus();
                     }
+
+                    // Check the timer is started
+                    if (isOtherTaskStarted(mItemID)) {
+                        timerIsAlreadyStarted();
+                    }
                 }
             }
         });
+    }
+
+    private void timerIsAlreadyStarted() {
+        Toast.makeText(mListItemContext, "Other task is already started.", Toast.LENGTH_SHORT).show();
+        isOtherItemSelected = true;
     }
 
     /**
@@ -638,10 +657,21 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         });
     }
 
-    /**
-     * This function set status of item.
-     */
-    void setItemStatus() {
-        // ToDo: get status and change item view image when timer is started, ended
+    boolean isOtherTaskStarted(int id) {
+        String[] date = {mToday};
+        Cursor cursor = db.rawQuery("SELECT status, " + BaseColumns._ID + " FROM list WHERE date = ?", date);
+
+        if (cursor.moveToFirst()) {
+            do {
+                if (cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS))
+                        == ItemContract.ItemEntry.STATUS_DO
+                        && cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry._ID)) != id) {
+                    return true;
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        return false;
     }
 }
