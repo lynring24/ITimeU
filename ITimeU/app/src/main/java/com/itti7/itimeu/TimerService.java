@@ -82,14 +82,18 @@ public class TimerService extends Service {
         showNotification(name);
     }
     private void showNotification(String name) {
+        Intent intent = new Intent(this,TimerFragment.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
         // The PendingIntent to launch our activity if the user selects this notification
-        PendingIntent contentIntent = PendingIntent.getService(this, 0,new Intent(this, TimerFragment.class), 0);
+        PendingIntent contentIntent = PendingIntent.getService(this, 0,intent, 0);
+
         // Set the info for the views that show in the notification panel.
          mBuilder = new NotificationCompat.Builder(TimerService.this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(name)
                 .setContentText(mLeftTime);
+
          mBuilder.setContentIntent(contentIntent);
         // Send the notification.
         mNM = (NotificationManager)TimerService.this.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -99,6 +103,7 @@ public class TimerService extends Service {
         Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
         timer.cancel();
+        mNM.cancel(NOTIFYID);
     }
 
     @Override

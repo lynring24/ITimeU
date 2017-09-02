@@ -212,7 +212,7 @@ public class TimerFragment extends Fragment {
                 if (mBound) {
                 /* set mStatus DB to DO(1)*/
                     db = dbHelper.getWritableDatabase();
-                    query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "' WHERE _ID = '" + mId + "';";
+                    query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_DO + "' WHERE _ID = '" + mId + "';";
                     db.execSQL(query);
                     db.close();
 
