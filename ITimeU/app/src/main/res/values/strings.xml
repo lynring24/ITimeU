@@ -56,6 +56,10 @@
     <string name="delete_item_fail">Fail to delete</string>
     <string name="delete_item_success">Success to delete</string>
 
+    <!-- Period hint -->
+    <string name="statistics_startdate_hint">select a start date</string>
+    <string name="statistics_enddate_hint">select an end date</string>
+
     <!-- activity_editor.xml -->
     <string name="input_name_hint">name (essential)</string>
     <string name="input_detail_hint">detail (optional)</string>
@@ -78,7 +82,7 @@
     <!-- MainActivity.java -->
     <string name="tab_list">list</string>
     <string name="tab_timer">timer</string>
-    <string name="tab_statistics">statistics</string>
+    <string name="tab_statistics">graph</string>
     <string name="tab_setting">setting</string>
     <string name="tab_about">about</string>
 
@@ -91,7 +95,7 @@
     <!-- fragment_list_item -->
     <string name="listitem_previous_date_description">get date from previous date</string>
     <string name="listitem_next_date_description">get date from next date</string>
-    
+
     <!-- activity_licenses.xml -->
     <string name="back">Back</string>
     <string name="datepicker_name">Material Date Time Picker</string>
@@ -128,6 +132,14 @@
         limitations under the License.</string>
     <string name="mp_chart_link"><a href="https://github.com/PhilJay/MPAndroidChart">
         MPAndroidChart</a></string>
+
+    <string name="statistics_name">Image of statistics, timer</string>
+    <string name="licenses_statistics">Free for commercial use (Include link to authors website)</string>
+    <string name="statistics_link"><a href="https://makoto.dunked.com/">Mariano Tardon</a></string>
+
+    <string name="emptyimage_name">Empty image</string>
+    <string name="licenses_emptyimage">Free for commercial use (Include link to authors website)</string>
+    <string name="emptyimage_link"><a href="https://www.iconfinder.com/webhostingmedia">David Cross</a></string>
 
     <!-- arrays.xml : spinner items -->
     <string name="arrays_week">WEEK</string>

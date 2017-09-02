@@ -11,11 +11,15 @@
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        app:tabIndicatorHeight="4dp"
+        app:tabSelectedTextColor="@color/accent"
+        app:tabTextAppearance="@style/CustomTextAppearance" />
 </LinearLayout>
 
