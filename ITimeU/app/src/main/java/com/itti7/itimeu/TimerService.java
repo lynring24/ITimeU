@@ -2,6 +2,7 @@ package com.itti7.itimeu;
 
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -60,7 +61,9 @@ public class TimerService extends Service {
                     Log.i("Timer", "------------------------------------------------------->Timer onFinish");
                     if (timerSwitch) {         //send only if it has finished
                         mLeftTime = "00:00";
-                        mNM.cancel(NOTIFYID);
+                        mBuilder.setContentText(mLeftTime);
+                        mBuilder.setSubText("FINISHED");
+                        mNM.notify(NOTIFYID, mBuilder.build());
                         stopTimer();
                         Log.i("Timer", "------------------------------------------------------->Timer start send Intent");
                         Intent sendIntent = new Intent(strReceiver);  // notice the end of Timer to Fragment
@@ -80,16 +83,15 @@ public class TimerService extends Service {
     }
     private void showNotification(String name) {
         // The PendingIntent to launch our activity if the user selects this notification
-        //PendingIntent contentIntent = PendingIntent.getService(this, 0,new Intent(this, TimerFragment.class), 0);
+        PendingIntent contentIntent = PendingIntent.getService(this, 0,new Intent(this, TimerFragment.class), 0);
         // Set the info for the views that show in the notification panel.
          mBuilder = new NotificationCompat.Builder(TimerService.this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(name)
                 .setContentText(mLeftTime);
-        // mBuilder.setContentIntent(contentIntent);
+         mBuilder.setContentIntent(contentIntent);
         // Send the notification.
-        // We use a layout id because it is a unique number.  We use it later to cancel.
         mNM = (NotificationManager)TimerService.this.getSystemService(Context.NOTIFICATION_SERVICE);
         mNM.notify(NOTIFYID, mBuilder.build());
     }
