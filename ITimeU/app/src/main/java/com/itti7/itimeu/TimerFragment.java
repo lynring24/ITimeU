@@ -33,7 +33,7 @@ public class TimerFragment extends Fragment {
 
     /*Setting UI*/
     public static final String PREFNAME = "pref";
-
+    public static int SESSION=4;
     private TextView mTimeText;
     private TextView mItemNameText;
 
@@ -103,7 +103,7 @@ public class TimerFragment extends Fragment {
 
                 // UPDATE mCountTimner range 1..8
                 // if Long Break Time has just finished, change to 1
-                if (mCountTimer == 8)
+                if (mCountTimer == (SESSION*2))
                     mCountTimer = 1;
                 else
                     mCountTimer++;
@@ -248,7 +248,8 @@ public class TimerFragment extends Fragment {
 /*        String mWorkTime = "1";
         String mBreakTime = "1";
         String mLongBreakTime = "1";*/
-        if (mCountTimer % 8 == 0) // assign time by work,short & long break
+        SESSION=pref.getInt("session",4);
+        if (mCountTimer % (SESSION*2) == 0) // assign time by work,short & long break
             runTime = pref.getInt("longbreaktime", 20);
         else if (mCountTimer % 2 == 1)
             runTime = pref.getInt("worktime", 25);
