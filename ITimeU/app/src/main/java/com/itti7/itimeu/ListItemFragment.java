@@ -131,6 +131,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         // Find the ListView which will be populated with the item data
         mTaskItemListView = mListItemView.findViewById(R.id.item_list_view);
 
+        // When task list view is empty, than show this view
         setEmptyView();
 
         // When click task item, then check item's information.
@@ -469,6 +470,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             timerFragment.setmUnit(mItemUnit);
             timerFragment.setmTotalUnit(mItemTotalUnit);
             timerFragment.nameUpdate();
+            timerFragment.setButton(true);
         }
 
         // Change Fragment ListItemFragment -> TimerFragment
