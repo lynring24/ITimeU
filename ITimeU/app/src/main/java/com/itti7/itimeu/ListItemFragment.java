@@ -565,8 +565,6 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
     /**
      * When click task item, than get information from the item.
-     *
-     * @return selected item's data is today? true / false
      */
     void getTaskItemInfoAndCheck() {
         mCursorAdapter = new ItemCursorAdapter(mListItemContext, null);
@@ -583,7 +581,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                         + BaseColumns._ID + " = ?", idStr);
 
                 // Check the timer is started
-                if (isOtherTaskStarted(mItemID)) {
+                if (isAnotherTaskStarted(mItemID)) {
                     timerIsAlreadyStarted();
                     return;
                 }
@@ -607,12 +605,15 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                         checkStatus();
                     }
                 }
+
+                cursor.close();
             }
         });
     }
 
     private void timerIsAlreadyStarted() {
-        Toast.makeText(mListItemContext, "Other task is already started.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mListItemContext, getString(R.string.already_start),
+                Toast.LENGTH_SHORT).show();
         isOtherItemSelected = true;
     }
 
@@ -660,17 +661,22 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         });
     }
 
-    boolean isOtherTaskStarted(int id) {
+    /**
+     * This function check that another task item is already started.
+     * @param id selected item's id
+     * @return if selected item's id is same with the task in execution
+     * , or there is nothing in execution, return true. Otherwise return false.
+     */
+    boolean isAnotherTaskStarted(int id) {
         String[] date = {mToday};
-        Cursor cursor = db.rawQuery("SELECT status, " + BaseColumns._ID + " FROM list WHERE date = ?", date);
+        Cursor cursor = db.rawQuery("SELECT status, " + BaseColumns._ID +
+                " FROM list WHERE date = ?", date);
 
         if (cursor.moveToFirst()) {
             do {
                 if (cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS))
                         == ItemContract.ItemEntry.STATUS_DO) {
-                    if (cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry._ID)) == id) {
-                        return false;
-                    } else return true;
+                    return cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry._ID)) != id;
                 }
             } while (cursor.moveToNext());
         }

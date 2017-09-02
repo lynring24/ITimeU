@@ -42,6 +42,7 @@
     <!-- ListItemFragment.java -->
 
     <!-- check status -->
+    <string name="already_start">Another task is already started.</string>
     <string name="already_done">This task is already done</string>
 
     <!-- check date -->
