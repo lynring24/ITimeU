@@ -3,11 +3,11 @@ package com.itti7.itimeu;
 import android.support.v4.app.*;
 
 class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
-    final static int ITEM_LIST = 0;
-    final static int ITEM_TIMER = 1;
-    final static int ITEM_STATISTICS = 2;
-    final static int ITEM_SETTING = 3;
-    final static int ITEM_ABOUT = 4;
+    private final static int ITEM_LIST = 0;
+    private final static int ITEM_TIMER = 1;
+    private final static int ITEM_STATISTICS = 2;
+    private final static int ITEM_SETTING = 3;
+    private final static int ITEM_ABOUT = 4;
 
     private int mNumbOfTabs;
 

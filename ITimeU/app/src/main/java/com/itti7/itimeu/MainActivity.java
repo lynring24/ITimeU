@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 = new SimpleFragmentPagerAdapter(getSupportFragmentManager(),
                 tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(4);
     }
 
     /**
