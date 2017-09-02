@@ -82,10 +82,10 @@ public class TimerService extends Service {
         showNotification(name);
     }
     private void showNotification(String name) {
-        Intent intent = new Intent(this,TimerFragment.class);
+        Intent intent = new Intent(this,MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
         // The PendingIntent to launch our activity if the user selects this notification
-        PendingIntent contentIntent = PendingIntent.getService(this, 0,intent, 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,intent, 0);
 
         // Set the info for the views that show in the notification panel.
          mBuilder = new NotificationCompat.Builder(TimerService.this)
