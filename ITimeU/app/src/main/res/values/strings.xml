@@ -82,7 +82,7 @@
     <!-- MainActivity.java -->
     <string name="tab_list">list</string>
     <string name="tab_timer">timer</string>
-    <string name="tab_statistics">statistics</string>
+    <string name="tab_statistics">graph</string>
     <string name="tab_setting">setting</string>
     <string name="tab_about">about</string>
 
