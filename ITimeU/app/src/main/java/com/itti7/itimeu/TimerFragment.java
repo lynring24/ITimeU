@@ -99,72 +99,83 @@ public class TimerFragment extends Fragment {
         mReceiver =  new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onReceive()");
-
-                // UPDATE mCountTimner range 1..8
-                // if Long Break Time has just finished, change to 1
-                if (mCountTimer == (SESSION*2))
-                    mCountTimer = 1;
-                else
-                    mCountTimer++;
-
-                SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putInt("COUNT", mCountTimer);
-                editor.commit();
-
-                //change the button text to 'start'
-                mStateBttn.setText("start");
-
-                //set the ListItemText for the next session
-                if (mCountTimer % 2 == 1)
-                    mItemNameText.setText(mName);
-                else {
-                    mUnit++; //if the last session WAS work ,increase mUnit
-                    if (mCountTimer % 8 == 0)
-                        mItemNameText.setText("Long Break Time");
-                    else
-                        mItemNameText.setText("Break Time");
-                }
-
-                //store mUnit and mStatus
-
-                db = dbHelper.getWritableDatabase();
-                query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "', status = '";
-                // if all the units are  completed
-                if (mUnit==mTotalUnit) {
-                    //UPDATE DB  mStatus = 2
-                    query = query + ItemContract.ItemEntry.STATUS_DONE + "' WHERE _ID = '" + mId + "';";
-                    // if the last break of the list just end go back to the listFragment
-                    if (mCountTimer == mUnit * 2) {
-                        //if finished, set the button disable
-                        mStateBttn.setEnabled(false);
-                        // Change Fragment TimerFragment -> ListItemFragment ->
-                        MainActivity mainActivity = (MainActivity) getActivity();
-                        (mainActivity).getViewPager().setCurrentItem(0);
-                    }
-                } else {
-                    //UPDATE DB  mStatus = 0
-                    query = query + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
-                }
-
-                db.execSQL(query);
-                db.close();
-
-            /*List Item unit count update*/
-                MainActivity mainActivity = (MainActivity) getActivity();
-                String listTag = mainActivity.getListTag();
-                ListItemFragment listItemFragment = (ListItemFragment)mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
-                listItemFragment.listUiUpdateFromDb();
+                onFinishUnit();
             }
         };
         return timerView;
     }
+    public void onFinishUnit(){
+        // UPDATE mCountTimner range 1..8
+        // if Long Break Time has just finished, change to 1
+        if (mCountTimer == (SESSION*2))
+            mCountTimer = 1;
+        else
+            mCountTimer++;
+
+        SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("COUNT", mCountTimer);
+        editor.commit();
+
+        //change the button text to 'start'
+        mStateBttn.setText("start");
+
+        //set the ListItemText for the next session
+        if (mCountTimer % 2 == 1)
+            mItemNameText.setText(mName);
+        else {
+            mUnit++; //if the last session WAS work ,increase mUnit
+            if (mCountTimer % 8 == 0)
+                mItemNameText.setText("Long Break Time");
+            else
+                mItemNameText.setText("Break Time");
+        }
+
+        //store mUnit and mStatus
+
+        db = dbHelper.getWritableDatabase();
+        query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "', status = '";
+        // if all the units are  completed
+        if (mUnit==mTotalUnit) {
+            //UPDATE DB  mStatus = 2
+            query = query + ItemContract.ItemEntry.STATUS_DONE + "' WHERE _ID = '" + mId + "';";
+            // if the last break of the list just end go back to the listFragment
+            if (mCountTimer == mUnit * 2) {
+                //if finished, set the button disable
+                mStateBttn.setEnabled(false);
+                // Change Fragment TimerFragment -> ListItemFragment ->
+                MainActivity mainActivity = (MainActivity) getActivity();
+                (mainActivity).getViewPager().setCurrentItem(0);
+            }
+        } else {
+            //UPDATE DB  mStatus = 0
+            query = query + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
+        }
+
+        db.execSQL(query);
+        db.close();
+
+            /*List Item unit count update*/
+        MainActivity mainActivity = (MainActivity) getActivity();
+        String listTag = mainActivity.getListTag();
+        ListItemFragment listItemFragment = (ListItemFragment)mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
+        listItemFragment.listUiUpdateFromDb();
+
+        //after the unit values has been updated
+        //turn the value to false;
+        TimerService.mTimerServiceFinished=false;
+    }
+
+
+
     @Override
     public void onStart() {
         Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onStart()");
         super.onStart();
         intent = new Intent(getActivity(), TimerService.class);
+        if(TimerService.mTimerServiceFinished==true){
+            onFinishUnit();
+        }
         /*init timer count */
         mCountTimer = 1;
         /*TimerService connection*/
@@ -240,14 +251,9 @@ public class TimerFragment extends Fragment {
     };
     public void startTimer() {
         Log.i("Fragment", "--------------------------------------------->startTimer()");
-        //read mCountTimer
-        //
+
         SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
         mCountTimer = pref.getInt("COUNT", 1);
-
-/*        String mWorkTime = "1";
-        String mBreakTime = "1";
-        String mLongBreakTime = "1";*/
         SESSION=pref.getInt("session",4);
         if (mCountTimer % (SESSION*2) == 0) // assign time by work,short & long break
             runTime = pref.getInt("longbreaktime", 20);

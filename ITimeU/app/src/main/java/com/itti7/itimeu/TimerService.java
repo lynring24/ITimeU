@@ -23,7 +23,7 @@ public class TimerService extends Service {
     private NotificationCompat.Builder mBuilder;
     private NotificationManager mNM;
     private final int NOTIFYID=001;
-
+    public static boolean mTimerServiceFinished = false;
     public TimerService() {
 
     }
@@ -66,6 +66,7 @@ public class TimerService extends Service {
                         mNM.notify(NOTIFYID, mBuilder.build());
                         stopTimer();
                         Log.i("Timer", "------------------------------------------------------->Timer start send Intent");
+                        mTimerServiceFinished =true;
                         Intent sendIntent = new Intent(strReceiver);  // notice the end of Timer to Fragment
                         sendBroadcast(sendIntent);
                         Log.i("Timer", "------------------------------------------------------->Timer finish send Intent");
