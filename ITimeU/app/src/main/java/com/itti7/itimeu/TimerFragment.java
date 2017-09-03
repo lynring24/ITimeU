@@ -226,7 +226,10 @@ public class TimerFragment extends Fragment {
                     query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_DO + "' WHERE _ID = '" + mId + "';";
                     db.execSQL(query);
                     db.close();
-
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    String listTag = mainActivity.getListTag();
+                    ListItemFragment listItemFragment = (ListItemFragment)mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
+                    listItemFragment.listUiUpdateFromDb();
                     startTimer();
                 }
             } else {
@@ -246,6 +249,10 @@ public class TimerFragment extends Fragment {
                 query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
                 db.execSQL(query);
                 db.close();
+                MainActivity mainActivity = (MainActivity) getActivity();
+                String listTag = mainActivity.getListTag();
+                ListItemFragment listItemFragment = (ListItemFragment)mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
+                listItemFragment.listUiUpdateFromDb();
             }
         }
     };
