@@ -109,7 +109,7 @@ public class TimerService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.i("Timer", "------------------------------------------------------->TimeronUnbind");
+        super.onUnbind(intent);
         stopTimer();
         return true;
     }
