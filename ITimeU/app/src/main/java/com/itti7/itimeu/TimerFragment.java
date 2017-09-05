@@ -2,7 +2,6 @@ package com.itti7.itimeu;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -32,7 +31,7 @@ import com.itti7.itimeu.data.ItemDbHelper;
 public class TimerFragment extends Fragment {
 
     /*Setting UI*/
-    public static final String PREFNAME = "pref";
+   // public static final String PREFNAME = "pref";
     public static int SESSION=4;
     private TextView mTimeText;
     private TextView mItemNameText;
@@ -112,10 +111,11 @@ public class TimerFragment extends Fragment {
         else
             mCountTimer++;
 
-        SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
+        /*SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt("COUNT", mCountTimer);
-        editor.commit();
+        editor.commit();*/
+        PrefUtil.save(getContext(),"COUNT", mCountTimer);
 
         //change the button text to 'start'
         mStateBttn.setText("start");
@@ -202,10 +202,11 @@ public class TimerFragment extends Fragment {
         getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
         /*init shared prefernce*/
-        SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
+       /* SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt("COUNT", mCountTimer);
-        editor.commit();
+        editor.commit();*/
+        PrefUtil.save(getContext(),"COUNT", mCountTimer);
     }
     @Override
     public void onResume() {
@@ -259,15 +260,16 @@ public class TimerFragment extends Fragment {
     public void startTimer() {
         Log.i("Fragment", "--------------------------------------------->startTimer()");
 
-        SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
+       /* SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
         mCountTimer = pref.getInt("COUNT", 1);
-        SESSION=pref.getInt("session",4);
+        SESSION=pref.getInt("session",4);*/
+       mCountTimer= PrefUtil.get(getContext(),"COUNT", 1);
         if (mCountTimer % (SESSION*2) == 0) // assign time by work,short & long break
-            runTime = pref.getInt("longbreaktime", 20);
+            runTime = PrefUtil.get(getContext(),"longbreaktime", 20);
         else if (mCountTimer % 2 == 1)
-            runTime = pref.getInt("worktime", 25);
+            runTime = PrefUtil.get(getContext(),"worktime", 25);
         else
-            runTime = pref.getInt("breaktime", 5);
+            runTime = PrefUtil.get(getContext(),"breaktime", 5);
 
         mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
         handler = new TimerHandler();
