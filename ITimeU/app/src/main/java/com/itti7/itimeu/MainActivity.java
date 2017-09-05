@@ -2,7 +2,6 @@ package com.itti7.itimeu;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
