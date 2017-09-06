@@ -31,8 +31,10 @@ import com.itti7.itimeu.data.ItemDbHelper;
 public class TimerFragment extends Fragment {
 
     /*Setting UI*/
-    // public static final String PREFNAME = "pref";
-    public static int SESSION = 4;
+    public static final String WORKTIME = "worktime";
+    public static final String BREAKTIME = "breaktime";
+    public static final String LONGBREAKTIME = "longbreaktime";
+    public static final String SESSION = "session";
     private TextView mTimeText;
     private TextView mItemNameText;
 
@@ -101,16 +103,18 @@ public class TimerFragment extends Fragment {
         };
 
         /*backbutton event handler*/
-        timerView.setOnKeyListener(new View.OnKeyListener(){
+        timerView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if( keyCode == KeyEvent.KEYCODE_BACK ) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
                     mTimerService.onDestroy();
-                    if (mBound) {
-                        getActivity().unbindService(conn);
-                        mBound = false;
-                    }
-                    Intent intent = new Intent(getActivity(),MainActivity.class);
+                    /*set mStatus to TO DO(0)*/
+                    db = dbHelper.getWritableDatabase();
+                    query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
+                    db.execSQL(query);
+                    db.close();
+                    getActivity().unbindService(conn);
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
                     startActivity(intent);
                     getActivity().finish();
                     return true;
@@ -125,10 +129,11 @@ public class TimerFragment extends Fragment {
     public void onFinishUnit() {
         // UPDATE mCountTimner range 1..8
         // if Long Break Time has just finished, change to 1
-        if (mCountTimer == (SESSION * 2))
+        mCountTimer++;
+        int sessionNum = PrefUtil.get(getContext(), SESSION, 1) * 2;
+        if (mCountTimer > sessionNum)
             mCountTimer = 1;
-        else
-            mCountTimer++;
+
 
         PrefUtil.save(getContext(), "COUNT", mCountTimer);
 
@@ -140,7 +145,7 @@ public class TimerFragment extends Fragment {
             mItemNameText.setText(mName);
         else {
             mUnit++; //if the last session WAS work ,increase mUnit
-            if (mCountTimer % 8 == 0)
+            if (mCountTimer % sessionNum == 0)
                 mItemNameText.setText("Long Break Time");
             else
                 mItemNameText.setText("Break Time");
@@ -212,7 +217,6 @@ public class TimerFragment extends Fragment {
                 mBound = true;
             }
         };
-
         /*TimerService Intent Listener*/
         getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
@@ -274,12 +278,12 @@ public class TimerFragment extends Fragment {
         Log.i("Fragment", "--------------------------------------------->startTimer()");
 
         mCountTimer = PrefUtil.get(getContext(), "COUNT", 1);
-        if (mCountTimer % (SESSION * 2) == 0) // assign time by work,short & long break
-            runTime = PrefUtil.get(getContext(), "longbreaktime", 20);
+        if (mCountTimer % ((PrefUtil.get(getContext(), SESSION, 1) * 2)) == 0) // assign time by work,short & long break
+            runTime = PrefUtil.get(getContext(), LONGBREAKTIME, 20);
         else if (mCountTimer % 2 == 1)
-            runTime = PrefUtil.get(getContext(), "worktime", 25);
+            runTime = PrefUtil.get(getContext(),WORKTIME , 25);
         else
-            runTime = PrefUtil.get(getContext(), "breaktime", 5);
+            runTime = PrefUtil.get(getContext(), BREAKTIME , 5);
 
         mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
         handler = new TimerHandler();
@@ -315,7 +319,6 @@ public class TimerFragment extends Fragment {
         mReadThread.start();
     }
 
-
     public class TimerHandler extends Handler {
         TimerHandler() {
             super();
@@ -339,6 +342,7 @@ public class TimerFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         if (mBound) {
+            mTimerService.stopService(intent);
             getActivity().unbindService(conn);
             mBound = false;
         }
