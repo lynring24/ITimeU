@@ -31,8 +31,8 @@ import com.itti7.itimeu.data.ItemDbHelper;
 public class TimerFragment extends Fragment {
 
     /*Setting UI*/
-   // public static final String PREFNAME = "pref";
-    public static int SESSION=4;
+    // public static final String PREFNAME = "pref";
+    public static int SESSION = 4;
     private TextView mTimeText;
     private TextView mItemNameText;
 
@@ -93,7 +93,7 @@ public class TimerFragment extends Fragment {
         mProgressBar.bringToFront(); // bring the progressbar to the top
 
         /*동적 리시버 구현 */
-        mReceiver =  new BroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 onFinishUnit();
@@ -121,15 +121,16 @@ public class TimerFragment extends Fragment {
         });
         return timerView;
     }
-    public void onFinishUnit(){
+
+    public void onFinishUnit() {
         // UPDATE mCountTimner range 1..8
         // if Long Break Time has just finished, change to 1
-        if (mCountTimer == (SESSION*2))
+        if (mCountTimer == (SESSION * 2))
             mCountTimer = 1;
         else
             mCountTimer++;
 
-        PrefUtil.save(getContext(),"COUNT", mCountTimer);
+        PrefUtil.save(getContext(), "COUNT", mCountTimer);
 
         //change the button text to 'start'
         mStateBttn.setText("start");
@@ -150,7 +151,7 @@ public class TimerFragment extends Fragment {
         db = dbHelper.getWritableDatabase();
         query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "', status = '";
         // if all the units are  completed
-        if (mUnit==mTotalUnit) {
+        if (mUnit == mTotalUnit) {
             //UPDATE DB  mStatus = 2
             query = query + ItemContract.ItemEntry.STATUS_DONE + "' WHERE _ID = '" + mId + "';";
             // if the last break of the list just end go back to the listFragment
@@ -172,14 +173,13 @@ public class TimerFragment extends Fragment {
             /*List Item unit count update*/
         MainActivity mainActivity = (MainActivity) getActivity();
         String listTag = mainActivity.getListTag();
-        ListItemFragment listItemFragment = (ListItemFragment)mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
+        ListItemFragment listItemFragment = (ListItemFragment) mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
         listItemFragment.listUiUpdateFromDb();
 
         //after the unit values has been updated
         //turn the value to false;
-        TimerService.mTimerServiceFinished=false;
+        TimerService.mTimerServiceFinished = false;
     }
-
 
 
     @Override
@@ -187,7 +187,7 @@ public class TimerFragment extends Fragment {
         Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onStart()");
         super.onStart();
         intent = new Intent(getActivity(), TimerService.class);
-        if(TimerService.mTimerServiceFinished==true){
+        if (TimerService.mTimerServiceFinished == true) {
             onFinishUnit();
         }
         /*init timer count */
@@ -212,18 +212,21 @@ public class TimerFragment extends Fragment {
                 mBound = true;
             }
         };
+
         /*TimerService Intent Listener*/
         getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
         /*init shared prefernce*/
-        PrefUtil.save(getContext(),"COUNT", mCountTimer);
+        PrefUtil.save(getContext(), "COUNT", mCountTimer);
     }
+
     @Override
     public void onResume() {
         Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onResume()");
         super.onResume();
-        getActivity().registerReceiver(mReceiver,new IntentFilter(mTimerService.strReceiver));
+        getActivity().registerReceiver(mReceiver, new IntentFilter(mTimerService.strReceiver));
     }
+
     Button.OnClickListener stateChecker = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -238,7 +241,7 @@ public class TimerFragment extends Fragment {
                     db.close();
                     MainActivity mainActivity = (MainActivity) getActivity();
                     String listTag = mainActivity.getListTag();
-                    ListItemFragment listItemFragment = (ListItemFragment)mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
+                    ListItemFragment listItemFragment = (ListItemFragment) mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
                     listItemFragment.listUiUpdateFromDb();
                     startTimer();
                 }
@@ -261,26 +264,27 @@ public class TimerFragment extends Fragment {
                 db.close();
                 MainActivity mainActivity = (MainActivity) getActivity();
                 String listTag = mainActivity.getListTag();
-                ListItemFragment listItemFragment = (ListItemFragment)mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
+                ListItemFragment listItemFragment = (ListItemFragment) mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
                 listItemFragment.listUiUpdateFromDb();
             }
         }
     };
+
     public void startTimer() {
         Log.i("Fragment", "--------------------------------------------->startTimer()");
 
-       mCountTimer= PrefUtil.get(getContext(),"COUNT", 1);
-        if (mCountTimer % (SESSION*2) == 0) // assign time by work,short & long break
-            runTime = PrefUtil.get(getContext(),"longbreaktime", 20);
+        mCountTimer = PrefUtil.get(getContext(), "COUNT", 1);
+        if (mCountTimer % (SESSION * 2) == 0) // assign time by work,short & long break
+            runTime = PrefUtil.get(getContext(), "longbreaktime", 20);
         else if (mCountTimer % 2 == 1)
-            runTime = PrefUtil.get(getContext(),"worktime", 25);
+            runTime = PrefUtil.get(getContext(), "worktime", 25);
         else
-            runTime = PrefUtil.get(getContext(),"breaktime", 5);
+            runTime = PrefUtil.get(getContext(), "breaktime", 5);
 
         mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
         handler = new TimerHandler();
         updateTimerText();
-        mTimerService.setTimeName(runTime,mItemNameText.getText().toString());
+        mTimerService.setTimeName(runTime, mItemNameText.getText().toString());
         mStateBttn.setText(R.string.stop);
         handler.sendEmptyMessage(0);
     }
@@ -291,7 +295,7 @@ public class TimerFragment extends Fragment {
             public void run() {
                 while (true) {
                     //check out if it is still available
-                    if(getActivity() == null)
+                    if (getActivity() == null)
                         return;
                     try {
                         getActivity().runOnUiThread(new Runnable() {
@@ -353,18 +357,20 @@ public class TimerFragment extends Fragment {
      * This function set item name in TextView(job_txt_view)
      */
 
-    public void  setTimerFrag(int mId,int mStatus,int mUnit,int mTotalUnit,String mName){
+    public void setTimerFrag(int mId, int mStatus, int mUnit, int mTotalUnit, String mName) {
         this.mId = mId;
         this.mStatus = mStatus;
         this.mUnit = mUnit;
         this.mTotalUnit = mTotalUnit;
         this.mName = mName;
         this.mStateBttn.setEnabled(true);
-        //should keep setting when the breakTimer hasn't run yet
-         mItemNameText.setText(mName);
-        // test code
-        Toast.makeText(getContext(), "ID: " + mId + ", Name: " + mName + ", Status: " + mStatus +
-                ", Unit: " + mUnit, Toast.LENGTH_SHORT).show();
+        if(mCountTimer%2==1) {
+            //should keep setting when the breakTimer hasn't run yet
+            mItemNameText.setText(mName);
+            // test code
+            Toast.makeText(getContext(), "ID: " + mId + ", Name: " + mName + ", Status: " + mStatus +
+                    ", Unit: " + mUnit, Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
