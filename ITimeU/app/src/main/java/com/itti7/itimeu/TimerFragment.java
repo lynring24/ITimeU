@@ -52,10 +52,7 @@ public class TimerFragment extends Fragment {
     private int mCountTimer;
 
     // Item info come from ListView
-    private int mId;
-    private int mStatus;
-    private int mUnit;
-    private int mTotalUnit;
+    private int mId, mStatus, mUnit, mTotalUnit;
     private String mName;
 
     // For access ITimeU database
@@ -111,10 +108,6 @@ public class TimerFragment extends Fragment {
         else
             mCountTimer++;
 
-        /*SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("COUNT", mCountTimer);
-        editor.commit();*/
         PrefUtil.save(getContext(),"COUNT", mCountTimer);
 
         //change the button text to 'start'
@@ -202,10 +195,6 @@ public class TimerFragment extends Fragment {
         getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
         /*init shared prefernce*/
-       /* SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("COUNT", mCountTimer);
-        editor.commit();*/
         PrefUtil.save(getContext(),"COUNT", mCountTimer);
     }
     @Override
@@ -219,7 +208,6 @@ public class TimerFragment extends Fragment {
         public void onClick(View v) {
             if (mStateBttn.getText().toString().equals("start")) { // checked
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Start");
-                ////--------------------------------------------------------------------------------------------------------------
                 //mUnit will be intialize when list item is clicked
                 if (mBound) {
                 /* set mStatus DB to DO(1)*/
@@ -260,9 +248,6 @@ public class TimerFragment extends Fragment {
     public void startTimer() {
         Log.i("Fragment", "--------------------------------------------->startTimer()");
 
-       /* SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
-        mCountTimer = pref.getInt("COUNT", 1);
-        SESSION=pref.getInt("session",4);*/
        mCountTimer= PrefUtil.get(getContext(),"COUNT", 1);
         if (mCountTimer % (SESSION*2) == 0) // assign time by work,short & long break
             runTime = PrefUtil.get(getContext(),"longbreaktime", 20);
@@ -355,7 +340,19 @@ public class TimerFragment extends Fragment {
     /**
      * Setter
      */
-    public void setmId(int mId) {
+
+    public void  setTimerFrag(int mId,int mStatus,int mUnit,int mTotalUnit,String mName){
+        this.mId = mId;
+        this.mStatus = mStatus;
+        this.mUnit = mUnit;
+        this.mTotalUnit = mTotalUnit;
+        this.mName = mName;
+        this.mStateBttn.setEnabled(true);
+        //should keep setting when the breakTimer hasn't run yet
+        if(mCountTimer%2==1)
+            mItemNameText.setText(mName);
+    }
+    /*public void setmId(int mId) {
         this.mId = mId;
     }
 
@@ -376,6 +373,6 @@ public class TimerFragment extends Fragment {
     }
     public void setButton(Boolean flag){
         this.mStateBttn.setEnabled(flag);
-    }
+    }*/
 }
 
