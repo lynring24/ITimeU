@@ -42,14 +42,14 @@ public class TimerFragment extends Fragment {
     private Button mStateBttn;
     /*timer Service Component*/
     private TimerService mTimerService;
-    boolean mBound = true;
+    boolean mBound = false;
     private TimerHandler handler;
     private int progressBarValue = 0;
     public int runTime; // minute
 
     /*timer calc*/
     private Intent intent;
-    private ServiceConnection conn;
+    //private ServiceConnection conn;
     private Thread mReadThread;
     /*store  time count*/
     private int mCountTimer;
@@ -113,7 +113,7 @@ public class TimerFragment extends Fragment {
                     query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
                     db.execSQL(query);
                     db.close();
-                    getActivity().unbindService(conn);
+                    getActivity().unbindService(mConnection);
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     startActivity(intent);
                     getActivity().finish();
@@ -171,11 +171,10 @@ public class TimerFragment extends Fragment {
             //UPDATE DB  mStatus = 0
             query = query + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
         }
-
         db.execSQL(query);
         db.close();
 
-            /*List Item unit count update*/
+       /*List Item unit count update*/
         MainActivity mainActivity = (MainActivity) getActivity();
         String listTag = mainActivity.getListTag();
         ListItemFragment listItemFragment = (ListItemFragment) mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
@@ -197,7 +196,7 @@ public class TimerFragment extends Fragment {
         }
         /*init timer count */
         mCountTimer = 1;
-        /*TimerService connection*/
+/*        *//*TimerService connection*//*
         conn = new ServiceConnection() {
             @Override
             public void onServiceDisconnected(ComponentName name) {
@@ -216,14 +215,36 @@ public class TimerFragment extends Fragment {
                 mTimerService = ((TimerService.MyBinder) service).getService();
                 mBound = true;
             }
-        };
+        };*/
         /*TimerService Intent Listener*/
-        getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
+        getActivity().bindService(intent,mConnection, Context.BIND_AUTO_CREATE);
 
         /*init shared prefernce*/
         PrefUtil.save(getContext(), "COUNT", mCountTimer);
     }
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
 
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onServiceConnected()");
+            mTimerService = ((TimerService.MyBinder) service).getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mTimerService = null;
+            mTimerService.stopTimer();
+            mProgressBar.setProgress(0);
+            handler.removeMessages(0);
+            mItemNameText.setText("");
+            mStateBttn.setEnabled(false);
+            mBound = false;
+        }
+    };
     @Override
     public void onResume() {
         Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onResume()");
@@ -343,7 +364,7 @@ public class TimerFragment extends Fragment {
         super.onDestroy();
         if (mBound) {
             mTimerService.stopService(intent);
-            getActivity().unbindService(conn);
+            getActivity().unbindService(mConnection);
             mBound = false;
         }
     }
