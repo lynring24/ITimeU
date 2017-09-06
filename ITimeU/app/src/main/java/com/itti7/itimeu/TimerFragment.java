@@ -6,13 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +44,7 @@ public class TimerFragment extends Fragment {
     private TimerHandler handler;
     private int progressBarValue = 0;
     public int runTime; // minute
+
     /*timer calc*/
     private Intent intent;
     private ServiceConnection conn;
@@ -98,6 +99,26 @@ public class TimerFragment extends Fragment {
                 onFinishUnit();
             }
         };
+
+        /*backbutton event handler*/
+        timerView.setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if( keyCode == KeyEvent.KEYCODE_BACK ) {
+                    mTimerService.onDestroy();
+                    if (mBound) {
+                        getActivity().unbindService(conn);
+                        mBound = false;
+                    }
+                    Intent intent = new Intent(getActivity(),MainActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
         return timerView;
     }
     public void onFinishUnit(){
@@ -269,7 +290,9 @@ public class TimerFragment extends Fragment {
             @Override
             public void run() {
                 while (true) {
-
+                    //check out if it is still available
+                    if(getActivity() == null)
+                        return;
                     try {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
@@ -329,17 +352,6 @@ public class TimerFragment extends Fragment {
     /**
      * This function set item name in TextView(job_txt_view)
      */
-    public void nameUpdate() {
-        mItemNameText.setText(mName);
-
-        // test code
-        Toast.makeText(getContext(), "ID: " + mId + ", Name: " + mName + ", Status: " + mStatus +
-                ", Unit: " + mUnit, Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Setter
-     */
 
     public void  setTimerFrag(int mId,int mStatus,int mUnit,int mTotalUnit,String mName){
         this.mId = mId;
@@ -349,30 +361,11 @@ public class TimerFragment extends Fragment {
         this.mName = mName;
         this.mStateBttn.setEnabled(true);
         //should keep setting when the breakTimer hasn't run yet
-        if(mCountTimer%2==1)
-            mItemNameText.setText(mName);
-    }
-    /*public void setmId(int mId) {
-        this.mId = mId;
-    }
-
-    public void setmStatus(int mStatus) {
-        this.mStatus = mStatus;
+         mItemNameText.setText(mName);
+        // test code
+        Toast.makeText(getContext(), "ID: " + mId + ", Name: " + mName + ", Status: " + mStatus +
+                ", Unit: " + mUnit, Toast.LENGTH_SHORT).show();
     }
 
-    public void setmUnit(int mUnit) {
-        this.mUnit = mUnit;
-    }
-
-    public void setmTotalUnit(int mTotalUnit) {
-        this.mTotalUnit = mTotalUnit;
-    }
-
-    public void setmName(String mName) {
-        this.mName = mName;
-    }
-    public void setButton(Boolean flag){
-        this.mStateBttn.setEnabled(flag);
-    }*/
 }
 
