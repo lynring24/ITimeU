@@ -1,7 +1,6 @@
 package com.itti7.itimeu;
 
 import android.animation.ValueAnimator;
-import android.content.ClipData;
 import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -81,9 +80,6 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
     // Date convert to String
     private String mCurrentListDateStr;
-
-    // Today's date
-    private String mToday = getStringFromDate(new Date());
 
     private boolean isOtherItemSelected = false;
 
@@ -430,7 +426,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
      * @return when item's date == today then return true, but date != today then return false.
      */
     boolean checkDate() {
-        if (mItemDate.equals(mToday)) {
+        if (mItemDate.equals(getStringFromDate(new Date()))) {
             return true;
         } else {
             Toast.makeText(mListItemContext, R.string.not_today, Toast.LENGTH_SHORT)
@@ -674,7 +670,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
      * , or there is nothing in execution, return true. Otherwise return false.
      */
     boolean isAnotherTaskStarted(int id) {
-        String[] date = {mToday};
+        String[] date = {getStringFromDate(new Date())};
         Cursor cursor = db.rawQuery("SELECT status, " + BaseColumns._ID +
                 " FROM list WHERE date = ?", date);
 
