@@ -1,6 +1,7 @@
 package com.itti7.itimeu;
 
 import android.animation.ValueAnimator;
+import android.content.ClipData;
 import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -294,7 +295,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         Uri currentItemUri = ContentUris.withAppendedId(ItemContract.ItemEntry.CONTENT_URI, id);
 
         // Only perform the delete if this is an existing item.
-        if (currentItemUri != null) {
+        if (currentItemUri != null && !isThisTaskStarted(id)) {
             // Call the ContentResolver to delete the item at the given content URI.
             // Pass in null for the selection and selection args because the mCurrentItemUri
             // content URI already identifies the item that we want.
@@ -311,6 +312,11 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 Toast.makeText(mListItemContext, getString(R.string.delete_item_success),
                         Toast.LENGTH_SHORT).show();
             }
+        }
+
+        else {
+            // Can not delete because of error or selected item is already started.
+            Toast.makeText(mListItemContext, getString(R.string.listitem_cannot_delete), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -682,6 +688,27 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         }
         cursor.close();
 
+        return false;
+    }
+
+    /**
+     * When click an item long, then check the item is started task.
+     * @param id    selected item's id
+     * @return  if the item's status == DO than return true, else return false.
+     */
+    boolean isThisTaskStarted(int id) {
+        String [] strId = { String.valueOf(id) };
+        Cursor cursor =
+                db.rawQuery("SELECT status FROM list WHERE "+ BaseColumns._ID + " =  ?", strId);
+
+        if (cursor.moveToFirst()) {
+            if(cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS))
+                    == ItemContract.ItemEntry.STATUS_DO) {
+                cursor.close();
+                return true;
+            }
+        }
+        cursor.close();
         return false;
     }
 }

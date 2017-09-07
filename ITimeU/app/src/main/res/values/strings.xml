@@ -57,6 +57,9 @@
     <string name="delete_item_fail">Fail to delete</string>
     <string name="delete_item_success">Success to delete</string>
 
+    <!-- Fail to delete -->
+    <string name="listitem_cannot_delete">You can not delete this item.</string>
+
     <!-- Period hint -->
     <string name="statistics_startdate_hint">select a start date</string>
     <string name="statistics_enddate_hint">select an end date</string>
