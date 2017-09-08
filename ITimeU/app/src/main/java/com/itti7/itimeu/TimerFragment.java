@@ -131,7 +131,7 @@ public class TimerFragment extends Fragment {
         // if Long Break Time has just finished, change to 1
         mCountTimer++;
         int sessionNum = PrefUtil.get(getContext(), SESSION, 1) * 2;
-        if (mCountTimer > sessionNum)
+        if (mCountTimer == sessionNum+1)
             mCountTimer = 1;
 
 
@@ -160,7 +160,7 @@ public class TimerFragment extends Fragment {
             //UPDATE DB  mStatus = 2
             query = query + ItemContract.ItemEntry.STATUS_DONE + "' WHERE _ID = '" + mId + "';";
             // if the last break of the list just end go back to the listFragment
-            if (mCountTimer == mUnit * 2) {
+            if (mCountTimer%2==1) {
                 //if finished, set the button disable
                 mStateBttn.setEnabled(false);
                 // Change Fragment TimerFragment -> ListItemFragment ->
@@ -196,38 +196,17 @@ public class TimerFragment extends Fragment {
         }
         /*init timer count */
         mCountTimer = 1;
-/*        *//*TimerService connection*//*
-        conn = new ServiceConnection() {
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mTimerService = null;
-                mBound = false;
-                mTimerService.stopTimer();
-                mProgressBar.setProgress(0);
-                handler.removeMessages(0);
-                mItemNameText.setText("");
-                mStateBttn.setEnabled(false);
-            }
-
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onServiceConnected()");
-                mTimerService = ((TimerService.MyBinder) service).getService();
-                mBound = true;
-            }
-        };*/
-        /*TimerService Intent Listener*/
-        getActivity().bindService(intent,mConnection, Context.BIND_AUTO_CREATE);
-
         /*init shared prefernce*/
         PrefUtil.save(getContext(), "COUNT", mCountTimer);
+
+        /*TimerService Intent Listener*/
+        getActivity().bindService(intent,mConnection, Context.BIND_AUTO_CREATE);
     }
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
+        public void onServiceConnected(ComponentName className,IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onServiceConnected()");
             mTimerService = ((TimerService.MyBinder) service).getService();
@@ -368,7 +347,7 @@ public class TimerFragment extends Fragment {
             mBound = false;
         }
     }
-
+/*
     @Override
     public void onPause() {
         super.onPause();
@@ -376,7 +355,7 @@ public class TimerFragment extends Fragment {
             getActivity().unregisterReceiver(mReceiver);
             mBound = false;
         }
-    }
+    }*/
 
     /**
      * This function set item name in TextView(job_txt_view)
