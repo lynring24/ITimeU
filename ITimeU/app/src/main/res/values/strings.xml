@@ -41,6 +41,9 @@
 
     <!-- ListItemFragment.java -->
 
+    <!-- long click item -->
+    <string name="listitem_this_item_started">You can not modify or delete this task. The task already started. Before do this, stop timer.</string>
+
     <!-- check status -->
     <string name="already_start">Another task is already started.</string>
     <string name="already_done">This task is already done</string>
@@ -82,9 +85,6 @@
     <string name="empty_title_str">The list is empty</string>
     <string name="empty_subtitle_str">Add the to-do list item</string>
     <string name="result">RESULT</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- MainActivity.java -->
     <string name="tab_list">list</string>

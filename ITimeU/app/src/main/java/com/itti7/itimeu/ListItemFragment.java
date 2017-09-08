@@ -217,10 +217,16 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
         switch (item.getItemId()) {
             case R.id.action_modify:
-                startActivity(intent);
+                if(!isThisTaskStarted(id)) {
+                    startActivity(intent);
+                }
+                else Toast.makeText(mListItemContext, getString(R.string.listitem_this_item_started), Toast.LENGTH_LONG).show();
                 break;
             case R.id.action_delete:
-                showDeleteConfirmationDialog(id);
+                if(!isThisTaskStarted(id)) {
+                    showDeleteConfirmationDialog(id);
+                }
+                else Toast.makeText(mListItemContext, getString(R.string.listitem_this_item_started), Toast.LENGTH_LONG).show();
                 break;
             default:
                 return false;
@@ -291,7 +297,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         Uri currentItemUri = ContentUris.withAppendedId(ItemContract.ItemEntry.CONTENT_URI, id);
 
         // Only perform the delete if this is an existing item.
-        if (currentItemUri != null && !isThisTaskStarted(id)) {
+        if (currentItemUri != null) {
             // Call the ContentResolver to delete the item at the given content URI.
             // Pass in null for the selection and selection args because the mCurrentItemUri
             // content URI already identifies the item that we want.
