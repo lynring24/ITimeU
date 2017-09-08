@@ -25,7 +25,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.itti7.itimeu.data.ItemContract.ItemEntry;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -128,6 +127,9 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
      */
     private boolean mItemHasChanged = false;
 
+    // object for showing toast.
+    private ShowToast toast;
+
     /**
      * OnTouchListener that listens for any user touches on a View, implying that they are modifying
      * the view, and we change the mItemHasChanged boolean to true.
@@ -144,6 +146,8 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
+
+        toast = new ShowToast(this);
 
         // Examine the intent that was used to launch this activity,
         // Examine the intent that was used to launch this activity,
@@ -268,7 +272,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
         if (TextUtils.isEmpty(nameString)) {
             mNameEditText.startAnimation(shake);
-            Toast.makeText(this, getString(R.string.input_name_toast), Toast.LENGTH_SHORT).show();
+            toast.showShortTimeToast(R.string.input_name_toast);
             return false;
         } else {
             // Determine if this is a new or existing item by checking
@@ -289,10 +293,10 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 // Show a toast message depending on whether or not the insertion was successful.
                 if (newUri == null) {
                     // If the new content URI is null, then there was an error with insertion.
-                    Toast.makeText(this, getString(R.string.create_item_fail), Toast.LENGTH_SHORT).show();
+                    toast.showShortTimeToast(R.string.create_item_fail);
                 } else {
                     // Otherwise, the insertion was successful and we can display a toast.
-                    Toast.makeText(this, getString(R.string.create_item_success), Toast.LENGTH_SHORT).show();
+                    toast.showShortTimeToast(R.string.create_item_success);
                 }
             } else {
                 // Create a ContentValues object for a existing item
@@ -307,7 +311,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 } else if (mTotalUnitNumber == mUnitNumber) {
                     mStatus = ItemEntry.STATUS_DONE;
                 } else {
-                    Toast.makeText(this, "Invalid status", Toast.LENGTH_SHORT).show();
+                    toast.showShortTimeToast(R.string.editor_status_invalid);
                     return false;
                 }
                 editValues.put(ItemEntry.COLUMN_ITEM_STATUS, mStatus);
@@ -322,10 +326,10 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 // Show a toast message depending on whether or not the update was successful.
                 if (rowsAffected == 0) {
                     // If no rows were affected, then there was an error with the update.
-                    Toast.makeText(this, getString(R.string.update_item_fail), Toast.LENGTH_SHORT).show();
+                    toast.showShortTimeToast(R.string.update_item_fail);
                 } else {
                     // Otherwise, the update was successful and we can display a toast.
-                    Toast.makeText(this, getString(R.string.update_item_success), Toast.LENGTH_SHORT).show();
+                    toast.showShortTimeToast(R.string.update_item_success);
                 }
             }
             return true;

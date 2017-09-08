@@ -26,7 +26,6 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.itti7.itimeu.data.ItemContract;
 import com.itti7.itimeu.data.ItemDbHelper;
@@ -102,6 +101,9 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     private int mPercent;
     private String mDetail;
 
+    // object for showing toast message
+    private ShowToast toast;
+
     public ListItemFragment() {
         // Required empty public constructor
     }
@@ -114,6 +116,9 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         mListItemView = inflater.inflate(R.layout.fragment_list_item, container, false);
         mListItemActivity = getActivity();
         mListItemContext = mListItemView.getContext();
+
+        // Create new ShowToast object
+        toast = new ShowToast(mListItemContext);
 
         // list table db
         dbHelper = new ItemDbHelper(mListItemContext);
@@ -220,13 +225,13 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 if(!isThisTaskStarted(id)) {
                     startActivity(intent);
                 }
-                else Toast.makeText(mListItemContext, getString(R.string.listitem_this_item_started), Toast.LENGTH_LONG).show();
+                else toast.showLongTimeToast(R.string.listitem_this_item_started);
                 break;
             case R.id.action_delete:
                 if(!isThisTaskStarted(id)) {
                     showDeleteConfirmationDialog(id);
                 }
-                else Toast.makeText(mListItemContext, getString(R.string.listitem_this_item_started), Toast.LENGTH_LONG).show();
+                else toast.showLongTimeToast(R.string.listitem_this_item_started);
                 break;
             default:
                 return false;
@@ -307,18 +312,16 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             // Show a toast message depending on whether or not the delete was successful.
             if (rowsDeleted == 0) {
                 // If no rows were deleted, then there was an error with the delete.
-                Toast.makeText(mListItemContext, getString(R.string.delete_item_fail),
-                        Toast.LENGTH_SHORT).show();
+                toast.showShortTimeToast(R.string.delete_item_fail);
             } else {
                 // Otherwise, the delete was successful and we can display a toast.
-                Toast.makeText(mListItemContext, getString(R.string.delete_item_success),
-                        Toast.LENGTH_SHORT).show();
+                toast.showShortTimeToast(R.string.delete_item_success);
             }
         }
 
         else {
             // Can not delete because of error or selected item is already started.
-            Toast.makeText(mListItemContext, getString(R.string.listitem_cannot_delete), Toast.LENGTH_SHORT).show();
+            toast.showShortTimeToast(R.string.listitem_cannot_delete);
         }
     }
 
@@ -435,8 +438,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         if (mItemDate.equals(getStringFromDate(new Date()))) {
             return true;
         } else {
-            Toast.makeText(mListItemContext, R.string.not_today, Toast.LENGTH_SHORT)
-                    .show();
+            toast.showShortTimeToast(R.string.not_today);
             return false;
         }
     }
@@ -454,8 +456,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
         // If selected item's status == Done, then stop action
         if (mItemStatus == ItemContract.ItemEntry.STATUS_DONE) {
-            Toast.makeText(mListItemContext, R.string.already_done, Toast.LENGTH_SHORT)
-                    .show();
+            toast.showShortTimeToast(R.string.already_done);
             return;
         } else if (mItemStatus == ItemContract.ItemEntry.STATUS_TODO) {
             // Is other task is started?
@@ -620,8 +621,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     }
 
     private void timerIsAlreadyStarted() {
-        Toast.makeText(mListItemContext, getString(R.string.already_start),
-                Toast.LENGTH_SHORT).show();
+        toast.showShortTimeToast(R.string.already_start);
         isOtherItemSelected = true;
     }
 

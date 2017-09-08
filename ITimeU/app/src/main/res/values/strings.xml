@@ -30,6 +30,8 @@
     <string name="update_item_fail">Fail to update item</string>
     <string name="update_item_success">Success to update item</string>
 
+    <string name="editor_status_invalid">Invalid status</string>
+
     <!-- Reset total unit TextView's text-->
     <string name="reset_total_unit">1</string>
 
