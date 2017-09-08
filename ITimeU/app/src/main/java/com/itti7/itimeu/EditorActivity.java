@@ -174,7 +174,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         countNameCharAndShow();
         nameCursorVisibility();
         countDetailCharAndShow();
-        detailCursorAndCountCharVisibility();
+        detailCursorVisibility();
 
         mTotalUnitTextView = (TextView) findViewById(R.id.get_total_unit_txt_view);
         mDate = intent.getStringExtra("date");
@@ -304,11 +304,9 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 // Set status
                 if (mTotalUnitNumber > mUnitNumber) {
                     mStatus = ItemEntry.STATUS_TODO;
-                }
-                else if (mTotalUnitNumber == mUnitNumber){
+                } else if (mTotalUnitNumber == mUnitNumber) {
                     mStatus = ItemEntry.STATUS_DONE;
-                }
-                else {
+                } else {
                     Toast.makeText(this, "Invalid status", Toast.LENGTH_SHORT).show();
                     return false;
                 }
@@ -434,7 +432,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             int detailColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DETAIL);
             int unitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_UNIT);
             int totalUnitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_TOTAL_UNIT);
-            //int statusColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_STATUS);
             int dateColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DATE);
 
             String name = cursor.getString(nameColumnIndex);
@@ -566,30 +563,11 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 int length = charSequence.length();
-
-                if (length == 0) {
-                    mNameCountTextView.setText(null);
-                    mNameCountTextView.setVisibility(View.INVISIBLE);
-                } else {
-                    mNameCountTextView.setVisibility(View.VISIBLE);
-                    mNameCountTextView.setText(length + " / " + NAME_MAX_COUNT);
-                }
+                mNameCountTextView.setText(length + " / " + NAME_MAX_COUNT);
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-            }
-        });
-
-        // focus change
-        mNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-                    mNameCountTextView.setVisibility(View.INVISIBLE);
-                } else {
-                    mNameCountTextView.setVisibility(View.VISIBLE);
-                }
             }
         });
     }
@@ -606,29 +584,11 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 int length = charSequence.length();
-
-                if (length == 0) {
-                    mDetailCountTextView.setText(null);
-                    mDetailCountTextView.setVisibility(View.INVISIBLE);
-                } else {
-                    mDetailCountTextView.setVisibility(View.VISIBLE);
-                    mDetailCountTextView.setText(length + " / " + DETAIL_MAX_COUNT);
-                }
+                mDetailCountTextView.setText(length + " / " + DETAIL_MAX_COUNT);
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-            }
-        });
-
-        mDetailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-                    mDetailCountTextView.setVisibility(View.INVISIBLE);
-                } else {
-                    mDetailCountTextView.setVisibility(View.VISIBLE);
-                }
             }
         });
     }
@@ -659,13 +619,12 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     /**
      * This function change detail cursor visibility.
      */
-    public void detailCursorAndCountCharVisibility() {
+    public void detailCursorVisibility() {
         mDetailEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     mDetailEditText.setCursorVisible(false);
-                    mDetailCountTextView.setVisibility(View.INVISIBLE);
                 }
                 return false;
             }

@@ -71,6 +71,8 @@
     <string name="default_total_unit_editor">1</string>
     <string name="ok_btn">OK</string>
     <string name="editor_date_txt_view">date</string>
+    <string name="editor_name_count_default">0 / 15</string>
+    <string name="editor_detail_count_default">0 / 20</string>
 
     <!-- item.xml -->
     <string name="item_status_imageview">show status of the item</string>
