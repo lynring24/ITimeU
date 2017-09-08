@@ -455,7 +455,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
             // Set selected item info
             //public void  setTimerFrag(int mId,int mStatus,int mUnit,int mTotalUnit,String mName)
-            timerFragment.setTimerFrag(mItemID,mItemStatus,mItemUnit,mItemTotalUnit,mItemName);
+            timerFragment.setTimerFragment(mItemID,mItemStatus,mItemUnit,mItemTotalUnit,mItemName);
         }
 
         // Change Fragment ListItemFragment -> TimerFragment

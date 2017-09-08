@@ -98,7 +98,7 @@ public class TimerFragment extends Fragment {
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                onFinishUnit();
+                onUnitFinish();
             }
         };
 
@@ -109,10 +109,9 @@ public class TimerFragment extends Fragment {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     mTimerService.onDestroy();
                     /*set mStatus to TO DO(0)*/
-                    db = dbHelper.getWritableDatabase();
                     query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
-                    db.execSQL(query);
-                    db.close();
+                    dbUpdate(query);
+
                     getActivity().unbindService(mConnection);
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     startActivity(intent);
@@ -126,14 +125,13 @@ public class TimerFragment extends Fragment {
         return timerView;
     }
 
-    public void onFinishUnit() {
+    public void onUnitFinish() {
         // UPDATE mCountTimner range 1..8
         // if Long Break Time has just finished, change to 1
         mCountTimer++;
         int sessionNum = PrefUtil.get(getContext(), SESSION, 1) * 2;
         if (mCountTimer == sessionNum+1)
             mCountTimer = 1;
-
 
         PrefUtil.save(getContext(), "COUNT", mCountTimer);
 
@@ -152,8 +150,6 @@ public class TimerFragment extends Fragment {
         }
 
         //store mUnit and mStatus
-
-        db = dbHelper.getWritableDatabase();
         query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "', status = '";
         // if all the units are  completed
         if (mUnit == mTotalUnit) {
@@ -171,20 +167,20 @@ public class TimerFragment extends Fragment {
             //UPDATE DB  mStatus = 0
             query = query + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
         }
-        db.execSQL(query);
-        db.close();
-
-       /*List Item unit count update*/
-        MainActivity mainActivity = (MainActivity) getActivity();
-        String listTag = mainActivity.getListTag();
-        ListItemFragment listItemFragment = (ListItemFragment) mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
-        listItemFragment.listUiUpdateFromDb();
+        dbUpdate(query);
 
         //after the unit values has been updated
         //turn the value to false;
         TimerService.mTimerServiceFinished = false;
     }
 
+    public void updateListFragment(){
+        /*List Item unit count update*/
+        MainActivity mainActivity = (MainActivity) getActivity();
+        String listTag = mainActivity.getListTag();
+        ListItemFragment listItemFragment = (ListItemFragment) mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
+        listItemFragment.listUiUpdateFromDb();
+    }
 
     @Override
     public void onStart() {
@@ -192,7 +188,7 @@ public class TimerFragment extends Fragment {
         super.onStart();
         intent = new Intent(getActivity(), TimerService.class);
         if (TimerService.mTimerServiceFinished == true) {
-            onFinishUnit();
+            onUnitFinish();
         }
         /*init timer count */
         mCountTimer = 1;
@@ -202,6 +198,7 @@ public class TimerFragment extends Fragment {
         /*TimerService Intent Listener*/
         getActivity().bindService(intent,mConnection, Context.BIND_AUTO_CREATE);
     }
+    
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -230,6 +227,14 @@ public class TimerFragment extends Fragment {
         super.onResume();
         getActivity().registerReceiver(mReceiver, new IntentFilter(mTimerService.strReceiver));
     }
+    public void dbUpdate(String query){
+        db = dbHelper.getWritableDatabase();
+        db.execSQL(query);
+        db.close();
+
+        /*List Item unit count update*/
+        updateListFragment();
+    }
 
     Button.OnClickListener stateChecker = new View.OnClickListener() {
         @Override
@@ -239,17 +244,28 @@ public class TimerFragment extends Fragment {
                 //mUnit will be intialize when list item is clicked
                 if (mBound) {
                 /* set mStatus DB to DO(1)*/
-                    db = dbHelper.getWritableDatabase();
                     query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_DO + "' WHERE _ID = '" + mId + "';";
-                    db.execSQL(query);
-                    db.close();
-                    MainActivity mainActivity = (MainActivity) getActivity();
-                    String listTag = mainActivity.getListTag();
-                    ListItemFragment listItemFragment = (ListItemFragment) mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
-                    listItemFragment.listUiUpdateFromDb();
-                    startTimer();
+                    dbUpdate(query);
+
+                    Log.i("Fragment", "--------------------------------------------->startTimer()");
+
+                    mCountTimer = PrefUtil.get(getContext(), "COUNT", 1);
+                    if (mCountTimer % ((PrefUtil.get(getContext(), SESSION, 1) * 2)) == 0) // assign time by work,short & long break
+                        runTime = PrefUtil.get(getContext(), LONGBREAKTIME, 20);
+                    else if (mCountTimer % 2 == 1)
+                        runTime = PrefUtil.get(getContext(),WORKTIME , 25);
+                    else
+                        runTime = PrefUtil.get(getContext(), BREAKTIME , 5);
+
+                    mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
+                    handler = new TimerHandler();
+                    updateLeftTime();
+                    mTimerService.setTimeName(runTime, mItemNameText.getText().toString());
+                    mStateBttn.setText(R.string.stop);
+                    handler.sendEmptyMessage(0);
                 }
-            } else {
+            }
+            else {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Stop");
                 Log.i("TimerFragment", "----------------------->Timer Stopped");
                 getActivity().stopService(intent); //stop service
@@ -262,38 +278,13 @@ public class TimerFragment extends Fragment {
                 mStateBttn.setText(R.string.start);
 
                 /*set mStatus to TO DO(0)*/
-                db = dbHelper.getWritableDatabase();
                 query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
-                db.execSQL(query);
-                db.close();
-                MainActivity mainActivity = (MainActivity) getActivity();
-                String listTag = mainActivity.getListTag();
-                ListItemFragment listItemFragment = (ListItemFragment) mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
-                listItemFragment.listUiUpdateFromDb();
+                dbUpdate(query);
             }
         }
     };
 
-    public void startTimer() {
-        Log.i("Fragment", "--------------------------------------------->startTimer()");
-
-        mCountTimer = PrefUtil.get(getContext(), "COUNT", 1);
-        if (mCountTimer % ((PrefUtil.get(getContext(), SESSION, 1) * 2)) == 0) // assign time by work,short & long break
-            runTime = PrefUtil.get(getContext(), LONGBREAKTIME, 20);
-        else if (mCountTimer % 2 == 1)
-            runTime = PrefUtil.get(getContext(),WORKTIME , 25);
-        else
-            runTime = PrefUtil.get(getContext(), BREAKTIME , 5);
-
-        mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
-        handler = new TimerHandler();
-        updateTimerText();
-        mTimerService.setTimeName(runTime, mItemNameText.getText().toString());
-        mStateBttn.setText(R.string.stop);
-        handler.sendEmptyMessage(0);
-    }
-
-    public void updateTimerText() {
+    public void updateLeftTime() {
         mReadThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -353,7 +344,7 @@ public class TimerFragment extends Fragment {
      * This function set item name in TextView(job_txt_view)
      */
 
-    public void setTimerFrag(int mId, int mStatus, int mUnit, int mTotalUnit, String mName) {
+    public void setTimerFragment(int mId, int mStatus, int mUnit, int mTotalUnit, String mName) {
         this.mId = mId;
         this.mStatus = mStatus;
         this.mUnit = mUnit;
