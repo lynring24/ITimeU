@@ -102,28 +102,10 @@ public class TimerFragment extends Fragment {
             }
         };
 
-        /*backbutton event handler*/
-        timerView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    mTimerService.onDestroy();
-                    /*set mStatus to TO DO(0)*/
-                    query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
-                    dbUpdate(query);
-
-                    getActivity().unbindService(mConnection);
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                    startActivity(intent);
-                    getActivity().finish();
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
         return timerView;
     }
+
+
 
     public void onUnitFinish() {
         // UPDATE mCountTimner range 1..8
@@ -236,6 +218,11 @@ public class TimerFragment extends Fragment {
         updateListFragment();
     }
 
+    public void onBackPressed(){
+        /*set mStatus to TO DO(0)*/
+        query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
+        dbUpdate(query);
+    }
     Button.OnClickListener stateChecker = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
