@@ -102,6 +102,12 @@ public class TimerFragment extends Fragment {
             }
         };
 
+        /*init timer count */
+        mCountTimer = 1;
+
+        /*init shared prefernce*/
+        PrefUtil.save(getContext(), "COUNT", mCountTimer);
+
         return timerView;
     }
 
@@ -170,10 +176,6 @@ public class TimerFragment extends Fragment {
         if (TimerService.mTimerServiceFinished == true) {
             onUnitFinish();
         }
-        /*init timer count */
-        mCountTimer = 1;
-        /*init shared prefernce*/
-        PrefUtil.save(getContext(), "COUNT", mCountTimer);
 
         /*TimerService Intent Listener*/
         getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
