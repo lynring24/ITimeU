@@ -5,9 +5,11 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.app.LoaderManager;
 import android.content.Loader;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -342,6 +344,11 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     private void submit() {
         Button okButton = (Button) findViewById(R.id.add_ok_btn);
         Button cancelButton = (Button) findViewById(R.id.add_cancel_btn);
+
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            okButton.setBackgroundColor(Color.parseColor("#FF5722"));
+            cancelButton.setBackgroundColor(Color.parseColor("#616161"));
+        }
 
         //click ok button
         okButton.setOnClickListener(new View.OnClickListener() {
