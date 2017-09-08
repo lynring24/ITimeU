@@ -103,8 +103,10 @@ public class TimerService extends Service {
     public void stopTimer() {
         Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
-        timer.cancel();
-        mNM.cancel(NOTIFYID);
+        if(timer!=null)
+            timer.cancel();
+        if(mNM!=null)
+            mNM.cancel(NOTIFYID);
     }
 
     @Override

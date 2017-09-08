@@ -344,18 +344,10 @@ public class TimerFragment extends Fragment {
         if (mBound) {
             mTimerService.stopService(intent);
             getActivity().unbindService(mConnection);
-            mBound = false;
-        }
-    }
-/*
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mBound) {
             getActivity().unregisterReceiver(mReceiver);
             mBound = false;
         }
-    }*/
+    }
 
     /**
      * This function set item name in TextView(job_txt_view)
