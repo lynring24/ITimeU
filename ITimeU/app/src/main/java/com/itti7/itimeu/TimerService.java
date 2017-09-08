@@ -64,12 +64,12 @@ public class TimerService extends Service {
                         mBuilder.setContentText(mLeftTime);
                         mBuilder.setSubText("FINISHED");
                         mNM.notify(NOTIFYID, mBuilder.build());
-                        stopTimer();
-                        Log.i("Timer", "------------------------------------------------------->Timer start send Intent");
+
+                        stopCountNotification();
+
                         mTimerServiceFinished =true;
                         Intent sendIntent = new Intent(strReceiver);  // notice the end of Timer to Fragment
                         sendBroadcast(sendIntent);
-                        Log.i("Timer", "------------------------------------------------------->Timer finish send Intent");
                     }
                 }
             };
@@ -100,7 +100,7 @@ public class TimerService extends Service {
         mNM = (NotificationManager)TimerService.this.getSystemService(Context.NOTIFICATION_SERVICE);
         mNM.notify(NOTIFYID, mBuilder.build());
     }
-    public void stopTimer() {
+    public void stopCountNotification() {
         Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
         if(timer!=null)
@@ -112,7 +112,7 @@ public class TimerService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         super.onUnbind(intent);
-        stopTimer();
+        stopCountNotification();
         return true;
     }
 
@@ -125,7 +125,6 @@ public class TimerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopTimer();
     }
 
     @Override
