@@ -65,7 +65,9 @@ public class TimerService extends Service {
                         mBuilder.setSubText("FINISHED");
                         mNM.notify(NOTIFYID, mBuilder.build());
 
-                        stopCountNotification();
+                        timerSwitch = false;
+                        if(timer!=null)
+                            timer.cancel();
 
                         mTimerServiceFinished =true;
                         Intent sendIntent = new Intent(strReceiver);  // notice the end of Timer to Fragment
