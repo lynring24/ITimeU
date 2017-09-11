@@ -2,9 +2,11 @@ package com.itti7.itimeu;
 
 import android.content.Context;
 import android.graphics.Color;
+
 import android.os.Handler;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -81,27 +83,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setOffscreenPageLimit(4);
     }
 
-    private Boolean exit = false;
-    @Override
-    public void onBackPressed() {
-        if (exit) {
-            super.onBackPressed();
-            finish(); // finish activity
-        } else {
-            Toast.makeText(this, "@string/main_press_back",
-                    Toast.LENGTH_SHORT).show();
-            exit = true;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    exit = false;
-                }
-            }, 3 * 1000);
-
-        }
-
-    }
-
     /**
      * @return  Return existing viewpager
      * */
@@ -111,4 +92,12 @@ public class MainActivity extends AppCompatActivity {
         }
         return viewPager;
     }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        TimerFragment timerFragment = (TimerFragment) getSupportFragmentManager().findFragmentByTag(mTimerTag);
+        timerFragment.onBackPressed();
+    }
+
 }
