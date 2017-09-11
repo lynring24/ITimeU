@@ -46,12 +46,12 @@ public class TimerService extends Service {
             timer = new CountDownTimer(runTime * 1000 * 60, 1000) { // minute
                 public void onTick(long millisUntilFinished) {
                     if (timerSwitch) {
-                        //Log.i("Timer", "------------------------------------------------------>Timer OnTick"); //checked
-                        String min = String.format("%02d", (millisUntilFinished) / (1000 * 60));
-                        String sec = String.format("%02d", (millisUntilFinished / 1000) % 60);
+                        long runTimeInSecond = millisUntilFinished/1000;
+                        String hour = String.format("%02d", (runTimeInSecond/(60*60)));
+                        String min = String.format("%02d", ((runTimeInSecond%(60*60))/60));
+                        String sec = String.format("%02d", ((runTimeInSecond%(60*60))%60));
                         mLeftTime = min + ":" + sec;
                         if (runTime >= 60) {
-                            String hour = String.format("%02d", (millisUntilFinished / (1000 * 60 * 60)));
                             mLeftTime = hour + ":" + mLeftTime;
                         }
                     }
