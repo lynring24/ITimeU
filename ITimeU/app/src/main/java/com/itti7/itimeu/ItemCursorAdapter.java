@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.itti7.itimeu.data.ItemContract;
@@ -63,13 +64,13 @@ class ItemCursorAdapter extends CursorAdapter {
 
         // Find the columns of item attributes that we're interested in
         int nameColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_NAME);
-        int quantityColumnIdex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DETAIL);
+        int quantityColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_DETAIL);
         int totalUnitColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT);
         int unitColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT);
 
         // Read the item attributes from the Cursor for the current item
         String itemName = cursor.getString(nameColumnIndex);
-        String itemQuantity = cursor.getString(quantityColumnIdex);
+        String itemQuantity = cursor.getString(quantityColumnIndex);
         int itemTotalUnit = cursor.getInt(totalUnitColumnIndex);
         int itemUnit = cursor.getInt(unitColumnIndex);
 
@@ -81,5 +82,23 @@ class ItemCursorAdapter extends CursorAdapter {
         detailTextView.setText(itemQuantity);
         totalUnitTextView.setText(itemTotalUnitString);
         unitTextView.setText(itemUnitString);
+
+        // Change image resource according to item's status
+        int statusColumnIndex = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS);
+        int statusOfItem = cursor.getInt(statusColumnIndex);
+
+        ImageView statusImage = view.findViewById(R.id.item_status_imageview);
+
+        switch (statusOfItem) {
+            case 0:
+                statusImage.setImageResource(R.drawable.ic_start_btn);
+                break;
+            case 1:
+                statusImage.setImageResource(R.drawable.ic_stop_btn);
+                break;
+            case 2:
+                statusImage.setImageResource(R.drawable.ic_done_btn);
+                break;
+        }
     }
 }

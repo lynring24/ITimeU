@@ -120,18 +120,5 @@ public final class ItemContract {
         public final static int STATUS_TODO = 0;
         public final static int STATUS_DO = 1;
         public final static int STATUS_DONE = 2;
-
-        /**
-         * sReturns whether or not the given status is
-         * {@link ItemEntry#STATUS_TODO},
-         * {@link ItemEntry#STATUS_DO},
-         * {@link ItemEntry#STATUS_DONE}.
-         */
-        public static boolean isValiedStatus(int status) {
-            if (status == STATUS_TODO || status == STATUS_DO || status == STATUS_DONE) {
-                return true;
-            }
-            return false;
-        }
     }
 }

@@ -23,7 +23,9 @@ public class TimerService extends Service {
     private NotificationCompat.Builder mBuilder;
     private NotificationManager mNM;
     private final int NOTIFYID=001;
+
     public static boolean mTimerServiceFinished = false;
+
     public TimerService() {
 
     }
@@ -70,6 +72,7 @@ public class TimerService extends Service {
                             timer.cancel();
 
                         mTimerServiceFinished =true;
+
                         Intent sendIntent = new Intent(strReceiver);  // notice the end of Timer to Fragment
                         sendBroadcast(sendIntent);
                     }
@@ -85,10 +88,12 @@ public class TimerService extends Service {
         showNotification(name);
     }
     private void showNotification(String name) {
+
         Intent intent = new Intent(this,MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
         // The PendingIntent to launch our activity if the user selects this notification
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,intent, 0);
+
 
         // Set the info for the views that show in the notification panel.
          mBuilder = new NotificationCompat.Builder(TimerService.this)
@@ -102,6 +107,7 @@ public class TimerService extends Service {
         mNM = (NotificationManager)TimerService.this.getSystemService(Context.NOTIFICATION_SERVICE);
         mNM.notify(NOTIFYID, mBuilder.build());
     }
+
     public void stopCountNotification() {
         Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
@@ -109,12 +115,15 @@ public class TimerService extends Service {
             timer.cancel();
         if(mNM!=null)
             mNM.cancel(NOTIFYID);
+
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
+
         super.onUnbind(intent);
         stopCountNotification();
+
         return true;
     }
 

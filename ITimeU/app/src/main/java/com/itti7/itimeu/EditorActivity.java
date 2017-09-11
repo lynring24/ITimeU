@@ -5,23 +5,28 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.app.LoaderManager;
 import android.content.Loader;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.itti7.itimeu.data.ItemContract.ItemEntry;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -38,37 +43,73 @@ import java.util.Locale;
 public class EditorActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    /** Identifier for the item data loader */
+    /**
+     * Identifier for the item data loader
+     */
     private static final int EXISTING_ITEM_LOADER = 0;
 
-    /** Content URI for the existing item (null if it's a new item) */
+    private static final int NAME_MAX_COUNT = 15;
+    private static final int DETAIL_MAX_COUNT = 20;
+
+    /**
+     * Content URI for the existing item (null if it's a new item)
+     */
     private Uri mCurrentItemUri;
 
-    /** EditText field to enter the item's name */
+    /**
+     * EditText field to enter the item's name
+     */
     private EditText mNameEditText;
 
-    /** EditText field to enter the item's detail */
+    /**
+     * EditText field to enter the item's detail
+     */
     private EditText mDetailEditText;
 
-    /** EditText field to enter the item's date */
+    /**
+     * Count view EditText's Character
+     */
+    private TextView mNameCountTextView;
+    private TextView mDetailCountTextView;
+
+    /**
+     * EditText field to enter the item's date
+     */
     private EditText mDateEditText;
 
-    /** TextView field to enter the item's total unit */
+    /**
+     * TextView field to enter the item's total unit
+     */
     private TextView mTotalUnitTextView;
 
-    /** ImageButton to increase total unit number */
+    /**
+     * ImageButton to increase total unit number
+     */
     private ImageButton mUnitPlusImageButton;
 
-    /** ImageButton to decrease total unit number */
+    /**
+     * ImageButton to decrease total unit number
+     */
     private ImageButton mUnitMinusImageButton;
 
-    /** Total unit convert integer value */
+    /**
+     * Unit convert integer value
+     */
+    private int mUnitNumber;
+
+    /**
+     * Total unit convert integer value
+     */
     private int mTotalUnitNumber;
 
-    /** Total unit convert string value */
+    /**
+     * Total unit convert string value
+     */
     private String mTotalUnitString;
 
-    /** Creation date */
+    /**
+     * Creation date
+     */
     private String mDate;
 
     // Simple date format
@@ -80,11 +121,16 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     /**
      * Status of the item. The possible valid values are in the ItemContract.java file:
      * {@link ItemEntry#STATUS_TODO}, {@link ItemEntry#STATUS_DO}, {@link ItemEntry#STATUS_DONE}
-     * */
+     */
     private int mStatus = ItemEntry.STATUS_TODO;
 
-    /** Boolean flag that keeps track of whether the item has been edited (true) or not (false) */
+    /**
+     * Boolean flag that keeps track of whether the item has been edited (true) or not (false)
+     */
     private boolean mItemHasChanged = false;
+
+    // object for showing toast.
+    private ShowToast toast;
 
     /**
      * OnTouchListener that listens for any user touches on a View, implying that they are modifying
@@ -102,6 +148,8 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
+
+        toast = new ShowToast(this);
 
         // Examine the intent that was used to launch this activity,
         // Examine the intent that was used to launch this activity,
@@ -124,9 +172,16 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
             getLoaderManager().initLoader(EXISTING_ITEM_LOADER, null, this);
         }
 
-        // Find all relevant views that we will need to read user input from
         mNameEditText = (EditText) findViewById(R.id.name_edit_txt);
         mDetailEditText = (EditText) findViewById(R.id.detail_edit_txt);
+        mNameCountTextView = (TextView) findViewById(R.id.editor_name_count_txt);
+        mDetailCountTextView = (TextView) findViewById(R.id.editor_detail_count_txt);
+
+        countNameCharAndShow();
+        nameCursorVisibility();
+        countDetailCharAndShow();
+        detailCursorVisibility();
+
         mTotalUnitTextView = (TextView) findViewById(R.id.get_total_unit_txt_view);
         mDate = intent.getStringExtra("date");
         mDateEditText = (EditText) findViewById(R.id.editor_date_edit_txt);
@@ -153,6 +208,13 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         submit();
     }
 
+
+    /**
+     * @param view          DatePickerDialog
+     * @param selectedYear  Year selected by the user
+     * @param selectedMonth Month selected by the user
+     * @param selectedDay   Date selected by the user
+     */
     @Override
     public void onDateSet(DatePickerDialog view, int selectedYear, int selectedMonth, int selectedDay) {
         Calendar calendar = Calendar.getInstance();
@@ -169,7 +231,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         mDateEditText.setText(mDate);
     }
 
-    void dateSelection(){
+    void dateSelection() {
         mDateEditText.setFocusable(false);
         mDateEditText.setOnTouchListener(mTouchListener);
         mDateEditText.setText(mDate);
@@ -191,8 +253,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                     DatePickerDialog datePickerDialog
                             = DatePickerDialog.newInstance(EditorActivity.this, mYear, mMonth, mDay);
                     datePickerDialog.show(getFragmentManager(), "DateFragment");
-                }
-                catch (ParseException e) {
+                } catch (ParseException e) {
                     Log.e("EditorActivity", "ParseException: " + e);
                 }
             }
@@ -213,10 +274,9 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
         if (TextUtils.isEmpty(nameString)) {
             mNameEditText.startAnimation(shake);
-            Toast.makeText(this, getString(R.string.input_name_toast), Toast.LENGTH_SHORT).show();
+            toast.showShortTimeToast(R.string.input_name_toast);
             return false;
         } else {
-            Log.v("EditorActivity", mDate);
             // Determine if this is a new or existing item by checking
             // if mCurrentItemUri is null or not
             if (mCurrentItemUri == null) {
@@ -227,7 +287,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 createValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
                 createValues.put(ItemEntry.COLUMN_ITEM_STATUS, mStatus);
                 createValues.put(ItemEntry.COLUMN_ITEM_DATE, mDate);
-                Log.v("EditorActivity", mDate);
 
                 // This is a NEW item, so insert a new item into the provider,
                 // returning the content URI for the new item.
@@ -236,10 +295,10 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 // Show a toast message depending on whether or not the insertion was successful.
                 if (newUri == null) {
                     // If the new content URI is null, then there was an error with insertion.
-                    Toast.makeText(this, getString(R.string.create_item_fail), Toast.LENGTH_SHORT).show();
+                    toast.showShortTimeToast(R.string.create_item_fail);
                 } else {
                     // Otherwise, the insertion was successful and we can display a toast.
-                    Toast.makeText(this, getString(R.string.create_item_success), Toast.LENGTH_SHORT).show();
+                    toast.showShortTimeToast(R.string.create_item_success);
                 }
             } else {
                 // Create a ContentValues object for a existing item
@@ -247,6 +306,17 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 editValues.put(ItemEntry.COLUMN_ITEM_NAME, nameString);
                 editValues.put(ItemEntry.COLUMN_ITEM_DETAIL, detailString);
                 editValues.put(ItemEntry.COLUMN_ITEM_TOTAL_UNIT, mTotalUnitNumber);
+
+                // Set status
+                if (mTotalUnitNumber > mUnitNumber) {
+                    mStatus = ItemEntry.STATUS_TODO;
+                } else if (mTotalUnitNumber == mUnitNumber) {
+                    mStatus = ItemEntry.STATUS_DONE;
+                } else {
+                    toast.showShortTimeToast(R.string.editor_status_invalid);
+                    return false;
+                }
+                editValues.put(ItemEntry.COLUMN_ITEM_STATUS, mStatus);
                 editValues.put(ItemEntry.COLUMN_ITEM_DATE, mDate);
 
                 // Otherwise this is an EXISTING item, so update the item with content URI: mCurrentItemUri
@@ -258,10 +328,10 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 // Show a toast message depending on whether or not the update was successful.
                 if (rowsAffected == 0) {
                     // If no rows were affected, then there was an error with the update.
-                    Toast.makeText(this, getString(R.string.update_item_fail), Toast.LENGTH_SHORT).show();
+                    toast.showShortTimeToast(R.string.update_item_fail);
                 } else {
                     // Otherwise, the update was successful and we can display a toast.
-                    Toast.makeText(this, getString(R.string.update_item_success), Toast.LENGTH_SHORT).show();
+                    toast.showShortTimeToast(R.string.update_item_success);
                 }
             }
             return true;
@@ -274,6 +344,11 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     private void submit() {
         Button okButton = (Button) findViewById(R.id.add_ok_btn);
         Button cancelButton = (Button) findViewById(R.id.add_cancel_btn);
+
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            okButton.setBackgroundColor(Color.parseColor("#FF5722"));
+            cancelButton.setBackgroundColor(Color.parseColor("#616161"));
+        }
 
         //click ok button
         okButton.setOnClickListener(new View.OnClickListener() {
@@ -303,8 +378,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
 
                     // Show a dialog that notifies the user they have unsaved changes
                     showUnsavedChangesDialog(discardButtonClickListener);
-                }
-                else finish();
+                } else finish();
             }
         });
     }
@@ -348,13 +422,12 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                 ItemEntry.COLUMN_ITEM_STATUS
         };
 
-        String[] date = {mDate};
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
                 mCurrentItemUri,         // Query the content URI for the current item
                 projection,             // Columns to include in the resulting Cursor
-                "date = ?",                   // No selection clause
-                date,                   // No selection arguments
+                null,                   // No selection clause
+                null,                   // No selection arguments
                 null);                  // Default sort order
     }
 
@@ -368,15 +441,14 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         if (cursor.moveToFirst()) {
             int nameColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_NAME);
             int detailColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DETAIL);
-            //int unitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_UNIT);
+            int unitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_UNIT);
             int totalUnitColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_TOTAL_UNIT);
-            //int statusColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_STATUS);
             int dateColumnIndex = cursor.getColumnIndex(ItemEntry.COLUMN_ITEM_DATE);
 
             String name = cursor.getString(nameColumnIndex);
             String detail = cursor.getString(detailColumnIndex);
             String date = cursor.getString(dateColumnIndex);
-            //int unit = cursor.getInt(unitColumnIndex);
+            mUnitNumber = cursor.getInt(unitColumnIndex);
             int totalUnit = cursor.getInt(totalUnitColumnIndex);
             //int status = cursor.getInt(statusColumnIndex);
 
@@ -454,7 +526,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         mUnitMinusImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mTotalUnitNumber > 1) {
+                if (mTotalUnitNumber > 1 && mTotalUnitNumber > mUnitNumber) {
                     mTotalUnitNumber--;
                     mTotalUnitString = Integer.toString(mTotalUnitNumber);
                     mTotalUnitTextView.setText(mTotalUnitString);
@@ -469,7 +541,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
      * This function change plus/minus imageButton src according to Unit number range
      */
     private void getUnitImageButtonSrc() {
-        if (mTotalUnitNumber <= 1) {
+        if (mTotalUnitNumber <= 1 || mTotalUnitNumber == mUnitNumber) {
             mUnitMinusImageButton.setImageResource(R.drawable.ic_unit_minus_false);
             mUnitPlusImageButton.setImageResource(R.drawable.ic_unit_plus_true);
         } else if (mTotalUnitNumber < 20) {
@@ -491,9 +563,90 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     }
 
     /**
-     * @param view          DatePickerDialog
-     * @param selectedYear  Year selected by the user
-     * @param selectedMonth Month selected by the user
-     * @param selectedDay   Date selected by the user
+     * This function count name character in edit text view and show on text view
      */
+    public void countNameCharAndShow() {
+        mNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                int length = charSequence.length();
+                mNameCountTextView.setText(length + " / " + NAME_MAX_COUNT);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+    }
+
+    /**
+     * This function count detail character in edit text view and show on text view
+     */
+    public void countDetailCharAndShow() {
+        mDetailEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                int length = charSequence.length();
+                mDetailCountTextView.setText(length + " / " + DETAIL_MAX_COUNT);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+    }
+
+    /**
+     * This function change name cursor visibility.
+     */
+    public void nameCursorVisibility() {
+        mNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    mNameEditText.setCursorVisible(false);
+                }
+                return false;
+            }
+        });
+
+        mNameEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                mNameEditText.setCursorVisible(true);
+                return false;
+            }
+        });
+    }
+
+    /**
+     * This function change detail cursor visibility.
+     */
+    public void detailCursorVisibility() {
+        mDetailEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    mDetailEditText.setCursorVisible(false);
+                }
+                return false;
+            }
+        });
+
+        mDetailEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                mDetailEditText.setCursorVisible(true);
+                return false;
+            }
+        });
+    }
 }

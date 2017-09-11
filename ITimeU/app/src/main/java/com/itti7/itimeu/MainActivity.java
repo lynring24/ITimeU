@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(4);
     }
-    
+
     /**
      * @return  Return existing viewpager
      * */
