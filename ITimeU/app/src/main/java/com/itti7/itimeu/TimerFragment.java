@@ -259,14 +259,13 @@ public class TimerFragment extends Fragment {
         updateListFragment();
     }
 
-    public void onBackPressed() {
+    public void setStatusToDo(){
         /*set mStatus to TO DO(0)*/
         if (mStateBttn.getText().toString().equals("stop")) {
             query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
             dbUpdate(query);
         }
     }
-
 
     Button.OnClickListener stateChecker = new View.OnClickListener() {
         @Override
@@ -366,6 +365,13 @@ public class TimerFragment extends Fragment {
             }
         }
 
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onStop()");
+        setStatusToDo();
     }
 
     @Override

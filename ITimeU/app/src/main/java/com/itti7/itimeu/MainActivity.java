@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed(){
         super.onBackPressed();
         TimerFragment timerFragment = (TimerFragment) getSupportFragmentManager().findFragmentByTag(mTimerTag);
-        timerFragment.onBackPressed();
+        timerFragment.setStatusToDo();
     }
 
 }
