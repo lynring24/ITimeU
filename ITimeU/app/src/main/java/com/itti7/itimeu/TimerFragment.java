@@ -386,7 +386,6 @@ public class TimerFragment extends Fragment {
 
 
     public void setTimerFragment(int mId, int mStatus, int mUnit, int mTotalUnit, String mName) {
-
         this.mId = mId;
         this.mStatus = mStatus;
         this.mUnit = mUnit;
@@ -396,6 +395,14 @@ public class TimerFragment extends Fragment {
         if (mCountTimer % 2 == 1) {
             //should keep setting when the breakTimer hasn't run yet
             mItemNameText.setText(mName);
+        }
+    }
+    public void setDeleteItemDisable(int dId){
+        //once the Item became deleted
+        if(dId==mId){
+            /*set the button disable*/
+            mStateBttn.setEnabled(false);
+            mItemNameText.setText("Deleted");
         }
     }
 }
