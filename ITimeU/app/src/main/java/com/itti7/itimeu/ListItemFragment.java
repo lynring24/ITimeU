@@ -26,7 +26,6 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.itti7.itimeu.data.ItemContract;
 import com.itti7.itimeu.data.ItemDbHelper;
@@ -81,8 +80,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     // Date convert to String
     private String mCurrentListDateStr;
 
-    // Today's date
-    private String mToday = getStringFromDate(new Date());
+    private boolean isOtherItemSelected = false;
 
     /**
      * Adapter for the ListView
@@ -100,11 +98,11 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     private int mItemTotalUnit;
     private int mItemStatus;
 
-    // Sum total units, and units respectively.
-    private int mSumOfTotalUnits, mSumOfUnits;
     private int mPercent;
-
     private String mDetail;
+
+    // object for showing toast message
+    private ShowToast toast;
 
     public ListItemFragment() {
         // Required empty public constructor
@@ -119,6 +117,9 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         mListItemActivity = getActivity();
         mListItemContext = mListItemView.getContext();
 
+        // Create new ShowToast object
+        toast = new ShowToast(mListItemContext);
+
         // list table db
         dbHelper = new ItemDbHelper(mListItemContext);
         db = dbHelper.getReadableDatabase();
@@ -132,7 +133,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         // Find the ListView which will be populated with the item data
         mTaskItemListView = mListItemView.findViewById(R.id.item_list_view);
 
-//        // When task list view is empty, than show this view
+        // When task list view is empty, than show this view
         setEmptyView();
 
         // When click task item, then check item's information.
@@ -153,7 +154,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         // If click date TextView
         showDialogForSelectDate();
 
-        //when user click addadd FloatingActionButton for add a item in the list.
+        //when user click add FloatingActionButton for add a item in the list.
         final FloatingActionButton addFab
                 = mListItemView.findViewById(R.id.add_fab_btn);
         clickAddFab(addFab);
@@ -189,6 +190,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     @Override
     public void onResume() {
         super.onResume();
+        // refresh achievement rate
+        setAchievementRate();
     }
 
     /**
@@ -219,10 +222,16 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
         switch (item.getItemId()) {
             case R.id.action_modify:
-                startActivity(intent);
+                if(!isThisTaskStarted(id)) {
+                    startActivity(intent);
+                }
+                else toast.showLongTimeToast(R.string.listitem_this_item_started);
                 break;
             case R.id.action_delete:
-                showDeleteConfirmationDialog(id);
+                if(!isThisTaskStarted(id)) {
+                    showDeleteConfirmationDialog(id);
+                }
+                else toast.showLongTimeToast(R.string.listitem_this_item_started);
                 break;
             default:
                 return false;
@@ -238,6 +247,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 ItemContract.ItemEntry._ID,
                 ItemContract.ItemEntry.COLUMN_ITEM_NAME,
                 ItemContract.ItemEntry.COLUMN_ITEM_DETAIL,
+                ItemContract.ItemEntry.COLUMN_ITEM_STATUS,
                 ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT,
                 ItemContract.ItemEntry.COLUMN_ITEM_UNIT};
 
@@ -302,13 +312,16 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             // Show a toast message depending on whether or not the delete was successful.
             if (rowsDeleted == 0) {
                 // If no rows were deleted, then there was an error with the delete.
-                Toast.makeText(mListItemContext, getString(R.string.delete_item_fail),
-                        Toast.LENGTH_SHORT).show();
+                toast.showShortTimeToast(R.string.delete_item_fail);
             } else {
                 // Otherwise, the delete was successful and we can display a toast.
-                Toast.makeText(mListItemContext, getString(R.string.delete_item_success),
-                        Toast.LENGTH_SHORT).show();
+                toast.showShortTimeToast(R.string.delete_item_success);
             }
+        }
+
+        else {
+            // Can not delete because of error or selected item is already started.
+            toast.showShortTimeToast(R.string.listitem_cannot_delete);
         }
     }
 
@@ -371,8 +384,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
      * Calculate Percentage: sum of units / sum of total-units
      */
     void calculateAchievementRate() {
-        mSumOfTotalUnits = 0;
-        mSumOfUnits = 0;
+        int mSumOfTotalUnits = 0;
+        int mSumOfUnits = 0;
         String[] date = {mCurrentListDateStr};
         Cursor cursor = db.rawQuery("SELECT totalUnit, unit FROM list WHERE date = ?", date);
 
@@ -381,14 +394,14 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 mSumOfTotalUnits += cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_TOTAL_UNIT));
                 mSumOfUnits += cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_UNIT));
             } while (cursor.moveToNext());
-
-            if (mSumOfTotalUnits != 0) {
-                mPercent = Math.round(((float) mSumOfUnits / mSumOfTotalUnits) * 100);
-            } else {
-                mPercent = 0;
-            }
         }
         cursor.close();
+
+        if (mSumOfTotalUnits != 0) {
+            mPercent = Math.round(((float) mSumOfUnits / mSumOfTotalUnits) * 100);
+        } else {
+            mPercent = 0;
+        }
 
         mDetail = "( " + mSumOfUnits + " / " + mSumOfTotalUnits + " )";
     }
@@ -422,11 +435,10 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
      * @return when item's date == today then return true, but date != today then return false.
      */
     boolean checkDate() {
-        if (mItemDate.equals(mToday)) {
+        if (mItemDate.equals(getStringFromDate(new Date()))) {
             return true;
         } else {
-            Toast.makeText(mListItemContext, R.string.not_today, Toast.LENGTH_SHORT)
-                    .show();
+            toast.showShortTimeToast(R.string.not_today);
             return false;
         }
     }
@@ -444,9 +456,16 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
         // If selected item's status == Done, then stop action
         if (mItemStatus == ItemContract.ItemEntry.STATUS_DONE) {
-            Toast.makeText(mListItemContext, R.string.already_done, Toast.LENGTH_SHORT)
-                    .show();
+            toast.showShortTimeToast(R.string.already_done);
+            return;
         } else if (mItemStatus == ItemContract.ItemEntry.STATUS_TODO) {
+            // Is other task is started?
+            if (isOtherItemSelected) {
+                // re-initialize
+                isOtherItemSelected = false;
+                return;
+            }
+
             // Set item name text to job_txt_view in TimerFragment
             String tabOfTimerFragment = mainActivity.getTimerTag();
             TimerFragment timerFragment = (TimerFragment) getActivity()
@@ -473,8 +492,6 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     public void listUiUpdateFromDb() {
         getLoaderManager().restartLoader(0, null, this);
         setAchievementRate();
-        // test code
-        Toast.makeText(getContext(), "Update list UI", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -557,8 +574,6 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
     /**
      * When click task item, than get information from the item.
-     *
-     * @return selected item's data is today? true / false
      */
     void getTaskItemInfoAndCheck() {
         mCursorAdapter = new ItemCursorAdapter(mListItemContext, null);
@@ -573,6 +588,12 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 String[] idStr = {String.valueOf(mItemID)};
                 Cursor cursor = db.rawQuery("SELECT name, unit, totalUnit, status, date FROM list WHERE "
                         + BaseColumns._ID + " = ?", idStr);
+
+                // Check the timer is started
+                if (isAnotherTaskStarted(mItemID)) {
+                    timerIsAlreadyStarted();
+                    return;
+                }
 
                 // Get current item's info
                 if (cursor.moveToFirst()) {
@@ -593,8 +614,15 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                         checkStatus();
                     }
                 }
+
+                cursor.close();
             }
         });
+    }
+
+    private void timerIsAlreadyStarted() {
+        toast.showShortTimeToast(R.string.already_start);
+        isOtherItemSelected = true;
     }
 
     /**
@@ -639,5 +667,50 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 startActivity(intent);
             }
         });
+    }
+
+    /**
+     * This function check that another task item is already started.
+     * @param id selected item's id
+     * @return if selected item's id is same with the task in execution
+     * , or there is nothing in execution, return true. Otherwise return false.
+     */
+    boolean isAnotherTaskStarted(int id) {
+        String[] date = {getStringFromDate(new Date())};
+        Cursor cursor = db.rawQuery("SELECT status, " + BaseColumns._ID +
+                " FROM list WHERE date = ?", date);
+
+        if (cursor.moveToFirst()) {
+            do {
+                if (cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS))
+                        == ItemContract.ItemEntry.STATUS_DO) {
+                    return cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry._ID)) != id;
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        return false;
+    }
+
+    /**
+     * When click an item long, then check the item is started task.
+     * @param id    selected item's id
+     * @return  if the item's status == DO than return true, else return false.
+     */
+    boolean isThisTaskStarted(int id) {
+        String [] strId = { String.valueOf(id) };
+        Cursor cursor =
+                db.rawQuery("SELECT status FROM list WHERE "+ BaseColumns._ID + " =  ?", strId);
+
+        if (cursor.moveToFirst()) {
+            if(cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS))
+                    == ItemContract.ItemEntry.STATUS_DO) {
+                cursor.close();
+                return true;
+            }
+        }
+        cursor.close();
+        return false;
     }
 }
