@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
@@ -609,6 +611,11 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     void initializeChart() {
         mChart.setData(null);
         mChart.invalidate();
+
+        Paint paint = mChart.getPaint(Chart.PAINT_INFO);
+        paint.setTextSize(32f);
+        mChart.setNoDataText("Select period what you want.");
+
         mStatResultText.setText(null);
 
         mStatStartEditText.setText(null);
