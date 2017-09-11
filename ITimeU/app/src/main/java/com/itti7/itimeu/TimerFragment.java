@@ -397,9 +397,10 @@ public class TimerFragment extends Fragment {
             mItemNameText.setText(mName);
         }
     }
-    public void setDeleteItemDisable(int dId){
+
+    public void setDeleteItemDisable(int dId) {
         //once the Item became deleted
-        if(dId==mId){
+        if (dId == mId) {
             /*set the button disable*/
             mStateBttn.setEnabled(false);
             mItemNameText.setText("Deleted");

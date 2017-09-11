@@ -222,16 +222,14 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
         switch (item.getItemId()) {
             case R.id.action_modify:
-                if(!isThisTaskStarted(id)) {
+                if (!isThisTaskStarted(id)) {
                     startActivity(intent);
-                }
-                else toast.showLongTimeToast(R.string.listitem_this_item_started);
+                } else toast.showLongTimeToast(R.string.listitem_this_item_started);
                 break;
             case R.id.action_delete:
-                if(!isThisTaskStarted(id)) {
+                if (!isThisTaskStarted(id)) {
                     showDeleteConfirmationDialog(id);
-                }
-                else toast.showLongTimeToast(R.string.listitem_this_item_started);
+                } else toast.showLongTimeToast(R.string.listitem_this_item_started);
                 break;
             default:
                 return false;
@@ -313,13 +311,19 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             if (rowsDeleted == 0) {
                 // If no rows were deleted, then there was an error with the delete.
                 toast.showShortTimeToast(R.string.delete_item_fail);
+                // Set item name text to job_txt_view in TimerFragment
             } else {
                 // Otherwise, the delete was successful and we can display a toast.
                 toast.showShortTimeToast(R.string.delete_item_success);
-            }
-        }
 
-        else {
+                String tabOfTimerFragment = ((MainActivity) getActivity()).getTimerTag();
+                TimerFragment timerFragment = (TimerFragment) getActivity()
+                        .getSupportFragmentManager()
+                        .findFragmentByTag(tabOfTimerFragment);
+
+                timerFragment.setDeleteItemDisable(id);
+            }
+        } else {
             // Can not delete because of error or selected item is already started.
             toast.showShortTimeToast(R.string.listitem_cannot_delete);
         }
@@ -474,7 +478,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
             // Set selected item info
             //public void  setTimerFrag(int mId,int mStatus,int mUnit,int mTotalUnit,String mName)
-            timerFragment.setTimerFragment(mItemID,mItemStatus,mItemUnit,mItemTotalUnit,mItemName);
+            timerFragment.setTimerFragment(mItemID, mItemStatus, mItemUnit, mItemTotalUnit, mItemName);
 
         }
 
@@ -667,6 +671,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
     /**
      * This function check that another task item is already started.
+     *
      * @param id selected item's id
      * @return if selected item's id is same with the task in execution
      * , or there is nothing in execution, return true. Otherwise return false.
@@ -691,16 +696,17 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
 
     /**
      * When click an item long, then check the item is started task.
-     * @param id    selected item's id
-     * @return  if the item's status == DO than return true, else return false.
+     *
+     * @param id selected item's id
+     * @return if the item's status == DO than return true, else return false.
      */
     boolean isThisTaskStarted(int id) {
-        String [] strId = { String.valueOf(id) };
+        String[] strId = {String.valueOf(id)};
         Cursor cursor =
-                db.rawQuery("SELECT status FROM list WHERE "+ BaseColumns._ID + " =  ?", strId);
+                db.rawQuery("SELECT status FROM list WHERE " + BaseColumns._ID + " =  ?", strId);
 
         if (cursor.moveToFirst()) {
-            if(cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS))
+            if (cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_ITEM_STATUS))
                     == ItemContract.ItemEntry.STATUS_DO) {
                 cursor.close();
                 return true;
