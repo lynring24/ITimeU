@@ -23,7 +23,7 @@ public class TimerService extends Service {
     private NotificationCompat.Builder mBuilder;
     private NotificationManager mNM;
     private final int NOTIFYID=001;
-
+    public static boolean mTimerServiceFinished = false;
     public TimerService() {
 
     }
@@ -64,11 +64,14 @@ public class TimerService extends Service {
                         mBuilder.setContentText(mLeftTime);
                         mBuilder.setSubText("FINISHED");
                         mNM.notify(NOTIFYID, mBuilder.build());
-                        stopTimer();
-                        Log.i("Timer", "------------------------------------------------------->Timer start send Intent");
+
+                        timerSwitch = false;
+                        if(timer!=null)
+                            timer.cancel();
+
+                        mTimerServiceFinished =true;
                         Intent sendIntent = new Intent(strReceiver);  // notice the end of Timer to Fragment
                         sendBroadcast(sendIntent);
-                        Log.i("Timer", "------------------------------------------------------->Timer finish send Intent");
                     }
                 }
             };
@@ -82,10 +85,10 @@ public class TimerService extends Service {
         showNotification(name);
     }
     private void showNotification(String name) {
-        Intent intent = new Intent(this,TimerFragment.class);
+        Intent intent = new Intent(this,MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
         // The PendingIntent to launch our activity if the user selects this notification
-        PendingIntent contentIntent = PendingIntent.getService(this, 0,intent, 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,intent, 0);
 
         // Set the info for the views that show in the notification panel.
          mBuilder = new NotificationCompat.Builder(TimerService.this)
@@ -99,34 +102,31 @@ public class TimerService extends Service {
         mNM = (NotificationManager)TimerService.this.getSystemService(Context.NOTIFICATION_SERVICE);
         mNM.notify(NOTIFYID, mBuilder.build());
     }
-    public void stopTimer() {
+    public void stopCountNotification() {
         Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
-        timer.cancel();
-        mNM.cancel(NOTIFYID);
+        if(timer!=null)
+            timer.cancel();
+        if(mNM!=null)
+            mNM.cancel(NOTIFYID);
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.i("Timer", "------------------------------------------------------->TimeronUnbind");
-        stopTimer();
+        super.onUnbind(intent);
+        stopCountNotification();
         return true;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("Timer", "------------------------------------------------------->Timer onStartCommand");
-        runTime = intent.getIntExtra("RUNTIME", 1);
-        Log.i("RUNTIME", "------------------------------------------------------->RUNTIME : "+runTime);
-//        timerSwitch = true;
-//        handler.post(runnable);
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopTimer();
     }
 
     @Override

@@ -85,7 +85,6 @@
     <string name="tab_statistics">graph</string>
     <string name="tab_setting">setting</string>
     <string name="tab_about">about</string>
-    <string name="main_press_back">Press Back again to Exit</string>
 
     <!-- fragment_about.xml -->
     <string name="about_title">About</string>
