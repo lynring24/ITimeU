@@ -2,7 +2,6 @@ package com.itti7.itimeu;
 
 import android.app.Activity;
 import android.content.Context;
-//import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -79,8 +78,6 @@ public class SettingFragment extends Fragment {
         msoundOncb = mSettingView.findViewById(R.id.sound_check);
         mvibrateOncb = mSettingView.findViewById(R.id.vibrate_check);
 
-        //SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
-
         //저장해둔 숫자 설정 불러오기
         //mworket.setText(String.valueOf(pref.getInt(WORKTIME, 25)));
         mworket.setText(String.valueOf(PrefUtil.get(getContext(),WORKTIME, 25)));
@@ -108,6 +105,7 @@ public class SettingFragment extends Fragment {
         mvibrateOncb.setChecked(PrefUtil.get(getContext(),VIBRATEON, false));
         //monScreencb.setChecked(pref.getBoolean(SCREENON, false));
         monScreencb.setChecked(PrefUtil.get(getContext(),SCREENON, false));
+
 
         mworksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -196,8 +194,6 @@ public class SettingFragment extends Fragment {
     }
 
     private void doAfterTrack(SeekBar bar) { // 이용자가 손을 뗐을 때의 숫자 출력
-        //SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
-        //SharedPreferences.Editor editor = pref.edit();
 
         if (bar.equals(mworksb)) {
             mworket.setText(mworket.getText());

@@ -2,6 +2,7 @@ package com.itti7.itimeu;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -35,6 +36,7 @@ public class TimerFragment extends Fragment {
     public static final String BREAKTIME = "breaktime";
     public static final String LONGBREAKTIME = "longbreaktime";
     public static final String SESSION = "session";
+
     private TextView mTimeText;
     private TextView mItemNameText;
 
@@ -42,6 +44,7 @@ public class TimerFragment extends Fragment {
     private Button mStateBttn;
     /*timer Service Component*/
     private TimerService mTimerService;
+
     boolean mBound = false;
     private TimerHandler handler;
     private int progressBarValue = 0;
@@ -94,6 +97,7 @@ public class TimerFragment extends Fragment {
         mProgressBar = (ProgressBar) timerView.findViewById(R.id.progressBar);
         mProgressBar.bringToFront(); // bring the progressbar to the top
 
+
         /*동적 리시버 구현 */
         mReceiver = new BroadcastReceiver() {
             @Override
@@ -108,6 +112,36 @@ public class TimerFragment extends Fragment {
         /*init shared prefernce*/
         PrefUtil.save(getContext(), "COUNT", mCountTimer);
 
+
+                db = dbHelper.getWritableDatabase();
+                query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET unit = '" + mUnit + "', status = '";
+                // if all the units are  completed
+                if (mUnit==mTotalUnit) {
+                    //UPDATE DB  mStatus = 2
+                    query = query + ItemContract.ItemEntry.STATUS_DONE + "' WHERE _ID = '" + mId + "';";
+                    // if the last break of the list just end go back to the listFragment
+                    if (mCountTimer == mUnit * 2) {
+                        //if finished, set the button disable
+                        mStateBttn.setEnabled(false);
+                        // Change Fragment TimerFragment -> ListItemFragment ->
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        (mainActivity).getViewPager().setCurrentItem(0);
+                    }
+                } else {
+                    //UPDATE DB  mStatus = 0
+                    query = query + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
+                }
+
+                db.execSQL(query);
+                db.close();
+
+            /*List Item unit count update*/
+                MainActivity mainActivity = (MainActivity) getActivity();
+                String listTag = mainActivity.getListTag();
+                ListItemFragment listItemFragment = (ListItemFragment)mainActivity.getSupportFragmentManager().findFragmentByTag(listTag);
+                listItemFragment.listUiUpdateFromDb();
+            }
+        };
         return timerView;
     }
 
@@ -173,9 +207,11 @@ public class TimerFragment extends Fragment {
         Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onStart()");
         super.onStart();
         intent = new Intent(getActivity(), TimerService.class);
+
         if (TimerService.mTimerServiceFinished == true) {
             onUnitFinish();
         }
+
 
         /*TimerService Intent Listener*/
         getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -206,10 +242,12 @@ public class TimerFragment extends Fragment {
         }
     };
 
+
     @Override
     public void onResume() {
         Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onResume()");
         super.onResume();
+
         getActivity().registerReceiver(mReceiver, new IntentFilter(mTimerService.strReceiver));
     }
 
@@ -230,14 +268,17 @@ public class TimerFragment extends Fragment {
         }
     }
 
+
     Button.OnClickListener stateChecker = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mStateBttn.getText().toString().equals("start")) { // checked
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Start");
+                ////--------------------------------------------------------------------------------------------------------------
                 //mUnit will be intialize when list item is clicked
                 if (mBound) {
                 /* set mStatus DB to DO(1)*/
+
                     query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_DO + "' WHERE _ID = '" + mId + "';";
                     dbUpdate(query);
 
@@ -257,6 +298,7 @@ public class TimerFragment extends Fragment {
                     mTimerService.setTimeName(runTime, mItemNameText.getText().toString());
                     mStateBttn.setText(R.string.stop);
                     handler.sendEmptyMessage(0);
+
                 }
             } else {
                 Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Stop");
@@ -278,13 +320,16 @@ public class TimerFragment extends Fragment {
     };
 
     public void updateLeftTime() {
+
         mReadThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
+
                     //check out if it is still available
                     if (getActivity() == null)
                         return;
+
                     try {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
@@ -302,6 +347,7 @@ public class TimerFragment extends Fragment {
         Log.i("TimerFragment", "------------------------------------------------------->TimerFragment ReadThreadStart()");
         mReadThread.start();
     }
+
 
     public class TimerHandler extends Handler {
         TimerHandler() {
@@ -328,16 +374,19 @@ public class TimerFragment extends Fragment {
         if (mBound) {
             mTimerService.stopService(intent);
             getActivity().unbindService(mConnection);
-            getActivity().unregisterReceiver(mReceiver);
+
             mBound = false;
         }
     }
+
 
     /**
      * This function set TimerFragment once listItem was clicked
      */
 
+
     public void setTimerFragment(int mId, int mStatus, int mUnit, int mTotalUnit, String mName) {
+
         this.mId = mId;
         this.mStatus = mStatus;
         this.mUnit = mUnit;
@@ -352,6 +401,5 @@ public class TimerFragment extends Fragment {
                     ", Unit: " + mUnit, Toast.LENGTH_SHORT).show();
         }
     }
-
 }
 
