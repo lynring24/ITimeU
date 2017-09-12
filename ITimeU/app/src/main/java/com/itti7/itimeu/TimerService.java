@@ -8,11 +8,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import static com.itti7.itimeu.SettingFragment.SCREENON;
+import static com.itti7.itimeu.SettingFragment.SOUNDON;
+import static com.itti7.itimeu.SettingFragment.VIBRATEON;
+import static java.security.AccessController.getContext;
 
 public class TimerService extends Service {
     public static String strReceiver = "com.TimerService.receiver";
@@ -68,13 +76,17 @@ public class TimerService extends Service {
                         timerSwitch = false;
                         if(timer!=null)
                             timer.cancel();
-
+                        //여기쯤*********************
+                        ringTimerEndAlarm();
+                        //*************************
                         mTimerServiceFinished =true;
 
                         Intent sendIntent = new Intent(strReceiver);  // notice the end of Timer to Fragment
                         sendBroadcast(sendIntent);
                     }
+
                 }
+
             };
             timer.start();
         }
@@ -94,13 +106,13 @@ public class TimerService extends Service {
 
 
         // Set the info for the views that show in the notification panel.
-         mBuilder = new NotificationCompat.Builder(TimerService.this)
+        mBuilder = new NotificationCompat.Builder(TimerService.this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(name)
                 .setContentText(mLeftTime);
 
-         mBuilder.setContentIntent(contentIntent);
+        mBuilder.setContentIntent(contentIntent);
         // Send the notification.
         mNM = (NotificationManager)TimerService.this.getSystemService(Context.NOTIFICATION_SERVICE);
         mNM.notify(NOTIFYID, mBuilder.build());
@@ -143,6 +155,25 @@ public class TimerService extends Service {
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         return new MyBinder();
+    }
+
+    private void ringTimerEndAlarm() {
+        boolean isVibrateOn = PrefUtil.get(this, VIBRATEON, true);
+        boolean isSoundOn = PrefUtil.get(this, SOUNDON, true);
+        boolean isScreenOn = PrefUtil.get(this, SCREENON, true);
+
+        if (isVibrateOn) {
+            if (Build.VERSION.SDK_INT >= 26) {
+                ((Vibrator) this.getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                ((Vibrator) this.getSystemService(VIBRATOR_SERVICE)).vibrate(1000);
+            }
+        }
+
+        if (isSoundOn) {
+
+        }
+
     }
 
     public class MyBinder extends Binder {
