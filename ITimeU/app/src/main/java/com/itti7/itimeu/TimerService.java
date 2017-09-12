@@ -7,6 +7,9 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -158,9 +161,9 @@ public class TimerService extends Service {
     }
 
     private void ringTimerEndAlarm() {
-        boolean isVibrateOn = PrefUtil.get(this, VIBRATEON, true);
+        boolean isVibrateOn = PrefUtil.get(this, VIBRATEON, false);
         boolean isSoundOn = PrefUtil.get(this, SOUNDON, true);
-        boolean isScreenOn = PrefUtil.get(this, SCREENON, true);
+        boolean isScreenOn = PrefUtil.get(this, SCREENON, false);
 
         if (isVibrateOn) {
             if (Build.VERSION.SDK_INT >= 26) {
@@ -171,7 +174,9 @@ public class TimerService extends Service {
         }
 
         if (isSoundOn) {
-
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone ring = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            ring.play();
         }
 
     }
