@@ -124,8 +124,9 @@
         limitations under the License.</string>
     <string name="datepicker_link"><a href="https://github.com/wdullaer/MaterialDateTimePicker">
         MaterialDateTimePicker</a></string>
+
     <string name="mp_chart_name">MP Andorid Chart</string>
-    <string name="licenses_mp_chart">Copyright 2016 Philipp Jahoda
+    <string name="licenses_mp_chart">Copyright (&#169;) 2016 Philipp Jahoda
 
 
         Licensed under the Apache License, Version 2.0 (the "License");
@@ -142,13 +143,35 @@
     <string name="mp_chart_link"><a href="https://github.com/PhilJay/MPAndroidChart">
         MPAndroidChart</a></string>
 
-    <string name="statistics_name">Image of statistics, timer</string>
+    <string name="app_intro_name">App Intro</string>
+    <string name="licenses_app_intro"> Copyright (&#169;) 2015 Paolo Rotolo
+   Copyright (&#169;) 2016 Maximilian Narr
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.</string>
+    <string name="app_intro_link"><a href="https://github.com/apl-devs/AppIntro">
+        AppIntro</a></string>
+
+    <string name="statistics_name">Images of statistics, timer</string>
     <string name="licenses_statistics">Free for commercial use (Include link to authors website)</string>
     <string name="statistics_link"><a href="https://makoto.dunked.com/">Mariano Tardon</a></string>
 
-    <string name="emptyimage_name">Empty image</string>
-    <string name="licenses_emptyimage">Free for commercial use (Include link to authors website)</string>
-    <string name="emptyimage_link"><a href="https://www.iconfinder.com/webhostingmedia">David Cross</a></string>
+    <string name="empty_image_name">Empty image</string>
+    <string name="licenses_empty_image">Free for commercial use (Include link to authors website)</string>
+    <string name="empty_image_link"><a href="https://www.iconfinder.com/webhostingmedia">David Cross</a></string>
+
+    <string name="intro_image_name">Intro images</string>
+    <string name="licenses_intro_image">Free for commercial use (Include link to authors website)</string>
+    <string name="intro_image_link"><a href="https://www.iconfinder.com/Blinks">Sergey Vrenev</a></string>
 
     <!-- arrays.xml : spinner items -->
     <string name="arrays_week">WEEK</string>
