@@ -100,6 +100,7 @@
     <string name="about_version">Version</string>
     <string name="about_licenses">Open licenses</string>
     <string name="about_feedback">Feedback</string>
+    <string name="about_language">Support language</string>
 
     <!-- fragment_list_item -->
     <string name="listitem_previous_date_description">get date from previous date</string>
@@ -188,4 +189,8 @@
     <string name="total_unit_label">Total pomodoro units</string>
     <string name="invalid_period1">The period is invalid</string>
     <string name="invalid_period2">The period should more than 1 day</string>
+
+    <!-- activity_support_language.xml -->
+    <string name="support_language_english">English</string>
+    <string name="support_language_korean">Korean</string>
 </resources>
