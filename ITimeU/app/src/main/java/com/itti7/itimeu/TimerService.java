@@ -42,7 +42,6 @@ public class TimerService extends Service {
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            Log.i("Timer", "------------------------------------------------------->Timer run()");
             timer = new CountDownTimer(runTime * 1000 * 60, 1000) { // minute
                 public void onTick(long millisUntilFinished) {
                     if (timerSwitch) {
@@ -60,7 +59,6 @@ public class TimerService extends Service {
                 }
 
                 public void onFinish() {
-                    Log.i("Timer", "------------------------------------------------------->Timer onFinish");
                     if (timerSwitch) {         //send only if it has finished
                         mLeftTime = "00:00";
                         mBuilder.setContentText(mLeftTime);
@@ -109,7 +107,6 @@ public class TimerService extends Service {
     }
 
     public void stopCountNotification() {
-        Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
         timerSwitch = false;
         if(timer!=null)
             timer.cancel();
@@ -129,7 +126,6 @@ public class TimerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("Timer", "------------------------------------------------------->Timer onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -151,7 +147,6 @@ public class TimerService extends Service {
 
     public class MyBinder extends Binder {
         public TimerService getService() {
-            Log.i("Timer", "------------------------------------------------------->Timer getService()");
             return TimerService.this;
         }
     }

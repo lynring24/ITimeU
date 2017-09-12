@@ -75,7 +75,6 @@ public class TimerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onCreateView()");
         View timerView = inflater.inflate(R.layout.fragment_timer, container, false);
 
         // get Timer tag and set to TimerTag
@@ -203,7 +202,6 @@ public class TimerFragment extends Fragment {
 
     @Override
     public void onStart() {
-        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onStart()");
         super.onStart();
         intent = new Intent(getActivity(), TimerService.class);
 
@@ -224,7 +222,6 @@ public class TimerFragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onServiceConnected()");
             mTimerService = ((TimerService.MyBinder) service).getService();
             mBound = true;
         }
@@ -244,7 +241,6 @@ public class TimerFragment extends Fragment {
 
     @Override
     public void onResume() {
-        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onResume()");
         super.onResume();
 
         getActivity().registerReceiver(mReceiver, new IntentFilter(mTimerService.strReceiver));
@@ -271,16 +267,13 @@ public class TimerFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if (mStateBttn.getText().toString().equals("start")) { // checked
-                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Start");
-                ////--------------------------------------------------------------------------------------------------------------
+
                 //mUnit will be intialize when list item is clicked
                 if (mBound) {
                 /* set mStatus DB to DO(1)*/
 
                     query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_DO + "' WHERE _ID = '" + mId + "';";
                     dbUpdate(query);
-
-                    Log.i("Fragment", "--------------------------------------------->startTimer()");
 
                     mCountTimer = PrefUtil.get(getContext(), "COUNT", 1);
                     if (mCountTimer % ((PrefUtil.get(getContext(), SESSION, 1) * 2)) == 0) // assign time by work,short & long break
@@ -299,15 +292,12 @@ public class TimerFragment extends Fragment {
 
                 }
             } else {
-                Log.i("TimerFragment", "------------------------------------------------------->TimerFragment stateChecker() Stop");
-                Log.i("TimerFragment", "----------------------->Timer Stopped");
                 getActivity().stopService(intent); //stop service
                 mReadThread.interrupt();
                 mTimerService.stopCountNotification();
                 mProgressBar.setProgress(0);
                 handler.removeMessages(0);
                 progressBarValue = 0; //must be set 0
-                Log.i("TimerFragment", "----------------------->Service stop");
                 mStateBttn.setText(R.string.start);
 
                 /*set mStatus to TO DO(0)*/
@@ -342,7 +332,6 @@ public class TimerFragment extends Fragment {
                 }
             }
         });
-        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment ReadThreadStart()");
         mReadThread.start();
     }
 
@@ -370,7 +359,6 @@ public class TimerFragment extends Fragment {
     @Override
     public void onStop(){
         super.onStop();
-        Log.i("TimerFragment", "------------------------------------------------------->TimerFragment onStop()");
         setStatusToDo();
     }
 
