@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,8 +18,8 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
@@ -44,8 +45,6 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     ItemDbHelper dbHelper;
     SQLiteDatabase db;
 
-    // Identifier for the item data loader
-    private View mStatisticsView;
     private Activity mStatisticsActivity;
     private Context mStatisticsContext;
 
@@ -61,27 +60,17 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
     // Date format
     private SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA);
-    // Today's date for getting period
-    private Date mTodayDate;
     // Today : Date -> String
     private String mTodayStr;
-    // A week ago date
-    private Date mAWeekAgoDate;
     // A week ago: Date -> String
     private String mAWeekAgoStr;
-    // A month ago
-    private Date mAMonthAgoDate;
     // A month ago: Date -> String
     private String mAMonthAgoStr;
-
-    // Percent in the period
-    private double mPercent;
 
     // Date : year, month, day
     private int mYear;
     private int mMonth;
     private int mDay;
-    private String mDate;
     private String mCustomStart;
     private String mCustomEnd;
     private boolean isClickStartDate;
@@ -106,12 +95,15 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     private String mColorStr = "#9E9E9E";
     private int mColorInt = Color.parseColor(mColorStr);
 
+    // Object for showing toast message
+    ShowToast toast;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              Bundle savedInstanceState) {
         // Set identifier
-        mStatisticsView = inflater.inflate(R.layout.fragment_statistics, container, false);
+        View mStatisticsView = inflater.inflate(R.layout.fragment_statistics, container, false);
         mStatisticsActivity = getActivity();
         mStatisticsContext = mStatisticsView.getContext();
 
@@ -139,6 +131,8 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        toast = new ShowToast(mStatisticsContext);
     }
 
     /**
@@ -253,6 +247,9 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
                     // initialize the chart
                     initializeChart();
 
+                    mStatStartEditText.setHint(R.string.statistics_startdate_hint);
+                    mStatEndEditText.setHint(R.string.statistics_enddate_hint);
+
                     // Can touch edit text, but focus is disabled.
                     mStatStartEditText.setClickable(true);
                     mStatEndEditText.setClickable(true);
@@ -288,7 +285,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
      * Get today's date
      */
     void getToday() {
-        mTodayDate = new Date();
+        Date mTodayDate = new Date();
         mTodayStr = mDateFormat.format(mTodayDate);
     }
 
@@ -298,7 +295,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     void getAWeekAgo() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -6);
-        mAWeekAgoDate = calendar.getTime();
+        Date mAWeekAgoDate = calendar.getTime();
         mAWeekAgoStr = mDateFormat.format(mAWeekAgoDate);
     }
 
@@ -308,7 +305,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     void getAMonthAgo() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, -1);
-        mAMonthAgoDate = calendar.getTime();
+        Date mAMonthAgoDate = calendar.getTime();
         mAMonthAgoStr = mDateFormat.format(mAMonthAgoDate);
     }
 
@@ -351,6 +348,8 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
                 } while (cursor.moveToNext());
             }
 
+            cursor.close();
+
             sumOfDayUnit.add(itemUnit);
             sumOfDayTotalUnit.add(itemTotalUnit);
 
@@ -380,12 +379,13 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
      * @return percent string set
      */
     String getPercent(int sumOfWholeTotalUnits, int sumOfWholeUnits) {
+        double mPercent;
         if (sumOfWholeTotalUnits != 0) {
             mPercent = Math.round(((double) sumOfWholeUnits / sumOfWholeTotalUnits) * 100);
         } else {
             mPercent = 0;
         }
-        return mPercent + " %  ( " + sumOfWholeUnits + " / " + sumOfWholeTotalUnits + ")";
+        return mPercent + " %  ( " + sumOfWholeUnits + " / " + sumOfWholeTotalUnits + " )";
     }
 
     /**
@@ -481,7 +481,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
         // Set Date in List
         calendar.set(mYear, mMonth, mDay);
-        mDate = mDateFormat.format(calendar.getTime());
+        String mDate = mDateFormat.format(calendar.getTime());
 
         // Custom statistics
         if (mSpinnerText.equals(getString(R.string.arrays_custom))) {
@@ -586,12 +586,10 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
             Date endDate = mDateFormat.parse(end);
 
             if (startDate.compareTo(endDate) > 0) {
-                Toast.makeText(mStatisticsContext, getString(R.string.invalid_period1),
-                        Toast.LENGTH_SHORT).show();
+                toast.showShortTimeToast(R.string.invalid_period1);
                 return true;
             } else if (startDate.compareTo(endDate) == 0) {
-                Toast.makeText(mStatisticsContext, getString(R.string.invalid_period2),
-                        Toast.LENGTH_SHORT).show();
+                toast.showShortTimeToast(R.string.invalid_period2);
                 return true;
             }
         } catch (ParseException e) {
@@ -606,9 +604,18 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     void initializeChart() {
         mChart.setData(null);
         mChart.invalidate();
+
+        Paint paint = mChart.getPaint(Chart.PAINT_INFO);
+        paint.setTextSize(32f);
+        mChart.setNoDataText("Select period what you want.");
+
         mStatResultText.setText(null);
+
         mStatStartEditText.setText(null);
         mStatEndEditText.setText(null);
+
+        mCustomStart = null;
+        mCustomEnd = null;
     }
 }
 

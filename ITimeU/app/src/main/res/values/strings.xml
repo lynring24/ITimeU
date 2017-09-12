@@ -30,6 +30,8 @@
     <string name="update_item_fail">Fail to update item</string>
     <string name="update_item_success">Success to update item</string>
 
+    <string name="editor_status_invalid">Invalid status</string>
+
     <!-- Reset total unit TextView's text-->
     <string name="reset_total_unit">1</string>
 
@@ -41,7 +43,11 @@
 
     <!-- ListItemFragment.java -->
 
+    <!-- long click item -->
+    <string name="listitem_this_item_started">You can not modify or delete this task. The task already started. Before do this, stop timer.</string>
+
     <!-- check status -->
+    <string name="already_start">Another task is already started.</string>
     <string name="already_done">This task is already done</string>
 
     <!-- check date -->
@@ -56,6 +62,13 @@
     <string name="delete_item_fail">Fail to delete</string>
     <string name="delete_item_success">Success to delete</string>
 
+    <!-- Fail to delete -->
+    <string name="listitem_cannot_delete">You can not delete this item.</string>
+
+    <!-- Period hint -->
+    <string name="statistics_startdate_hint">select a start date</string>
+    <string name="statistics_enddate_hint">select an end date</string>
+
     <!-- activity_editor.xml -->
     <string name="input_name_hint">name (essential)</string>
     <string name="input_detail_hint">detail (optional)</string>
@@ -63,8 +76,11 @@
     <string name="default_total_unit_editor">1</string>
     <string name="ok_btn">OK</string>
     <string name="editor_date_txt_view">date</string>
+    <string name="editor_name_count_default">0 / 15</string>
+    <string name="editor_detail_count_default">0 / 20</string>
 
     <!-- item.xml -->
+    <string name="item_status_imageview">show status of the item</string>
     <string name="unit_divider">/</string>
 
     <!-- activity_list.xml -->
@@ -72,13 +88,10 @@
     <string name="empty_subtitle_str">Add the to-do list item</string>
     <string name="result">RESULT</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <!-- MainActivity.java -->
     <string name="tab_list">list</string>
     <string name="tab_timer">timer</string>
-    <string name="tab_statistics">statistics</string>
+    <string name="tab_statistics">graph</string>
     <string name="tab_setting">setting</string>
     <string name="tab_about">about</string>
 

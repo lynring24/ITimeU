@@ -1,10 +1,15 @@
 package com.itti7.itimeu;
 
-import android.support.design.widget.BottomNavigationView;
+import android.content.Context;
+import android.graphics.Color;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,20 +42,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         // Add tabs
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.list).setText(R.string.tab_list));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.clock).setText(R.string.tab_timer));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.statistics).
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.list_selector).setText(R.string.tab_list));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.timer_selector).setText(R.string.tab_timer));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.statistics_selector).
                 setText(R.string.tab_statistics));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.setting).
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.setting_selector).
                 setText(R.string.tab_setting));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.about).setText(R.string.tab_about));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.about_selector).setText(R.string.tab_about));
 
         // ViewPager for swiping and navigation to the selected tab
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setBackgroundColor(Color.WHITE);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                // Hide keyboard
+                ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(viewPager.getWindowToken(), 0);
                 viewPager.setCurrentItem(tab.getPosition());
             }
 
@@ -70,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 = new SimpleFragmentPagerAdapter(getSupportFragmentManager(),
                 tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(4);
     }
 
     /**
@@ -81,4 +90,12 @@ public class MainActivity extends AppCompatActivity {
         }
         return viewPager;
     }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        TimerFragment timerFragment = (TimerFragment) getSupportFragmentManager().findFragmentByTag(mTimerTag);
+        timerFragment.setStatusToDo();
+    }
+
 }

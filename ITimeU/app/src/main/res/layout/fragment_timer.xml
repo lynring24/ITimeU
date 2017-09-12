@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.itti7.itimeu.TimerFragment"
-    android:isScrollContainer="true"
     android:layout_gravity="center">
 
     <TextView
@@ -52,6 +51,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_above="@id/progressBar"
-        android:textSize="40sp"
+        android:textSize="30sp"
         android:text="work"/>
 </RelativeLayout>

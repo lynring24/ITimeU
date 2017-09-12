@@ -15,4 +15,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!-- Tab text size -->
+    <style name="CustomTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">12sp</item>
+    </style>
+
 </resources>
