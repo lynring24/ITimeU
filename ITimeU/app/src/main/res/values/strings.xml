@@ -15,15 +15,15 @@
 
     <!-- IntroSlide.java -->
     <string name="intro_page1_title">Remember</string>
-    <string name="intro_page1_description">25, 5, 4, and 20 minutes</string>
-    <string name="intro_page2_title">25: Do your task</string>
-    <string name="intro_page2_description">During 25 minutes,\ndo your task with no \'stop\'</string>
+    <string name="intro_page1_description">25, 5, 4, and 20</string>
+    <string name="intro_page2_title">25: Pomodoro</string>
+    <string name="intro_page2_description">During 25 minutes,\ndo your task with no \'stop\'\nWe refer the unit to pomodoro</string>
     <string name="intro_page3_title">5: Short break time</string>
-    <string name="intro_page3_description">Have 5 minutes break time,\nafter 25 minutes</string>
-    <string name="intro_page4_title">4: Four cycle\n20: Long break time</string>
-    <string name="intro_page4_description">Have 20 minutes break time,\nafter every 4 task</string>
+    <string name="intro_page3_description">Take 5 minutes off\nafter one pomodoro is done</string>
+    <string name="intro_page4_title">4: Four pomodoro\n20: Long break time</string>
+    <string name="intro_page4_description">Take 20 minutes off\nafter every 4 pomodoro is done</string>
     <string name="intro_page5_title">Good Luck</string>
-    <string name="intro_page5_description">We hope you achieve your purpose\nwith our app!</string>
+    <string name="intro_page5_description">We hope you achieve purpose\nwith I TIME U</string>
 
     <!-- EditorActivity.java -->
 
