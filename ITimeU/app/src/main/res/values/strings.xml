@@ -13,6 +13,18 @@
     <string name="start">start</string>
     <string name="stop">stop</string>
 
+    <!-- IntroSlide.java -->
+    <string name="intro_page1_title">Remember</string>
+    <string name="intro_page1_description">25, 5, 4, and 20 minutes</string>
+    <string name="intro_page2_title">25: Do your task</string>
+    <string name="intro_page2_description">During 25 minutes,\ndo your task with no \'stop\'</string>
+    <string name="intro_page3_title">5: Short break time</string>
+    <string name="intro_page3_description">Have 5 minutes break time,\nafter 25 minutes</string>
+    <string name="intro_page4_title">4: Four cycle\n20: Long break time</string>
+    <string name="intro_page4_description">Have 20 minutes break time,\nafter every 4 task</string>
+    <string name="intro_page5_title">Good Luck</string>
+    <string name="intro_page5_description">We hope you achieve your purpose\nwith our app!</string>
+
     <!-- EditorActivity.java -->
 
     <!-- editor view's title -->
