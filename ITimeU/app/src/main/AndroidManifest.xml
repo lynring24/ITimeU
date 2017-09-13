@@ -18,6 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".IntroSlide"/>
         <activity android:name=".EditorActivity" />
         <activity android:name=".about.LicensesActivity" />
 

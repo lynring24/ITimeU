@@ -1,8 +1,11 @@
 package com.itti7.itimeu;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -79,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
                 tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(4);
+
+        showIntroSlideWhenFirst();
     }
 
     /**
@@ -98,4 +103,43 @@ public class MainActivity extends AppCompatActivity {
         timerFragment.setStatusToDo();
     }
 
+    void showIntroSlideWhenFirst(){
+        //  Declare a new thread to do a preference check
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //  Initialize SharedPreferences
+                SharedPreferences getPrefs = PreferenceManager
+                        .getDefaultSharedPreferences(getBaseContext());
+
+                //  Create a new boolean and preference and set it to true
+                boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
+
+                //  If the activity has never started before...
+                if (isFirstStart) {
+
+                    //  Launch app intro
+                    final Intent introSlideIntent = new Intent(MainActivity.this, IntroSlide.class);
+
+                    runOnUiThread(new Runnable() {
+                        @Override public void run() {
+                            startActivity(introSlideIntent);
+                        }
+                    });
+
+                    //  Make a new preferences editor
+                    SharedPreferences.Editor e = getPrefs.edit();
+
+                    //  Edit preference to make it false because we don't want this to run again
+                    e.putBoolean("firstStart", false);
+
+                    //  Apply changes
+                    e.apply();
+                }
+            }
+        });
+
+        // Start the thread
+        thread.start();
+    }
 }
