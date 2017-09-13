@@ -11,13 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.itti7.itimeu.about.LicensesActivity;
+import com.itti7.itimeu.about.SupportLanguageActivity;
+
 public class AboutFragment extends Fragment {
 
     // This application's Version
     final static String APPLICATION_VERSION = "0.0.0";
 
     // Mail receiver
-    String[] emailTo = { "1117hyemin@gmail.com" , "juneoh227@gmail.com"
+    String[] emailTo = {"1117hyemin@gmail.com", "juneoh227@gmail.com"
             , "lync2846@gmail.com"};
 
     // Mail title subject
@@ -34,6 +37,7 @@ public class AboutFragment extends Fragment {
     TextView mLicensesTextView;
     // TextView for feedback with mail
     TextView mFeedbackTextView;
+    TextView mSupportLanguageTextView;
 
     public AboutFragment() {
         // Required empty public constructor
@@ -75,6 +79,17 @@ public class AboutFragment extends Fragment {
                 sendFeedback(emailTo, emailSubject);
             }
         });
+
+        // When click this text view, than show activity which show language info
+        mSupportLanguageTextView = mAboutView.findViewById(R.id.language_txt_view);
+        mSupportLanguageTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mAboutContext, SupportLanguageActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return mAboutView;
     }
 
@@ -91,8 +106,8 @@ public class AboutFragment extends Fragment {
     /**
      * This function create intent for sending Email.
      *
-     * @param mailto    Receiving address
-     * @param subject   Subject of mail
+     * @param mailto  Receiving address
+     * @param subject Subject of mail
      */
     public void sendFeedback(String[] mailto, String subject) {
         Intent intent = new Intent(Intent.ACTION_SENDTO);

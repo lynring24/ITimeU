@@ -1,9 +1,11 @@
-package com.itti7.itimeu;
+package com.itti7.itimeu.about;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+
+import com.itti7.itimeu.R;
 
 public class LicensesActivity extends AppCompatActivity {
 

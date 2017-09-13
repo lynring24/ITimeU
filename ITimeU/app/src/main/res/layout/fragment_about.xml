@@ -79,4 +79,19 @@
         android:layout_height="1dip"
         android:background="#C1C1C1" />
 
+    <TextView
+        android:id="@+id/language_txt_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="30dp"
+        android:paddingLeft="12dp"
+        android:paddingTop="30dp"
+        android:text="@string/about_language"
+        android:textSize="16sp" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="#C1C1C1" />
+
 </LinearLayout>
