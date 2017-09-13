@@ -15,21 +15,19 @@ import android.os.IBinder;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import static com.itti7.itimeu.SettingFragment.SCREENON;
 import static com.itti7.itimeu.SettingFragment.SOUNDON;
 import static com.itti7.itimeu.SettingFragment.VIBRATEON;
-import static java.security.AccessController.getContext;
 
 public class TimerService extends Service {
     public static String strReceiver = "com.TimerService.receiver";
     private String mLeftTime;
     private int runTime;
-    private boolean timerSwitch = false;
+    private boolean mTimerSwitch = false;
     private CountDownTimer timer;
-    private NotificationCompat.Builder mBuilder;
-    private NotificationManager mNM;
+    private NotificationCompat.Builder mNotificationBuilder;
+    private NotificationManager mNotificationManager;
     private final int NOTIFYID=001;
 
     public static boolean mTimerServiceFinished = false;
@@ -39,11 +37,11 @@ public class TimerService extends Service {
     }
 
     public String getTime() {
-        return timerSwitch ? mLeftTime : "00:00";
+        return mTimerSwitch ? mLeftTime : "00:00";
     }
 
     public boolean getRun() {
-        return timerSwitch;
+        return mTimerSwitch;
     }
 
     Handler handler = new Handler();
@@ -52,7 +50,7 @@ public class TimerService extends Service {
         public void run() {
             timer = new CountDownTimer(runTime * 1000 * 60, 1000) { // minute
                 public void onTick(long millisUntilFinished) {
-                    if (timerSwitch) {
+                    if (mTimerSwitch) {
                         long runTimeInSecond = millisUntilFinished/1000;
                         String hour = String.format("%02d", (runTimeInSecond/(60*60)));
                         String min = String.format("%02d", ((runTimeInSecond%(60*60))/60));
@@ -62,18 +60,18 @@ public class TimerService extends Service {
                             mLeftTime = hour + ":" + mLeftTime;
                         }
                     }
-                    mBuilder.setContentText(mLeftTime);
-                    mNM.notify(NOTIFYID, mBuilder.build());
+                    mNotificationBuilder.setContentText(mLeftTime);
+                    mNotificationManager.notify(NOTIFYID, mNotificationBuilder.build());
                 }
 
                 public void onFinish() {
-                    if (timerSwitch) {         //send only if it has finished
+                    if (mTimerSwitch) {         //send only if it has finished
                         mLeftTime = "00:00";
-                        mBuilder.setContentText(mLeftTime);
-                        mBuilder.setSubText("FINISHED");
-                        mNM.notify(NOTIFYID, mBuilder.build());
+                        mNotificationBuilder.setContentText(mLeftTime);
+                        mNotificationBuilder.setSubText("FINISHED");
+                        mNotificationManager.notify(NOTIFYID, mNotificationBuilder.build());
 
-                        timerSwitch = false;
+                        mTimerSwitch = false;
                         if(timer!=null)
                             timer.cancel();
                         //여기쯤*********************
@@ -91,39 +89,39 @@ public class TimerService extends Service {
             timer.start();
         }
     };
-    public void setTimeName(int time,String name) {
+    public void setRunTimeTaskName(int time, String name) {
         runTime=time;
-        timerSwitch = true;
+        mTimerSwitch = true;
         handler.post(runnable);
         showNotification(name);
     }
     private void showNotification(String name) {
 
-        Intent intent = new Intent(this,MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        Intent NotificationIntent = new Intent(this,MainActivity.class);
+        NotificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
         // The PendingIntent to launch our activity if the user selects this notification
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,intent, 0);
+        PendingIntent PendingContentIntent = PendingIntent.getActivity(this, 0,NotificationIntent, 0);
 
 
         // Set the info for the views that show in the notification panel.
-        mBuilder = new NotificationCompat.Builder(TimerService.this)
+        mNotificationBuilder = new NotificationCompat.Builder(TimerService.this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(name)
                 .setContentText(mLeftTime);
 
-        mBuilder.setContentIntent(contentIntent);
+        mNotificationBuilder.setContentIntent(PendingContentIntent);
         // Send the notification.
-        mNM = (NotificationManager)TimerService.this.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNM.notify(NOTIFYID, mBuilder.build());
+        mNotificationManager = (NotificationManager)TimerService.this.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(NOTIFYID, mNotificationBuilder.build());
     }
 
     public void stopCountNotification() {
-        timerSwitch = false;
+        mTimerSwitch = false;
         if(timer!=null)
             timer.cancel();
-        if(mNM!=null)
-            mNM.cancel(NOTIFYID);
+        if(mNotificationManager!=null)
+            mNotificationManager.cancel(NOTIFYID);
 
     }
 
