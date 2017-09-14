@@ -2,7 +2,6 @@ package com.itti7.itimeu;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -29,7 +28,6 @@ public class SettingFragment extends Fragment {
     private static EditText mworket, mbreaket, mlongBreaket, msessionNumet; //에디트텍스트 뷰
     private static CheckBox msoundOncb, mvibrateOncb, monScreencb; //체크박스
 
-    public static final String PREFNAME = "pref";
     public static final String WORKTIME = "worktime";
     public static final String BREAKTIME = "breaktime";
     public static final String LONGBREAKTIME = "longbreaktime";
@@ -80,24 +78,34 @@ public class SettingFragment extends Fragment {
         msoundOncb = mSettingView.findViewById(R.id.sound_check);
         mvibrateOncb = mSettingView.findViewById(R.id.vibrate_check);
 
-        SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
-
         //저장해둔 숫자 설정 불러오기
-        mworket.setText(String.valueOf(pref.getInt(WORKTIME, 25)));
-        mbreaket.setText(String.valueOf(pref.getInt(BREAKTIME, 5)));
-        mlongBreaket.setText(String.valueOf(pref.getInt(LONGBREAKTIME, 20)));
-        msessionNumet.setText(String.valueOf(pref.getInt(SESSION, 4)));
+        //mworket.setText(String.valueOf(pref.getInt(WORKTIME, 25)));
+        mworket.setText(String.valueOf(PrefUtil.get(getContext(),WORKTIME, 25)));
+        //mbreaket.setText(String.valueOf(pref.getInt(BREAKTIME, 5)));
+        mbreaket.setText(String.valueOf(PrefUtil.get(getContext(),BREAKTIME, 5)));
+        //mlongBreaket.setText(String.valueOf(pref.getInt(LONGBREAKTIME, 20)));
+        mlongBreaket.setText(String.valueOf(PrefUtil.get(getContext(),LONGBREAKTIME, 20)));
+        //msessionNumet.setText(String.valueOf(pref.getInt(SESSION, 4)));
+        msessionNumet.setText(String.valueOf(PrefUtil.get(getContext(),SESSION, 4)));
 
         //숫자-시크바 연동
-        mworksb.setProgress(pref.getInt(WORKTIME, 25));
-        mbreaksb.setProgress(pref.getInt(BREAKTIME, 5));
-        mlongBreaksb.setProgress(pref.getInt(LONGBREAKTIME, 20));
-        msessionNumsb.setProgress(pref.getInt(SESSION, 4));
+        //mworksb.setProgress(pref.getInt(WORKTIME, 25));
+        mworksb.setProgress(PrefUtil.get(getContext(),WORKTIME, 25));
+        //mbreaksb.setProgress(pref.getInt(BREAKTIME, 5));
+        mbreaksb.setProgress(PrefUtil.get(getContext(),BREAKTIME, 5));
+        //mlongBreaksb.setProgress(pref.getInt(LONGBREAKTIME, 20));
+        mlongBreaksb.setProgress(PrefUtil.get(getContext(),LONGBREAKTIME, 20));
+        //msessionNumsb.setProgress(pref.getInt(SESSION, 4));
+        mlongBreaksb.setProgress(PrefUtil.get(getContext(),SESSION, 4));
 
         //체크박스 설정 불러오기
-        msoundOncb.setChecked(pref.getBoolean(SOUNDON, true));
-        mvibrateOncb.setChecked(pref.getBoolean(VIBRATEON, false));
-        monScreencb.setChecked(pref.getBoolean(SCREENON, false));
+        //msoundOncb.setChecked(pref.getBoolean(SOUNDON, true));
+        msoundOncb.setChecked(PrefUtil.get(getContext(),SOUNDON, true));
+        //mvibrateOncb.setChecked(pref.getBoolean(VIBRATEON, false));
+        mvibrateOncb.setChecked(PrefUtil.get(getContext(),VIBRATEON, false));
+        //monScreencb.setChecked(pref.getBoolean(SCREENON, false));
+        monScreencb.setChecked(PrefUtil.get(getContext(),SCREENON, false));
+
 
         mworksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -186,41 +194,46 @@ public class SettingFragment extends Fragment {
     }
 
     private void doAfterTrack(SeekBar bar) { // 이용자가 손을 뗐을 때의 숫자 출력
-        SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
 
         if (bar.equals(mworksb)) {
             mworket.setText(mworket.getText());
-            editor.putInt(WORKTIME, Integer.valueOf(mworket.getText().toString()));
+            //editor.putInt(WORKTIME, Integer.valueOf(mworket.getText().toString()));
+            PrefUtil.save(getContext(),WORKTIME, Integer.valueOf(mworket.getText().toString()));
         }
         else if (bar.equals(mbreaksb)) {
             mbreaket.setText(mbreaket.getText());
-            editor.putInt(BREAKTIME, Integer.valueOf(mbreaket.getText().toString()));
+            //editor.putInt(BREAKTIME, Integer.valueOf(mbreaket.getText().toString()));
+            PrefUtil.save(getContext(),BREAKTIME, Integer.valueOf(mbreaket.getText().toString()));
         }
         else if (bar.equals(mlongBreaksb)) {
             mlongBreaket.setText(mlongBreaket.getText());
-            editor.putInt(LONGBREAKTIME, Integer.valueOf(mlongBreaket.getText().toString()));
+            //editor.putInt(LONGBREAKTIME, Integer.valueOf(mlongBreaket.getText().toString()));
+            PrefUtil.save(getContext(),LONGBREAKTIME, Integer.valueOf(mlongBreaket.getText().toString()));
         }
         else if (bar.equals(msessionNumsb)) {
             msessionNumet.setText(msessionNumet.getText());
-            editor.putInt(SESSION, Integer.valueOf(msessionNumet.getText().toString()));
+            //editor.putInt(SESSION, Integer.valueOf(msessionNumet.getText().toString()));
+            PrefUtil.save(getContext(),SESSION, Integer.valueOf(msessionNumet.getText().toString()));
         }
-        editor.commit();
+        //editor.commit();
     }
 
     private void saveCheckBox(CompoundButton cbox, boolean isChecked) {
-        SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
+        //SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
+        //SharedPreferences.Editor editor = pref.edit();
         if (cbox.equals(monScreencb)) {
-            editor.putBoolean(SCREENON, isChecked);
+            //editor.putBoolean(SCREENON, isChecked);
+            PrefUtil.save(getContext(),SCREENON, isChecked);
         }
         else if (cbox.equals(msoundOncb)) {
-            editor.putBoolean(SOUNDON, isChecked);
+            //editor.putBoolean(SOUNDON, isChecked);
+            PrefUtil.save(getContext(),SOUNDON, isChecked);
         }
         else if (cbox.equals(mvibrateOncb)) {
-            editor.putBoolean(VIBRATEON, isChecked);
+            //editor.putBoolean(VIBRATEON, isChecked);
+            PrefUtil.save(getContext(),VIBRATEON, isChecked);
         }
-        editor.commit();
+        //editor.commit();
     }
 
 } //end of class

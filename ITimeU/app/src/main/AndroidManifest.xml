@@ -9,16 +9,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".IntroSlide"/>
         <activity android:name=".EditorActivity" />
-        <activity android:name=".LicensesActivity"/>
-        
+        <activity android:name=".about.LicensesActivity" />
+
         <provider
             android:name=".data.ItemProvider"
             android:authorities="com.itti7.itimeu"
@@ -27,7 +30,9 @@
         <service
             android:name=".TimerService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".about.SupportLanguageActivity"></activity>
     </application>
 
 </manifest>

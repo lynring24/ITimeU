@@ -24,6 +24,8 @@ public class TimerService extends Service {
     private NotificationManager mNM;
     private final int NOTIFYID=001;
 
+    public static boolean mTimerServiceFinished = false;
+
     public TimerService() {
 
     }
@@ -40,16 +42,15 @@ public class TimerService extends Service {
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            Log.i("Timer", "------------------------------------------------------->Timer run()");
             timer = new CountDownTimer(runTime * 1000 * 60, 1000) { // minute
                 public void onTick(long millisUntilFinished) {
                     if (timerSwitch) {
-                        //Log.i("Timer", "------------------------------------------------------>Timer OnTick"); //checked
-                        String min = String.format("%02d", (millisUntilFinished) / (1000 * 60));
-                        String sec = String.format("%02d", (millisUntilFinished / 1000) % 60);
+                        long runTimeInSecond = millisUntilFinished/1000;
+                        String hour = String.format("%02d", (runTimeInSecond/(60*60)));
+                        String min = String.format("%02d", ((runTimeInSecond%(60*60))/60));
+                        String sec = String.format("%02d", ((runTimeInSecond%(60*60))%60));
                         mLeftTime = min + ":" + sec;
                         if (runTime >= 60) {
-                            String hour = String.format("%02d", (millisUntilFinished / (1000 * 60 * 60)));
                             mLeftTime = hour + ":" + mLeftTime;
                         }
                     }
@@ -58,17 +59,20 @@ public class TimerService extends Service {
                 }
 
                 public void onFinish() {
-                    Log.i("Timer", "------------------------------------------------------->Timer onFinish");
                     if (timerSwitch) {         //send only if it has finished
                         mLeftTime = "00:00";
                         mBuilder.setContentText(mLeftTime);
                         mBuilder.setSubText("FINISHED");
                         mNM.notify(NOTIFYID, mBuilder.build());
-                        stopTimer();
-                        Log.i("Timer", "------------------------------------------------------->Timer start send Intent");
+
+                        timerSwitch = false;
+                        if(timer!=null)
+                            timer.cancel();
+
+                        mTimerServiceFinished =true;
+
                         Intent sendIntent = new Intent(strReceiver);  // notice the end of Timer to Fragment
                         sendBroadcast(sendIntent);
-                        Log.i("Timer", "------------------------------------------------------->Timer finish send Intent");
                     }
                 }
             };
@@ -82,10 +86,12 @@ public class TimerService extends Service {
         showNotification(name);
     }
     private void showNotification(String name) {
-        Intent intent = new Intent(this,TimerFragment.class);
+
+        Intent intent = new Intent(this,MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_SINGLE_TOP);
         // The PendingIntent to launch our activity if the user selects this notification
-        PendingIntent contentIntent = PendingIntent.getService(this, 0,intent, 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,intent, 0);
+
 
         // Set the info for the views that show in the notification panel.
          mBuilder = new NotificationCompat.Builder(TimerService.this)
@@ -99,34 +105,33 @@ public class TimerService extends Service {
         mNM = (NotificationManager)TimerService.this.getSystemService(Context.NOTIFICATION_SERVICE);
         mNM.notify(NOTIFYID, mBuilder.build());
     }
-    public void stopTimer() {
-        Log.i("Timer", "------------------------------------------------------->Timer stopTimer");
+
+    public void stopCountNotification() {
         timerSwitch = false;
-        timer.cancel();
-        mNM.cancel(NOTIFYID);
+        if(timer!=null)
+            timer.cancel();
+        if(mNM!=null)
+            mNM.cancel(NOTIFYID);
+
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.i("Timer", "------------------------------------------------------->TimeronUnbind");
-        stopTimer();
+
+        super.onUnbind(intent);
+        stopCountNotification();
+
         return true;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("Timer", "------------------------------------------------------->Timer onStartCommand");
-        runTime = intent.getIntExtra("RUNTIME", 1);
-        Log.i("RUNTIME", "------------------------------------------------------->RUNTIME : "+runTime);
-//        timerSwitch = true;
-//        handler.post(runnable);
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopTimer();
     }
 
     @Override
@@ -142,7 +147,6 @@ public class TimerService extends Service {
 
     public class MyBinder extends Binder {
         public TimerService getService() {
-            Log.i("Timer", "------------------------------------------------------->Timer getService()");
             return TimerService.this;
         }
     }

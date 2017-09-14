@@ -11,10 +11,3 @@
 
     </shape>
 </rotate>
-    <!--        <gradient
-                 android:angle="0"
-                android:centerColor="@color/accent"
-                 android:endColor="@color/accent"
-                 android:startColor="@color/accent"
-                 android:type="linear"
-                 android:useLevel="false" />-->

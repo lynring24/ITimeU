@@ -18,7 +18,6 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -96,6 +95,9 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     private String mColorStr = "#9E9E9E";
     private int mColorInt = Color.parseColor(mColorStr);
 
+    // Object for showing toast message
+    ShowToast toast;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -129,6 +131,8 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        toast = new ShowToast(mStatisticsContext);
     }
 
     /**
@@ -381,7 +385,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         } else {
             mPercent = 0;
         }
-        return mPercent + " %  ( " + sumOfWholeUnits + " / " + sumOfWholeTotalUnits + ")";
+        return mPercent + " %  ( " + sumOfWholeUnits + " / " + sumOfWholeTotalUnits + " )";
     }
 
     /**
@@ -582,12 +586,10 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
             Date endDate = mDateFormat.parse(end);
 
             if (startDate.compareTo(endDate) > 0) {
-                Toast.makeText(mStatisticsContext, getString(R.string.invalid_period1),
-                        Toast.LENGTH_SHORT).show();
+                toast.showShortTimeToast(R.string.invalid_period1);
                 return true;
             } else if (startDate.compareTo(endDate) == 0) {
-                Toast.makeText(mStatisticsContext, getString(R.string.invalid_period2),
-                        Toast.LENGTH_SHORT).show();
+                toast.showShortTimeToast(R.string.invalid_period2);
                 return true;
             }
         } catch (ParseException e) {

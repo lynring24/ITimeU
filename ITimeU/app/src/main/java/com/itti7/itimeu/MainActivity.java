@@ -1,10 +1,13 @@
 package com.itti7.itimeu;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Handler;
-import android.support.design.widget.BottomNavigationView;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -79,27 +82,8 @@ public class MainActivity extends AppCompatActivity {
                 tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(4);
-    }
 
-    private Boolean exit = false;
-    @Override
-    public void onBackPressed() {
-        if (exit) {
-            super.onBackPressed();
-            finish(); // finish activity
-        } else {
-            Toast.makeText(this, "@string/main_press_back",
-                    Toast.LENGTH_SHORT).show();
-            exit = true;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    exit = false;
-                }
-            }, 3 * 1000);
-
-        }
-
+        showIntroSlideWhenFirst();
     }
 
     /**
@@ -110,5 +94,52 @@ public class MainActivity extends AppCompatActivity {
             viewPager = (ViewPager) findViewById(R.id.viewpager);
         }
         return viewPager;
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        TimerFragment timerFragment = (TimerFragment) getSupportFragmentManager().findFragmentByTag(mTimerTag);
+        timerFragment.setStatusToDo();
+    }
+
+    void showIntroSlideWhenFirst(){
+        //  Declare a new thread to do a preference check
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //  Initialize SharedPreferences
+                SharedPreferences getPrefs = PreferenceManager
+                        .getDefaultSharedPreferences(getBaseContext());
+
+                //  Create a new boolean and preference and set it to true
+                boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
+
+                //  If the activity has never started before...
+                if (isFirstStart) {
+
+                    //  Launch app intro
+                    final Intent introSlideIntent = new Intent(MainActivity.this, IntroSlide.class);
+
+                    runOnUiThread(new Runnable() {
+                        @Override public void run() {
+                            startActivity(introSlideIntent);
+                        }
+                    });
+
+                    //  Make a new preferences editor
+                    SharedPreferences.Editor e = getPrefs.edit();
+
+                    //  Edit preference to make it false because we don't want this to run again
+                    e.putBoolean("firstStart", false);
+
+                    //  Apply changes
+                    e.apply();
+                }
+            }
+        });
+
+        // Start the thread
+        thread.start();
     }
 }
