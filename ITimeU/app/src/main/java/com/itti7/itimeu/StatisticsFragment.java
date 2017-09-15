@@ -98,6 +98,12 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     // Object for showing toast message
     ShowToast toast;
 
+    final static int WEEK_PERIOD = 1;
+    final static int MONTH_PERIOD = 2;
+    final static int CUSTOM_PERIOD = 3;
+    private int selectedPeriod = 0;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -106,6 +112,9 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         View mStatisticsView = inflater.inflate(R.layout.fragment_statistics, container, false);
         mStatisticsActivity = getActivity();
         mStatisticsContext = mStatisticsView.getContext();
+
+        String statisticsTag = getTag();
+        ((MainActivity) getActivity()).setStatisticsTag(statisticsTag);
 
         dbHelper = new ItemDbHelper(mStatisticsContext);
         db = dbHelper.getReadableDatabase();
@@ -211,14 +220,17 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
                 // ----------WEEK-----------
                 if (mSpinnerText.equals(getString(R.string.arrays_week))) {
                     drawWeekPeriodStatisticsChart();
+                    selectedPeriod = WEEK_PERIOD;
                 }
                 // -----------MONTH-----------
                 else if (mSpinnerText.equals(getString(R.string.arrays_month))) {
                     drawMonthPeriodStatisticsChart();
+                    selectedPeriod = MONTH_PERIOD;
                 }
                 // -----------CUSTOM------------
                 else {
                     drawCustomPeriodStatisticsChart();
+                    selectedPeriod = CUSTOM_PERIOD;
                 }
             }
 
@@ -619,7 +631,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
         Paint paint = mChart.getPaint(Chart.PAINT_INFO);
         paint.setTextSize(32f);
-        mChart.setNoDataText("Select period what you want.");
+        mChart.setNoDataText(getString(R.string.statisitcs_no_data));
 
         mStatResultText.setText(null);
 
@@ -628,6 +640,20 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
         mCustomStart = null;
         mCustomEnd = null;
+    }
+
+    void updateChartGraph() {
+        switch (selectedPeriod) {
+            case WEEK_PERIOD:
+                drawWeekPeriodStatisticsChart();
+                break;
+            case MONTH_PERIOD:
+                drawMonthPeriodStatisticsChart();
+                break;
+            case CUSTOM_PERIOD:
+                drawCustomPeriodStatisticsChart();
+                break;
+        }
     }
 }
 
