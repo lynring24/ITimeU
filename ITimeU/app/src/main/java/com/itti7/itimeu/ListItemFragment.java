@@ -276,7 +276,6 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 deleteItem(index);
                 // Update List Date
                 listUiUpdateFromDb();
-                updateStatisticsGraph();
             }
         });
         builder.setNegativeButton(getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
@@ -495,6 +494,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     public void listUiUpdateFromDb() {
         getLoaderManager().restartLoader(0, null, this);
         setAchievementRate();
+        updateStatisticsGraph();
     }
 
     /**
