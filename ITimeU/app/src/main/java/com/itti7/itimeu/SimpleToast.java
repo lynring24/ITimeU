@@ -3,10 +3,10 @@ package com.itti7.itimeu;
 import android.content.Context;
 import android.widget.Toast;
 
-final class ShowToast {
+final class SimpleToast {
     private Context context;
 
-    ShowToast(Context context) {
+    SimpleToast(Context context) {
         this.context = context;
     }
 

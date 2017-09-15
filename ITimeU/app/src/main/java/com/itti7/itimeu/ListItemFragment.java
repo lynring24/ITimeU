@@ -102,7 +102,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     private String mDetail;
 
     // object for showing toast message
-    private ShowToast toast;
+    private SimpleToast toast;
 
     public ListItemFragment() {
         // Required empty public constructor
@@ -117,8 +117,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         mListItemActivity = getActivity();
         mListItemContext = mListItemView.getContext();
 
-        // Create new ShowToast object
-        toast = new ShowToast(mListItemContext);
+        // Create new SimpleToast object
+        toast = new SimpleToast(mListItemContext);
 
         // list table db
         dbHelper = new ItemDbHelper(mListItemContext);

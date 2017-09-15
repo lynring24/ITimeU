@@ -96,7 +96,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     private int mColorInt = Color.parseColor(mColorStr);
 
     // Object for showing toast message
-    ShowToast toast;
+    SimpleToast toast;
 
     @Nullable
     @Override
@@ -132,7 +132,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        toast = new ShowToast(mStatisticsContext);
+        toast = new SimpleToast(mStatisticsContext);
     }
 
     /**

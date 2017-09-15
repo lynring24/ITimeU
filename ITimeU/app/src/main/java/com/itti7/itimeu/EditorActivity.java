@@ -130,7 +130,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
     private boolean mItemHasChanged = false;
 
     // object for showing toast.
-    private ShowToast toast;
+    private SimpleToast toast;
 
     /**
      * OnTouchListener that listens for any user touches on a View, implying that they are modifying
@@ -149,7 +149,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
-        toast = new ShowToast(this);
+        toast = new SimpleToast(this);
 
         // Examine the intent that was used to launch this activity,
         // Examine the intent that was used to launch this activity,
