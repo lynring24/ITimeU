@@ -104,6 +104,8 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
     // object for showing toast message
     private ShowToast toast;
 
+    final static int REQUEST_NUMBER = 0;
+
     public ListItemFragment() {
         // Required empty public constructor
     }
@@ -223,7 +225,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         switch (item.getItemId()) {
             case R.id.action_modify:
                 if (!isThisTaskStarted(id)) {
-                    startActivity(intent);
+                    startActivityForResult(intent, REQUEST_NUMBER);
                 } else toast.showLongTimeToast(R.string.listitem_this_item_started);
                 break;
             case R.id.action_delete:
@@ -274,6 +276,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
                 deleteItem(index);
                 // Update List Date
                 listUiUpdateFromDb();
+                updateStatisticsGraph();
             }
         });
         builder.setNegativeButton(getString(R.string.cancel_btn), new DialogInterface.OnClickListener() {
@@ -664,7 +667,7 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
             public void onClick(View v) {
                 Intent intent = new Intent(mListItemContext, EditorActivity.class);
                 intent.putExtra("date", mCurrentListDateStr);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_NUMBER);
             }
         });
     }
@@ -714,5 +717,22 @@ public class ListItemFragment extends Fragment implements DatePickerDialog.OnDat
         }
         cursor.close();
         return false;
+    }
+
+    public void updateStatisticsGraph() {
+        String tabOfStatisticsFragment = ((MainActivity) getActivity()).getStatisticsTag();
+        if (tabOfStatisticsFragment != null) {
+            StatisticsFragment statisticsFragment = (StatisticsFragment) getActivity()
+                    .getSupportFragmentManager()
+                    .findFragmentByTag(tabOfStatisticsFragment);
+
+            statisticsFragment.updateChartGraph();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        updateStatisticsGraph();
     }
 }
