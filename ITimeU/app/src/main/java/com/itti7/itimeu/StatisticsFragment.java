@@ -187,12 +187,12 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         LineData data = new LineData();
         data.addDataSet(unitDataSet);
         data.addDataSet(totalUnitDataSet);
+        data.notifyDataChanged();
 
         // Set data to chart view
         mChart.setData(data);
+        mChart.notifyDataSetChanged();
         mChart.invalidate();
-
-
     }
 
     @Override
@@ -210,67 +210,15 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
                 mSpinnerText = mStatSpinner.getSelectedItem().toString();
                 // ----------WEEK-----------
                 if (mSpinnerText.equals(getString(R.string.arrays_week))) {
-                    // Get Date
-                    getToday();
-                    getAWeekAgo();
-
-                    // Set period to edit text
-                    mStatStartEditText.setText(mAWeekAgoStr);
-                    mStatEndEditText.setText(mTodayStr);
-
-                    /* Get sum of unit/total unit each days, whole value of these,
-                       and set text result.*/
-                    getPeriod(mAWeekAgoStr, mTodayStr);
-
-                    // Add data
-                    addData();
+                    drawWeekPeriodStatisticsChart();
                 }
                 // -----------MONTH-----------
                 else if (mSpinnerText.equals(getString(R.string.arrays_month))) {
-                    // Get Date
-                    getToday();
-                    getAMonthAgo();
-
-                    // Set period to text view
-                    mStatStartEditText.setText(mAMonthAgoStr);
-                    mStatEndEditText.setText(mTodayStr);
-
-                    /* Get sum of unit/total unit each days, whole value of these,
-                       and set text result.*/
-                    getPeriod(mAMonthAgoStr, mTodayStr);
-
-                    // Add data
-                    addData();
+                    drawMonthPeriodStatisticsChart();
                 }
                 // -----------CUSTOM------------
                 else {
-                    // initialize the chart
-                    initializeChart();
-
-                    mStatStartEditText.setHint(R.string.statistics_startdate_hint);
-                    mStatEndEditText.setHint(R.string.statistics_enddate_hint);
-
-                    // Can touch edit text, but focus is disabled.
-                    mStatStartEditText.setClickable(true);
-                    mStatEndEditText.setClickable(true);
-
-                    // Click start edit text
-                    mStatStartEditText.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            checkClick(true, false);
-                            showDateDialog(mCustomStart);
-                        }
-                    });
-
-                    // Click end edit text
-                    mStatEndEditText.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            checkClick(false, true);
-                            showDateDialog(mCustomEnd);
-                        }
-                    });
+                    drawCustomPeriodStatisticsChart();
                 }
             }
 
@@ -279,6 +227,70 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
             }
         });
+    }
+
+    private void drawCustomPeriodStatisticsChart() {
+        // initialize the chart
+        initializeChart();
+
+        mStatStartEditText.setHint(R.string.statistics_startdate_hint);
+        mStatEndEditText.setHint(R.string.statistics_enddate_hint);
+
+        // Can touch edit text, but focus is disabled.
+        mStatStartEditText.setClickable(true);
+        mStatEndEditText.setClickable(true);
+
+        // Click start edit text
+        mStatStartEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkClick(true, false);
+                showDateDialog(mCustomStart);
+            }
+        });
+
+        // Click end edit text
+        mStatEndEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkClick(false, true);
+                showDateDialog(mCustomEnd);
+            }
+        });
+    }
+
+    private void drawMonthPeriodStatisticsChart() {
+        // Get Date
+        getToday();
+        getAMonthAgo();
+
+        // Set period to text view
+        mStatStartEditText.setText(mAMonthAgoStr);
+        mStatEndEditText.setText(mTodayStr);
+
+                    /* Get sum of unit/total unit each days, whole value of these,
+                       and set text result.*/
+        getPeriod(mAMonthAgoStr, mTodayStr);
+
+        // Add data
+        addData();
+    }
+
+    private void drawWeekPeriodStatisticsChart() {
+        // Get Date
+        getToday();
+        getAWeekAgo();
+
+        // Set period to edit text
+        mStatStartEditText.setText(mAWeekAgoStr);
+        mStatEndEditText.setText(mTodayStr);
+
+                    /* Get sum of unit/total unit each days, whole value of these,
+                       and set text result.*/
+        getPeriod(mAWeekAgoStr, mTodayStr);
+
+        // Add data
+        addData();
     }
 
     /**
