@@ -229,6 +229,8 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
                 }
                 // -----------CUSTOM------------
                 else {
+                    // initialize the chart
+                    initializeChart();
                     drawCustomPeriodStatisticsChart();
                     selectedPeriod = CUSTOM_PERIOD;
                 }
@@ -242,9 +244,6 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     }
 
     private void drawCustomPeriodStatisticsChart() {
-        // initialize the chart
-        initializeChart();
-
         mStatStartEditText.setHint(R.string.statistics_startdate_hint);
         mStatEndEditText.setHint(R.string.statistics_enddate_hint);
 
@@ -269,6 +268,11 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
                 showDateDialog(mCustomEnd);
             }
         });
+
+        if(selectedPeriod == CUSTOM_PERIOD) {
+            getPeriod(mCustomStart, mCustomEnd);
+            addData();
+        }
     }
 
     private void drawMonthPeriodStatisticsChart() {
