@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -142,7 +143,7 @@ public class TimerFragment extends Fragment {
         // UPDATE mCountTimner range 1..8
         // if Long Break Time has just finished, change to 1
         mCountTimer++;
-        int sessionNum = PrefUtil.get(getContext(), SESSION, 1) * 2;
+        int sessionNum = PrefUtil.get(getContext(), SESSION, 4) * 2;
         if (mCountTimer == sessionNum + 1)
             mCountTimer = 1;
 
@@ -271,7 +272,8 @@ public class TimerFragment extends Fragment {
                     dbUpdate(query);
 
                     mCountTimer = PrefUtil.get(getContext(), "COUNT", 1);
-                    if (mCountTimer % ((PrefUtil.get(getContext(), SESSION, 1) * 2)) == 0) // assign time by work,short & long break
+                    Log.i("TimerFragment","Session : "+(PrefUtil.get(getContext(), SESSION, 4) * 2));
+                    if (mCountTimer % ((PrefUtil.get(getContext(), SESSION, 4) * 2)) == 0) // assign time by work,short & long break
                         runTime = PrefUtil.get(getContext(), LONGBREAKTIME, 20);
                     else if (mCountTimer % 2 == 1)
                         runTime = PrefUtil.get(getContext(), WORKTIME, 25);
