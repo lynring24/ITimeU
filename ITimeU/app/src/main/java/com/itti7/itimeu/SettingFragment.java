@@ -221,11 +221,12 @@ public class SettingFragment extends Fragment {
     private void saveCheckBox(CompoundButton cbox, boolean isChecked) {
         //SharedPreferences pref = getActivity().getSharedPreferences(PREFNAME, Context.MODE_PRIVATE);
         //SharedPreferences.Editor editor = pref.edit();
-        if (cbox.equals(monScreencb)) {
+/*        if (cbox.equals(monScreencb)) {
             //editor.putBoolean(SCREENON, isChecked);
             PrefUtil.save(getContext(),SCREENON, isChecked);
         }
-        else if (cbox.equals(msoundOncb)) {
+        else*/
+        if (cbox.equals(msoundOncb)) {
             //editor.putBoolean(SOUNDON, isChecked);
             PrefUtil.save(getContext(),SOUNDON, isChecked);
         }
