@@ -174,28 +174,37 @@ public class SettingFragment extends Fragment {
     }
 
     private void doAfterTrack(SeekBar bar) { // 이용자가 손을 뗐을 때의 숫자 출력
+        int temp;
 
         if (bar.equals(mworksb)) {
-            mworket.setText(mworket.getText());
-            //editor.putInt(WORKTIME, Integer.valueOf(mworket.getText().toString()));
-            PrefUtil.save(getContext(),WORKTIME, Integer.valueOf(mworket.getText().toString()));
+            temp = Integer.valueOf(mworket.getText().toString());
+            if (temp < 1)
+                mworket.setText("1");
+            else
+                mworket.setText(mworket.getText());
+            PrefUtil.save(getContext(), WORKTIME, Integer.valueOf(mworket.getText().toString()));
+        } else if (bar.equals(mbreaksb)) {
+            temp = Integer.valueOf(mbreaket.getText().toString());
+            if (temp < 1)
+                mbreaket.setText("1");
+            else
+                mbreaket.setText(mbreaket.getText());
+            PrefUtil.save(getContext(), BREAKTIME, Integer.valueOf(mbreaket.getText().toString()));
+        } else if (bar.equals(mlongBreaksb)) {
+            temp = Integer.valueOf(mlongBreaket.getText().toString());
+            if (temp < 1)
+                mlongBreaket.setText("1");
+            else
+                mlongBreaket.setText(mlongBreaket.getText());
+            PrefUtil.save(getContext(), LONGBREAKTIME, Integer.valueOf(mlongBreaket.getText().toString()));
+        } else if (bar.equals(msessionNumsb)) {
+            temp = Integer.valueOf(msessionNumet.getText().toString());
+            if (temp < 1)
+                msessionNumet.setText("1");
+            else
+                msessionNumet.setText(msessionNumet.getText());
+            PrefUtil.save(getContext(), SESSION, Integer.valueOf(msessionNumet.getText().toString()));
         }
-        else if (bar.equals(mbreaksb)) {
-            mbreaket.setText(mbreaket.getText());
-            //editor.putInt(BREAKTIME, Integer.valueOf(mbreaket.getText().toString()));
-            PrefUtil.save(getContext(),BREAKTIME, Integer.valueOf(mbreaket.getText().toString()));
-        }
-        else if (bar.equals(mlongBreaksb)) {
-            mlongBreaket.setText(mlongBreaket.getText());
-            //editor.putInt(LONGBREAKTIME, Integer.valueOf(mlongBreaket.getText().toString()));
-            PrefUtil.save(getContext(),LONGBREAKTIME, Integer.valueOf(mlongBreaket.getText().toString()));
-        }
-        else if (bar.equals(msessionNumsb)) {
-            msessionNumet.setText(msessionNumet.getText());
-            //editor.putInt(SESSION, Integer.valueOf(msessionNumet.getText().toString()));
-            PrefUtil.save(getContext(),SESSION, Integer.valueOf(msessionNumet.getText().toString()));
-        }
-        //editor.commit();
     }
 
     private void saveCheckBox(CompoundButton cbox, boolean isChecked) {
