@@ -120,8 +120,7 @@
             android:layout_marginTop="10dp"
             android:layout_weight="7.5"
             android:max="90"
-            android:progress="20"
-            android:secondaryProgress="25" />
+            android:progress="20" />
 
         <EditText
             android:id="@+id/long_break_time"

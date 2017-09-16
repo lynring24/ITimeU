@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +12,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
-
-
 import static android.content.Context.MODE_PRIVATE;
 
 public class SettingFragment extends Fragment {
@@ -26,7 +22,7 @@ public class SettingFragment extends Fragment {
 
     private SeekBar mworksb, mbreaksb, mlongBreaksb, msessionNumsb; //시크바
     private static EditText mworket, mbreaket, mlongBreaket, msessionNumet; //에디트텍스트 뷰
-    private static CheckBox msoundOncb, mvibrateOncb, monScreencb; //체크박스
+    private static CheckBox msoundOncb, mvibrateOncb; //체크박스
 
     public static final String WORKTIME = "worktime";
     public static final String BREAKTIME = "breaktime";
@@ -36,22 +32,6 @@ public class SettingFragment extends Fragment {
     public  static final String SOUNDON = "sound";
     public  static final String VIBRATEON = "vibrate";
     //설정 저장에 필요한 상수(이름)
-
-    public static EditText getMworket() {
-        return mworket;
-    }
-
-    public static EditText getMbreaket() {
-        return mbreaket;
-    }
-
-    public static EditText getMlongBreaket() {
-        return mlongBreaket;
-    }
-
-    public static EditText getMsessionNumet() {
-        return msessionNumet;
-    }
 
     @Nullable
     @Override
@@ -84,10 +64,10 @@ public class SettingFragment extends Fragment {
         msessionNumet.setText(String.valueOf(PrefUtil.get(getContext(),SESSION, 4)));
 
         //숫자-시크바 연동
-        mworksb.setProgress(PrefUtil.get(getContext(),WORKTIME, 25));
-        mbreaksb.setProgress(PrefUtil.get(getContext(),BREAKTIME, 5));
-        mlongBreaksb.setProgress(PrefUtil.get(getContext(),LONGBREAKTIME, 20));
-        mlongBreaksb.setProgress(PrefUtil.get(getContext(),SESSION, 4));
+        mworksb.setProgress(Integer.parseInt(mworket.getText().toString()));
+        mbreaksb.setProgress(Integer.parseInt(mbreaket.getText().toString()));
+        mlongBreaksb.setProgress(Integer.parseInt(mlongBreaket.getText().toString()));
+        msessionNumsb.setProgress(Integer.parseInt(msessionNumet.getText().toString()));
 
         //체크박스 설정 불러오기
         msoundOncb.setChecked(PrefUtil.get(getContext(),SOUNDON, true));
@@ -113,7 +93,7 @@ public class SettingFragment extends Fragment {
             public void onStopTrackingTouch(SeekBar seekBar)  {
                 doAfterTrack(seekBar);
             }
-        }); //브레이크타임 시크바 리스터
+        }); //브레이크타임 시크바 리스너
 
         mlongBreaksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
