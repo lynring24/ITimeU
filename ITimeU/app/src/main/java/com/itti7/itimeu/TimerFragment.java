@@ -139,6 +139,7 @@ public class TimerFragment extends Fragment {
     }
 
     public void onUnitFinish() {
+        stopUpdateLeftTime();
         // UPDATE mCountTimner range 1..8
         // if Long Break Time has just finished, change to 1
         mCountTimer++;
@@ -288,7 +289,7 @@ public class TimerFragment extends Fragment {
                 }
             } else {
                 getActivity().stopService(intent); //stop service
-                mReadThread.interrupt();
+                stopUpdateLeftTime();
                 mTimerService.stopCountNotification();
                 mProgressBar.setProgress(0);
                 Timerhandler.removeMessages(0);
@@ -330,6 +331,10 @@ public class TimerFragment extends Fragment {
         mReadThread.start();
     }
 
+    public void stopUpdateLeftTime() {
+        mReadThread.interrupt();
+        mTimeText.setText("");
+    }
 
     public class TimerHandler extends Handler {
         TimerHandler() {
@@ -367,7 +372,7 @@ public class TimerFragment extends Fragment {
             mServiceBound = false;
         }
     }
-    
+
     /**
      * This function set TimerFragment once listItem was clicked
      */
