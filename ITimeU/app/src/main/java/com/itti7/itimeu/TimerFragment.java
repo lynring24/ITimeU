@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -251,7 +250,7 @@ public class TimerFragment extends Fragment {
         updateListFragment();
     }
 
-    public void setStatusToDo(){
+    public void setStatusToDo() {
         /*set mStatus to TO DO(0)*/
         if (mStateBttn.getText().toString().equals("stop")) {
             query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_TODO + "' WHERE _ID = '" + mId + "';";
@@ -272,7 +271,6 @@ public class TimerFragment extends Fragment {
                     dbUpdate(query);
 
                     mCountTimer = PrefUtil.get(getContext(), "COUNT", 1);
-                    Log.i("TimerFragment","Session : "+(PrefUtil.get(getContext(), SESSION, 4) * 2));
                     if (mCountTimer % ((PrefUtil.get(getContext(), SESSION, 4) * 2)) == 0) // assign time by work,short & long break
                         runTime = PrefUtil.get(getContext(), LONGBREAKTIME, 20);
                     else if (mCountTimer % 2 == 1)
@@ -354,7 +352,7 @@ public class TimerFragment extends Fragment {
     }
 
     @Override
-    public void onStop(){
+    public void onStop() {
         super.onStop();
         setStatusToDo();
     }
@@ -369,8 +367,7 @@ public class TimerFragment extends Fragment {
             mServiceBound = false;
         }
     }
-
-
+    
     /**
      * This function set TimerFragment once listItem was clicked
      */
