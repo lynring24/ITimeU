@@ -269,7 +269,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
             }
         });
 
-        if(selectedPeriod == CUSTOM_PERIOD) {
+        if (selectedPeriod == CUSTOM_PERIOD && mCustomStart != null && mCustomEnd != null) {
             getPeriod(mCustomStart, mCustomEnd);
             addData();
         }
