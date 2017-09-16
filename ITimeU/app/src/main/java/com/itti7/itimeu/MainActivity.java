@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     // Tags of Fragments
     String mTimerTag;
     String mListTag;
+    String mStatisticsTag;
+
     /** Getter/Setter of TimerTag */
     public void setTimerTag(String timerTag) {
         mTimerTag = timerTag;
@@ -37,6 +39,14 @@ public class MainActivity extends AppCompatActivity {
 
     public String getListTag(){
         return mListTag;
+    }
+
+    public String getStatisticsTag() {
+        return mStatisticsTag;
+    }
+
+    public void setStatisticsTag(String statisticsTag) {
+        mStatisticsTag = statisticsTag;
     }
 
     @Override

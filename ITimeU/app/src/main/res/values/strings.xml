@@ -201,6 +201,7 @@
     <string name="total_unit_label">Total pomodoro units</string>
     <string name="invalid_period1">The period is invalid</string>
     <string name="invalid_period2">The period should more than 1 day</string>
+    <string name="statisitcs_no_data">Select period what you want.</string>
 
     <!-- activity_support_language.xml -->
     <string name="support_language_english">English</string>
