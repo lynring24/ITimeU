@@ -2,7 +2,6 @@ package com.itti7.itimeu;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -13,15 +12,12 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.itti7.itimeu.data.ItemContract;
 import com.itti7.itimeu.data.ItemDbHelper;
@@ -45,8 +41,8 @@ public class TimerFragment extends Fragment {
     /*timer Service Component*/
     private TimerService mTimerService;
 
-    boolean mBound = false;
-    private TimerHandler handler;
+    boolean mServiceBound = false;
+    private TimerHandler Timerhandler;
     private int progressBarValue = 0;
     public int runTime; // minute
 
@@ -147,7 +143,7 @@ public class TimerFragment extends Fragment {
         // UPDATE mCountTimner range 1..8
         // if Long Break Time has just finished, change to 1
         mCountTimer++;
-        int sessionNum = PrefUtil.get(getContext(), SESSION, 1) * 2;
+        int sessionNum = PrefUtil.get(getContext(), SESSION, 4) * 2;
         if (mCountTimer == sessionNum + 1)
             mCountTimer = 1;
 
@@ -223,7 +219,7 @@ public class TimerFragment extends Fragment {
         public void onServiceConnected(ComponentName className, IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             mTimerService = ((TimerService.MyBinder) service).getService();
-            mBound = true;
+            mServiceBound = true;
         }
 
         @Override
@@ -231,10 +227,10 @@ public class TimerFragment extends Fragment {
             mTimerService = null;
             //mTimerService.stopCountNotification();
             mProgressBar.setProgress(0);
-            handler.removeMessages(0);
+            Timerhandler.removeMessages(0);
             mItemNameText.setText("");
             mStateBttn.setEnabled(false);
-            mBound = false;
+            mServiceBound = false;
         }
     };
 
@@ -269,14 +265,15 @@ public class TimerFragment extends Fragment {
             if (mStateBttn.getText().toString().equals("start")) { // checked
 
                 //mUnit will be intialize when list item is clicked
-                if (mBound) {
+                if (mServiceBound) {
                 /* set mStatus DB to DO(1)*/
 
                     query = "UPDATE " + ItemContract.ItemEntry.TABLE_NAME + " SET status = '" + ItemContract.ItemEntry.STATUS_DO + "' WHERE _ID = '" + mId + "';";
                     dbUpdate(query);
 
                     mCountTimer = PrefUtil.get(getContext(), "COUNT", 1);
-                    if (mCountTimer % ((PrefUtil.get(getContext(), SESSION, 1) * 2)) == 0) // assign time by work,short & long break
+                    Log.i("TimerFragment","Session : "+(PrefUtil.get(getContext(), SESSION, 4) * 2));
+                    if (mCountTimer % ((PrefUtil.get(getContext(), SESSION, 4) * 2)) == 0) // assign time by work,short & long break
                         runTime = PrefUtil.get(getContext(), LONGBREAKTIME, 20);
                     else if (mCountTimer % 2 == 1)
                         runTime = PrefUtil.get(getContext(), WORKTIME, 25);
@@ -284,11 +281,11 @@ public class TimerFragment extends Fragment {
                         runTime = PrefUtil.get(getContext(), BREAKTIME, 5);
 
                     mProgressBar.setMax(runTime * 60 + 2); // setMax by sec
-                    handler = new TimerHandler();
+                    Timerhandler = new TimerHandler();
                     updateLeftTime();
-                    mTimerService.setTimeName(runTime, mItemNameText.getText().toString());
+                    mTimerService.setRunTimeTaskName(runTime, mItemNameText.getText().toString());
                     mStateBttn.setText(R.string.stop);
-                    handler.sendEmptyMessage(0);
+                    Timerhandler.sendEmptyMessage(0);
 
                 }
             } else {
@@ -296,7 +293,7 @@ public class TimerFragment extends Fragment {
                 mReadThread.interrupt();
                 mTimerService.stopCountNotification();
                 mProgressBar.setProgress(0);
-                handler.removeMessages(0);
+                Timerhandler.removeMessages(0);
                 progressBarValue = 0; //must be set 0
                 mStateBttn.setText(R.string.start);
 
@@ -347,7 +344,7 @@ public class TimerFragment extends Fragment {
                 progressBarValue++;
                 mProgressBar.bringToFront();
                 mProgressBar.setProgress(progressBarValue);
-                handler.sendEmptyMessageDelayed(0, 1000); //increase by sec
+                Timerhandler.sendEmptyMessageDelayed(0, 1000); //increase by sec
             } else { // Timer must be finished
                 mProgressBar.setProgress(0);
                 progressBarValue = 0;
@@ -365,11 +362,11 @@ public class TimerFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mBound) {
+        if (mServiceBound) {
             mTimerService.stopService(intent);
             getActivity().unbindService(mConnection);
 
-            mBound = false;
+            mServiceBound = false;
         }
     }
 
