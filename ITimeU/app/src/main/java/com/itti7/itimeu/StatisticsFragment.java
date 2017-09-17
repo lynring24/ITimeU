@@ -50,7 +50,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
     // Statistics view components
     private Spinner mStatSpinner;
-    private LineChart mChart;
+    private LineChart mLineChart;
     private TextView mStatResultText;
     private EditText mStatStartEditText;
     private EditText mStatEndEditText;
@@ -77,11 +77,11 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     private boolean isClickEndDate;
 
     // ArrayList for units and total units in each days
-    private ArrayList<Integer> sumOfDayUnit;
-    private ArrayList<Integer> sumOfDayTotalUnit;
+    private ArrayList<Integer> sumOfDayUnitArrayList;
+    private ArrayList<Integer> sumOfDayTotalUnitArrayList;
 
     // Save date in selected period
-    private ArrayList<String> dates;
+    private ArrayList<String> dateArrayList;
 
     // Accent color for drawing unit chart
     private String mColorAccentStr = "#FF5722";
@@ -124,7 +124,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         selectedSpinnerItem();
 
         // Get chart view
-        mChart = mStatisticsView.findViewById(R.id.chart);
+        mLineChart = mStatisticsView.findViewById(R.id.chart);
 
         // Get result text view
         mStatResultText = mStatisticsView.findViewById(R.id.stat_result);
@@ -149,21 +149,21 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
      */
     private void addData() {
         // Unit data
-        List<Entry> unitEntries = new ArrayList<>();
+        List<Entry> unitList = new ArrayList<>();
 
-        for (int i = 0; i < sumOfDayUnit.size(); i++) {
-            unitEntries.add(new Entry(i, sumOfDayUnit.get(i)));
+        for (int i = 0; i < sumOfDayUnitArrayList.size(); i++) {
+            unitList.add(new Entry(i, sumOfDayUnitArrayList.get(i)));
         }
 
         // Units line data set
-        LineDataSet unitDataSet = new LineDataSet(unitEntries, getString(R.string.unit_label));
+        LineDataSet unitDataSet = new LineDataSet(unitList, getString(R.string.unit_label));
         customLineDataSet(unitDataSet, mColorAccentInt);
 
         // Total unit data
         List<Entry> totalUnitEntries = new ArrayList<>();
 
-        for (int i = 0; i < sumOfDayTotalUnit.size(); i++) {
-            totalUnitEntries.add(new Entry(i, sumOfDayTotalUnit.get(i)));
+        for (int i = 0; i < sumOfDayTotalUnitArrayList.size(); i++) {
+            totalUnitEntries.add(new Entry(i, sumOfDayTotalUnitArrayList.get(i)));
         }
 
         // Total units line data set
@@ -172,15 +172,15 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         customLineDataSet(totalUnitDataSet, mColorDarkInt);
 
         // Set x-axis
-        XAxis xAxis = mChart.getXAxis();
+        XAxis xAxis = mLineChart.getXAxis();
         xAxis.setDrawGridLines(false);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularityEnabled(true);
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                if (dates.size() > (int) value) {
-                    return dates.get((int) value).replace(".", "/").substring(5);
+                if (dateArrayList.size() > (int) value) {
+                    return dateArrayList.get((int) value).replace(".", "/").substring(5);
                 } else return null;
             }
 
@@ -199,9 +199,9 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         data.notifyDataChanged();
 
         // Set data to chart view
-        mChart.setData(data);
-        mChart.notifyDataSetChanged();
-        mChart.invalidate();
+        mLineChart.setData(data);
+        mLineChart.notifyDataSetChanged();
+        mLineChart.invalidate();
     }
 
     @Override
@@ -346,22 +346,22 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     void getPeriodFromSql(Date startDate, Date endDate) {
         int itemUnit = 0;
         int itemTotalUnit = 0;
-        sumOfDayUnit = new ArrayList<>();
-        sumOfDayTotalUnit = new ArrayList<>();
+        sumOfDayUnitArrayList = new ArrayList<>();
+        sumOfDayTotalUnitArrayList = new ArrayList<>();
         int sumOfWholeUnits = 0;
         int sumOfWholeTotalUnits = 0;
 
-        dates = new ArrayList<>();
+        dateArrayList = new ArrayList<>();
         Date currentDate = startDate;
         while (currentDate.compareTo(endDate) <= 0) {
-            dates.add(mDateFormat.format(currentDate));
+            dateArrayList.add(mDateFormat.format(currentDate));
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(currentDate);
             calendar.add(Calendar.DAY_OF_MONTH, 1);
             currentDate = calendar.getTime();
         }
 
-        for (String date : dates) {
+        for (String date : dateArrayList) {
             String[] dateStr = {date};
             Cursor cursor = db.rawQuery("SELECT unit, totalUnit FROM list WHERE date = ?", dateStr);
 
@@ -378,8 +378,8 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
             cursor.close();
 
-            sumOfDayUnit.add(itemUnit);
-            sumOfDayTotalUnit.add(itemTotalUnit);
+            sumOfDayUnitArrayList.add(itemUnit);
+            sumOfDayTotalUnitArrayList.add(itemTotalUnit);
 
             // Re-initialize
             itemUnit = 0;
@@ -387,12 +387,12 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         }
 
         // Sum units
-        for (int i : sumOfDayUnit) {
+        for (int i : sumOfDayUnitArrayList) {
             sumOfWholeUnits += i;
         }
 
         // Sum total units
-        for (int i : sumOfDayTotalUnit) {
+        for (int i : sumOfDayTotalUnitArrayList) {
             sumOfWholeTotalUnits += i;
         }
 
@@ -437,56 +437,56 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
      */
     void customChart() {
         // Set padding
-        mChart.setExtraRightOffset(40f);
-        mChart.setExtraBottomOffset(20f);
+        mLineChart.setExtraRightOffset(40f);
+        mLineChart.setExtraBottomOffset(20f);
         // Set color
-        mChart.setBorderColor(mColorAccentInt);
-        mChart.setBackgroundColor(Color.WHITE);
+        mLineChart.setBorderColor(mColorAccentInt);
+        mLineChart.setBackgroundColor(Color.WHITE);
         // Set line design
-        mChart.setDrawGridBackground(false);
-        mChart.getDescription().setEnabled(false);
-        mChart.setDrawBorders(false);
+        mLineChart.setDrawGridBackground(false);
+        mLineChart.getDescription().setEnabled(false);
+        mLineChart.setDrawBorders(false);
 
         // Y - right - Axis
-        mChart.getAxisRight().setEnabled(false);
+        mLineChart.getAxisRight().setEnabled(false);
 
         // X - Axis
-        mChart.getXAxis().setYOffset(15f);
-        mChart.getXAxis().setTextSize(11f);
-        mChart.getXAxis().setTextColor(mColorAccentInt);
-        mChart.getXAxis().setDrawAxisLine(false);
-        mChart.getXAxis().setDrawGridLines(false);
+        mLineChart.getXAxis().setYOffset(15f);
+        mLineChart.getXAxis().setTextSize(11f);
+        mLineChart.getXAxis().setTextColor(mColorAccentInt);
+        mLineChart.getXAxis().setDrawAxisLine(false);
+        mLineChart.getXAxis().setDrawGridLines(false);
 
         // Y - left - Axis
-        mChart.getAxisLeft().setXOffset(15f);
-        mChart.getAxisLeft().setTextSize(14f);
-        mChart.getAxisLeft().setGranularity(1f);
-        mChart.getAxisLeft().setAxisMinimum(0);
-        mChart.getAxisLeft().setTextColor(mColorInt);
-        mChart.getAxisLeft().setAxisLineColor(mColorInt);
-        mChart.getAxisLeft().setDrawGridLines(false);
+        mLineChart.getAxisLeft().setXOffset(15f);
+        mLineChart.getAxisLeft().setTextSize(14f);
+        mLineChart.getAxisLeft().setGranularity(1f);
+        mLineChart.getAxisLeft().setAxisMinimum(0);
+        mLineChart.getAxisLeft().setTextColor(mColorInt);
+        mLineChart.getAxisLeft().setAxisLineColor(mColorInt);
+        mLineChart.getAxisLeft().setDrawGridLines(false);
 
         // enable touch gestures
-        mChart.setTouchEnabled(true);
+        mLineChart.setTouchEnabled(true);
 
         // enable scaling and dragging
-        mChart.setDragEnabled(true);
-        mChart.setScaleEnabled(true);
+        mLineChart.setDragEnabled(true);
+        mLineChart.setScaleEnabled(true);
 
         // if disabled, scaling can be done on x- and y-axis separately
-        mChart.setPinchZoom(false);
+        mLineChart.setPinchZoom(false);
 
         // create a custom MarkerView (extend MarkerView) and specify the layout
         // to use for it
         MyMarkerView mv = new MyMarkerView(mStatisticsContext, R.layout.custom_marker_view);
-        mv.setChartView(mChart); // For bounds control
-        mChart.setMarker(mv); // Set the marker to the chart
+        mv.setChartView(mLineChart); // For bounds control
+        mLineChart.setMarker(mv); // Set the marker to the chart
 
         // Show dynamic animation
-        mChart.animateXY(2000, 2000);
+        mLineChart.animateXY(2000, 2000);
 
         // Customizing Legend label design
-        Legend l = mChart.getLegend();
+        Legend l = mLineChart.getLegend();
         l.setXEntrySpace(20f);
         l.setTextSize(11f);
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
@@ -630,12 +630,12 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
      * Initialize Chart view -> Empty chart
      */
     void initializeChart() {
-        mChart.setData(null);
-        mChart.invalidate();
+        mLineChart.setData(null);
+        mLineChart.invalidate();
 
-        Paint paint = mChart.getPaint(Chart.PAINT_INFO);
+        Paint paint = mLineChart.getPaint(Chart.PAINT_INFO);
         paint.setTextSize(32f);
-        mChart.setNoDataText(getString(R.string.statisitcs_no_data));
+        mLineChart.setNoDataText(getString(R.string.statisitcs_no_data));
 
         mStatResultText.setText(null);
 
