@@ -163,7 +163,6 @@ public class TimerService extends Service {
     private void ringTimerEndAlarm() {
         boolean isVibrateOn = PrefUtil.get(this, VIBRATEON, false);
         boolean isSoundOn = PrefUtil.get(this, SOUNDON, true);
-//        boolean isScreenOn = PrefUtil.get(this, SCREENON, false);
 
         if (isVibrateOn) {
             if (Build.VERSION.SDK_INT >= 26) {
