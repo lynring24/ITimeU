@@ -35,4 +35,6 @@
         <activity android:name=".about.SupportLanguageActivity"></activity>
     </application>
 
+    <uses-permission android:name = "android.permission.VIBRATE" />
+
 </manifest>
