@@ -14,16 +14,16 @@
         <TextView
             android:id="@+id/achievement_rate_txt_view"
             android:layout_gravity="center"
-            android:paddingTop="20dp"
+            android:paddingTop="40dp"
             android:textColor="@color/colorAccent"
-            android:textSize="32sp" />
+            android:textSize="40sp" />
 
         <TextView
             android:id="@+id/rate_detail_txt_view"
             android:layout_gravity="center"
-            android:paddingBottom="20dp"
+            android:paddingBottom="40dp"
             android:textColor="@color/colorPrimary"
-            android:textSize="16sp" />
+            android:textSize="20sp" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -36,11 +36,11 @@
                 android:layout_gravity="center"
                 android:background="@color/colorAccent"
                 android:drawablePadding="10dp"
-                android:padding="12dp"
+                android:padding="16dp"
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textColor="#ffffff"
-                android:textSize="16sp" />
+                android:textSize="20sp" />
 
             <ImageButton
                 android:id="@+id/listitem_previous_date_imgbtn"
@@ -48,7 +48,9 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/listitem_previous_date_description"
-                android:paddingRight="12dp"
+                android:minWidth="80dp"
+                android:paddingRight="20dp"
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_date_left" />
 
             <ImageButton
@@ -58,7 +60,9 @@
                 android:layout_gravity="end"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/listitem_next_date_description"
-                android:paddingLeft="12dp"
+                android:minWidth="80dp"
+                android:paddingLeft="20dp"
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_date_right" />
         </FrameLayout>
     </GridLayout>
@@ -70,10 +74,10 @@
         android:layout_below="@id/title_grid_layout"
         android:divider="@android:color/transparent"
         android:dividerHeight="4dp"
+        android:paddingBottom="48dp"
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="48dp">
+        android:paddingTop="20dp">
 
     </ListView>
 
@@ -83,13 +87,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:paddingTop="140dp">
+        android:paddingTop="160dp">
 
         <ImageView
             android:id="@+id/empty_shelter_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:minHeight="180dp"
+            android:minWidth="180dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/empty_background" />
 
         <TextView
@@ -98,9 +105,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/empty_shelter_image"
             android:layout_centerHorizontal="true"
-            android:paddingTop="16dp"
+            android:paddingTop="32dp"
             android:text="@string/empty_title_str"
-            android:textAppearance="?android:textAppearanceMedium" />
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/empty_subtitle_txt"
@@ -108,10 +115,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/empty_title_txt"
             android:layout_centerHorizontal="true"
-            android:paddingTop="8dp"
+            android:paddingTop="20dp"
             android:text="@string/empty_subtitle_str"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="#A2AAB0" />
+            android:textColor="#A2AAB0"
+            android:textSize="16sp" />
     </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
@@ -120,8 +127,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginBottom="40dp"
+        android:layout_marginRight="40dp"
+        android:minHeight="160dp"
+        android:minWidth="160dp"
+        android:scaleType="center"
         android:src="@drawable/ic_add_white"
-        app:fabSize="mini" />
+        app:fabSize="normal" />
+
 </RelativeLayout>
