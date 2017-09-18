@@ -13,14 +13,14 @@
         android:layout_marginLeft="13dp"
         android:layout_marginTop="30dp"
         android:textColor="@color/colorAccent"
-        android:text="General" />
+        android:text="@string/general" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="13dp"
         android:layout_marginTop="10dp"
-        android:text="Work session duration" />
+        android:text="@string/workTime" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="13dp"
         android:layout_marginTop="10dp"
-        android:text="Break duration" />
+        android:text="@string/breakTime" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -108,7 +108,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="13dp"
         android:layout_marginTop="10dp"
-        android:text="Long break duration" />
+        android:text="@string/longBreakTime" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -152,7 +152,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="13dp"
         android:layout_marginTop="10dp"
-        android:text="Work sessions before a long break" />
+        android:text="@string/sessionNumber" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -198,7 +198,7 @@
         android:layout_marginTop="40dp"
         android:layout_marginBottom="10dp"
         android:textColor="@color/colorAccent"
-        android:text="when a session is over" />
+        android:text="@string/sessionOver" />
 
     <LinearLayout
         android:layout_marginBottom="10dp"
@@ -210,7 +210,7 @@
             android:layout_weight="8.5"
             android:layout_height="wrap_content"
             android:layout_marginLeft="13dp"
-            android:text="play sound when session ends" />
+            android:text="@string/playSound" />
 
         <CheckBox
             android:id="@+id/sound_check"
@@ -237,7 +237,7 @@
             android:layout_weight="8.5"
             android:layout_height="wrap_content"
             android:layout_marginLeft="13dp"
-            android:text="vibrate when session ends" />
+            android:text="@string/vibrate" />
 
         <CheckBox
             android:id="@+id/vibrate_check"
