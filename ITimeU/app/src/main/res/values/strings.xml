@@ -12,6 +12,7 @@
     <string name="time">00:25</string>
     <string name="start">start</string>
     <string name="stop">stop</string>
+    <string name="example">example</string>
 
     <!-- IntroSlide.java -->
     <string name="intro_page1_title">Remember</string>
