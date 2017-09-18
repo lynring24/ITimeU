@@ -65,4 +65,14 @@
     <string name="unsaved_change_msg">변경 사항이 저장되지 않았습니다</string>
     <string name="update_item_fail">업데이트에 실패했습니다</string>
     <string name="update_item_success">업데이트에 성공했습니다</string>
+    <string name="breakTime">휴식</string>
+    <string name="sessionOver">각 세션이 끝났을 때</string>
+    <string name="sessionNumber">긴 휴식 전까지 세션 수</string>
+    <string name="sessions">세션</string>
+    <string name="playSound">소리 울리기</string>
+    <string name="longBreakTime">긴 휴식</string>
+    <string name="general">일반</string>
+    <string name="minutes">분</string>
+    <string name="vibrate">진동 울리기</string>
+    <string name="workTime">작업</string>
 </resources>
