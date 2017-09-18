@@ -10,21 +10,25 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="13dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="60dp"
+        android:textSize="25sp"
         android:textColor="@color/colorAccent"
         android:text="@string/general" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="13dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        android:textSize="22sp"
         android:text="@string/workTime" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginTop="5dp">
 
         <SeekBar
@@ -32,7 +36,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_weight="7.5"
+            android:layout_weight="8"
             android:max="90"
             android:progress="25" />
 
@@ -40,7 +44,7 @@
             android:id="@+id/work_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.8"
             android:gravity="center"
             android:editable="false"
             android:text="25" />
@@ -50,6 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_weight="2"
+            android:textSize="17sp"
             android:text="minutes" />
 
     </LinearLayout>
@@ -62,13 +67,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="13dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        android:textSize="22sp"
         android:text="@string/breakTime" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_marginTop="5dp">
 
         <SeekBar
@@ -76,7 +83,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_weight="7.5"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="8"
             android:max="60"
             android:progress="5" />
 
@@ -84,7 +92,7 @@
             android:id="@+id/break_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.8"
             android:gravity="center"
             android:editable="false"
             android:text="5" />
@@ -94,6 +102,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_weight="2"
+            android:textSize="17sp"
             android:text="minutes" />
 
     </LinearLayout>
@@ -106,21 +115,24 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="13dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        android:textSize="22sp"
         android:text="@string/longBreakTime" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_marginTop="5dp">
 
         <SeekBar
             android:id="@+id/long_break_seek"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
-            android:layout_weight="7.5"
+            android:layout_weight="8"
             android:max="90"
             android:progress="20" />
 
@@ -128,7 +140,7 @@
             android:id="@+id/long_break_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.8"
             android:gravity="center"
             android:editable="false"
             android:text="20" />
@@ -138,6 +150,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_weight="2"
+            android:textSize="17sp"
             android:text="minutes" />
 
     </LinearLayout>
@@ -150,13 +163,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="13dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        android:textSize="22sp"
         android:text="@string/sessionNumber" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_marginTop="5dp">
 
         <SeekBar
@@ -164,7 +179,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_weight="7.5"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="8"
             android:max="10"
             android:progress="4" />
 
@@ -172,7 +188,7 @@
             android:id="@+id/session_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.8"
             android:gravity="center"
             android:editable="false"
             android:text="4" />
@@ -182,6 +198,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_weight="2"
+            android:textSize="17sp"
             android:text="sessions" />
 
     </LinearLayout>
@@ -194,14 +211,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="13dp"
+        android:layout_marginLeft="30dp"
         android:layout_marginTop="40dp"
-        android:layout_marginBottom="10dp"
+        android:textSize="25sp"
         android:textColor="@color/colorAccent"
         android:text="@string/sessionOver" />
 
     <LinearLayout
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -209,7 +227,8 @@
             android:layout_width="0dp"
             android:layout_weight="8.5"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="13dp"
+            android:layout_marginLeft="30dp"
+            android:textSize="22sp"
             android:text="@string/playSound" />
 
         <CheckBox
@@ -227,8 +246,7 @@
         android:background="#C1C1C1" />
 
     <LinearLayout
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -236,7 +254,8 @@
             android:layout_width="0dp"
             android:layout_weight="8.5"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="13dp"
+            android:layout_marginLeft="30dp"
+            android:textSize="22sp"
             android:text="@string/vibrate" />
 
         <CheckBox
