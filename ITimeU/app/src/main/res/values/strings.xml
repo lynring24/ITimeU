@@ -1,6 +1,18 @@
 <resources>
     <string name="app_name" translatable="false">I Time U</string>
 
+    <!-- setting name -->
+    <string name="minutes">minutes</string>
+    <string name="sessions">sessions</string>
+    <string name="general">General</string>
+    <string name="workTime">Work session duration</string>
+    <string name="breakTime">Break duration</string>
+    <string name="longBreakTime">Long break duration</string>
+    <string name="sessionNumber">Work sessions before a long break</string>
+    <string name="sessionOver">When a session is over</string>
+    <string name="playSound">play sound when session ends</string>
+    <string name="vibrate">vibrate when session ends</string>
+
     <!--  menubar name-->
     <string name="setting">setting</string>
     <string name="about">about</string>
