@@ -8,12 +8,16 @@ I Time U는 To do list와 Pomodoro 기법을 합친 시간 관리 어플리케�
 
 I Time U는 타이머 애플리케이션으로 사용자가 할 일(Task)을 손쉽게 관리하도록 하고, 사용자의 집중을 도우며, 일에 대한 성취감을 느낄 수 있도록 만든다는 목적을 갖는다. 이는 포모도로 기법[1)](#pomodoro) 을 어플리케이션에 적용함으로써 실현할 수 있다. 
 
-<h2>3. I Time U 사용자 매뉴얼</h2>
+<h2>3. I Time U 지원 버전</h2>
+### 아이스크림 샌드위치(Android 4.0.3/API 15) ~ 오레오(Android 8.0/API 26)
+
+<h2>4. I Time U 사용자 매뉴얼</h2>
 
 ## Intro
 ### (1) I TIME U 최초 실행 시 보여지는 인트로.
 ![intro_pages](https://user-images.githubusercontent.com/19372511/30512948-62e263ca-9b35-11e7-8ef6-9769dda1a7da.png)
 포모도로에 친숙하지 않은 사용자를 위해 핵심적인 개념을 담은 가이드라인을 제공한다.
+<br><br>
 
 ## List
 ### (1) Blank list
@@ -57,7 +61,8 @@ I Time U는 타이머 애플리케이션으로 사용자가 할 일(Task)을 손
 * 완료한 일: (총 포모도로의 수) = (완료한 포모도로의 수) 로 일이 완료된 상태이다. 클릭해도 타이머로 이동하지 않는다. (토스트 메세지 출력)
 
 * 할 일 / 진행 중인 일 / 완료한 일을 길게 클릭할 경우: 해당 일을 수정 / 삭제 할 수 있는 메뉴가 나타난다. 단, 진행 중인 일에서는 수정 / 삭제를 클릭해도 해당 액션을 수행할 수 없다. (토스트 메세지 출력)<br>
-<img src="https://user-images.githubusercontent.com/19372511/30513227-e35a342e-9b3a-11e7-8e4e-44aa23e3ee6c.png" width="250" /><br>
+<img src="https://user-images.githubusercontent.com/19372511/30513227-e35a342e-9b3a-11e7-8e4e-44aa23e3ee6c.png" width="250" />
+<br><br>
 
 ## Timer
 ### (1) 타이머 시작 및 진행
@@ -82,7 +87,7 @@ I Time U는 타이머 애플리케이션으로 사용자가 할 일(Task)을 손
 <img src="https://user-images.githubusercontent.com/19359354/30536421-b7d0d4d6-9ca0-11e7-925f-206c6314a77e.PNG" width="250"/>
 
 * 포모도로 작업이 설정된 세션 반복 수만큼 도달하면 긴 쉬는 시간이 시작된다. 
-
+<br><br>
 
 ## Statistics
 ### (1) Week
@@ -104,6 +109,7 @@ I Time U는 타이머 애플리케이션으로 사용자가 할 일(Task)을 손
 시작 날짜를 달력 다이얼로그에서 선택하고, 마찬가지로 끝 날짜를 선택하면 그래프가 생성된다. 단, 시작 날짜와 끝 날짜의 차이는 1일 이상이어야 한다. (1일 보다 작을 시 토스트 메세지 출력)
 
 <img src="https://user-images.githubusercontent.com/19372511/30513331-4898a1da-9b3c-11e7-94a4-493633616d19.png" width="250" />
+<br><br>
 
 ## Setting
 <img src="https://user-images.githubusercontent.com/19471816/30535325-efe0d442-9c9c-11e7-812f-73020236eefc.PNG" width="250" />
@@ -117,6 +123,7 @@ I Time U는 타이머 애플리케이션으로 사용자가 할 일(Task)을 손
 ### (2) when a session is over: 타이머가 끝났을 때 알림 방식을 설정한다.
 * play sound when session ends: 폰 설정에서 소리가 켜져 있을 경우 소리 알림을 보낸다.
 * vibrate when session ends: 진동 알림을 보낸다.
+<br><br>
 
 ## About
 <img src="https://user-images.githubusercontent.com/19372511/30513339-7f26da00-9b3c-11e7-9ffb-870fe12c4ecb.png" width="250" />
