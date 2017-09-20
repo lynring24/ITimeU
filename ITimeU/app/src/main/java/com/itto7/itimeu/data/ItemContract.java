@@ -1,4 +1,4 @@
-package com.itti7.itimeu.data;
+package com.itto7.itimeu.data;
 
 import android.content.ContentResolver;
 import android.net.Uri;
@@ -24,7 +24,7 @@ public final class ItemContract {
      * content authority is the package name for the app, which is guaranteed to be unique on the
      * device.
      */
-    public static final String CONTENT_AUTHORITY = "com.itti7.itimeu";
+    public static final String CONTENT_AUTHORITY = "com.itto7.itimeu";
 
     /**
      * Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
@@ -34,8 +34,8 @@ public final class ItemContract {
 
     /**
      * Possible path (appended to base content URI for possible URI's)
-     * For instance, content://com.itti7.itimeu/itimeu/ is a valid path for
-     * looking at item data. content://com.itti7.itimeu/staff/ will fail,
+     * For instance, content://com.itto7.itimeu/itimeu/ is a valid path for
+     * looking at item data. content://com.itto7.itimeu/staff/ will fail,
      * as the ContentProvider hasn't been given any information on what to do with "staff".
      */
     public static final String PATH_ITIMEU = "itimeu";

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.itti7.itimeu.MainActivity">
+    tools:context="com.itto7.itimeu.MainActivity">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"

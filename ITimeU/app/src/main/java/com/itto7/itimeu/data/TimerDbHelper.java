@@ -1,4 +1,4 @@
-package com.itti7.itimeu.data;
+package com.itto7.itimeu.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

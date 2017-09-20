@@ -1,4 +1,4 @@
-package com.itti7.itimeu;
+package com.itto7.itimeu;
 
 
 import android.app.NotificationManager;
@@ -19,9 +19,9 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 
-import static com.itti7.itimeu.SettingFragment.SCREENON;
-import static com.itti7.itimeu.SettingFragment.SOUNDON;
-import static com.itti7.itimeu.SettingFragment.VIBRATEON;
+import static com.itto7.itimeu.SettingFragment.SCREENON;
+import static com.itto7.itimeu.SettingFragment.SOUNDON;
+import static com.itto7.itimeu.SettingFragment.VIBRATEON;
 
 public class TimerService extends Service {
     public static String strReceiver = "com.TimerService.receiver";

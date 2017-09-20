@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.itti7.itimeu.about.LicensesActivity">
+    tools:context="com.itto7.itimeu.about.LicensesActivity">
 
     <GridLayout
         android:padding="40dp"

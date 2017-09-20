@@ -1,11 +1,11 @@
-package com.itti7.itimeu.about;
+package com.itto7.itimeu.about;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.itti7.itimeu.R;
+import com.itto7.itimeu.R;
 
 public class SupportLanguageActivity extends AppCompatActivity {
 

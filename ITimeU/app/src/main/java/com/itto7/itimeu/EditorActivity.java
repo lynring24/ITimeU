@@ -1,4 +1,4 @@
-package com.itti7.itimeu;
+package com.itto7.itimeu;
 
 import android.content.ContentValues;
 import android.content.CursorLoader;
@@ -28,7 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.itti7.itimeu.data.ItemContract.ItemEntry;
+import com.itto7.itimeu.data.ItemContract.ItemEntry;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.ParseException;

@@ -1,4 +1,4 @@
-package com.itti7.itimeu.data;
+package com.itto7.itimeu.data;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -38,18 +38,18 @@ public class ItemProvider extends ContentProvider {
         // should recognize. All paths added to the UriMatcher have a corresponding code to return
         // when a match is found.
 
-        // The content URI of the form "content://com.itti7.itimeu" will map to the
+        // The content URI of the form "content://com.itto7.itimeu" will map to the
         // integer code {@link #ITEMS}. This URI is used to provide access to MULTIPLE rows
         // of the list table.
         sUriMatcher.addURI(ItemContract.CONTENT_AUTHORITY, ItemContract.PATH_ITIMEU, ITEMS);
 
-        // The content URI of the form "content://com.itti7.itimeu"/itimeu/#" will map to the
+        // The content URI of the form "content://com.itto7.itimeu"/itimeu/#" will map to the
         // integer code {@link #ITEM_ID}. This URI is used to provide access to ONE single row
         // of the items table.
         //
         // In this case, the "#" wildcard is used where "#" can be substituted for an integer.
-        // For example, "content://com.itti7.itimeu/itimeu/3" matches, but
-        // "content://content://com.itti7.itimeu/itimeu" (without a number at the end) doesn't match.
+        // For example, "content://com.itto7.itimeu/itimeu/3" matches, but
+        // "content://content://com.itto7.itimeu/itimeu" (without a number at the end) doesn't match.
         sUriMatcher.addURI(ItemContract.CONTENT_AUTHORITY,
                 ItemContract.PATH_ITIMEU + "/#", ITEM_ID);
     }
@@ -84,7 +84,7 @@ public class ItemProvider extends ContentProvider {
                 break;
             case ITEM_ID:
                 // For the ITEM_ID code, extract out the ID from the URI.
-                // For an example URI such as "content://com.itti7.itimeu/itimeu/3",
+                // For an example URI such as "content://com.itto7.itimeu/itimeu/3",
                 // the selection will be "_id=?" and the selection argument will be a
                 // String array containing the actual ID of 3 in this case.
                 //

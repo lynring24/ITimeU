@@ -1,10 +1,10 @@
-package com.itti7.itimeu.data;
+package com.itto7.itimeu.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.itti7.itimeu.data.ItemContract.ItemEntry;
+import com.itto7.itimeu.data.ItemContract.ItemEntry;
 
 /**
  * Database helper for I Time U app. Manages database creation and version management.

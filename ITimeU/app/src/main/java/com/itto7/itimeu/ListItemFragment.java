@@ -1,4 +1,4 @@
-package com.itti7.itimeu;
+package com.itto7.itimeu;
 
 import android.animation.ValueAnimator;
 import android.provider.BaseColumns;
@@ -27,8 +27,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.itti7.itimeu.data.ItemContract;
-import com.itti7.itimeu.data.ItemDbHelper;
+import com.itto7.itimeu.data.ItemContract;
+import com.itto7.itimeu.data.ItemDbHelper;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.ParseException;

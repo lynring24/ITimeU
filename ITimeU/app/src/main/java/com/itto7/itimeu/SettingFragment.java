@@ -1,4 +1,4 @@
-package com.itti7.itimeu;
+package com.itto7.itimeu;
 
 import android.app.Activity;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.itti7.itimeu;
+package com.itto7.itimeu;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.itti7.itimeu.about.LicensesActivity;
-import com.itti7.itimeu.about.SupportLanguageActivity;
+import com.itto7.itimeu.about.LicensesActivity;
+import com.itto7.itimeu.about.SupportLanguageActivity;
 
 public class AboutFragment extends Fragment {
 
