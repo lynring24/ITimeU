@@ -1,4 +1,4 @@
-package com.itto7.itimeu.data;
+package com.itto3.itimeu.data;
 
 import android.provider.BaseColumns;
 

@@ -1,4 +1,4 @@
-package com.itto7.itimeu;
+package com.itto3.itimeu;
 
 import android.app.Activity;
 import android.content.Context;
@@ -28,8 +28,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.itto7.itimeu.data.ItemContract;
-import com.itto7.itimeu.data.ItemDbHelper;
+import com.itto3.itimeu.data.ItemContract;
+import com.itto3.itimeu.data.ItemDbHelper;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.ParseException;

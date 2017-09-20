@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.itto7.itimeu.EditorActivity">
+    tools:context="com.itto3.itimeu.EditorActivity">
 
     <TextView
         android:id="@+id/editor_title_txt_view"

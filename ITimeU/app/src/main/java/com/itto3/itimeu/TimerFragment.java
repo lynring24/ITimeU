@@ -1,4 +1,4 @@
-package com.itto7.itimeu;
+package com.itto3.itimeu;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -18,8 +18,8 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.itto7.itimeu.data.ItemContract;
-import com.itto7.itimeu.data.ItemDbHelper;
+import com.itto3.itimeu.data.ItemContract;
+import com.itto3.itimeu.data.ItemDbHelper;
 
 /**
  * A simple {@link Fragment} subclass.

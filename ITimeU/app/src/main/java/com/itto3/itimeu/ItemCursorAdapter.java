@@ -1,4 +1,4 @@
-package com.itto7.itimeu;
+package com.itto3.itimeu;
 
 
 import android.content.Context;
@@ -10,7 +10,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.itto7.itimeu.data.ItemContract;
+import com.itto3.itimeu.data.ItemContract;
 
 /**
  * {@link ItemCursorAdapter} is an adapter for a list or grid view

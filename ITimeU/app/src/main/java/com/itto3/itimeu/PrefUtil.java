@@ -1,4 +1,4 @@
-package com.itto7.itimeu;
+package com.itto3.itimeu;
 
 import android.content.Context;
 import android.content.SharedPreferences;

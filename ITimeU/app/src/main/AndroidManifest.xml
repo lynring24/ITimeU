@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.itto7.itimeu">
+    package="com.itto3.itimeu">
 
     <application
         android:allowBackup="true"
@@ -24,7 +24,7 @@
 
         <provider
             android:name=".data.ItemProvider"
-            android:authorities="com.itto7.itimeu"
+            android:authorities="com.itto3.itimeu"
             android:exported="false" />
 
         <service
