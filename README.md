@@ -11,9 +11,9 @@ I Time U는 타이머 애플리케이션으로 사용자가 할 일(Task)을 손
 <h2>3. I Time U 사용자 매뉴얼</h2>
 
 ## Intro
+### (1) I TIME U 최초 실행 시 보여지는 인트로.
 ![intro_pages](https://user-images.githubusercontent.com/19372511/30512948-62e263ca-9b35-11e7-8ef6-9769dda1a7da.png)
-
-I TIME U 최초 실행 시 보여지는 인트로이다. 포모도로에 친숙하지 않은 사용자를 위해 핵심적인 개념을 담은 가이드라인을 제공한다.
+포모도로에 친숙하지 않은 사용자를 위해 핵심적인 개념을 담은 가이드라인을 제공한다.
 
 ## List
 ### (1) Blank list
@@ -61,26 +61,27 @@ I TIME U 최초 실행 시 보여지는 인트로이다. 포모도로에 친숙�
 
 ## Timer
 ### (1) 타이머 시작 및 진행
-![timer_run](https://user-images.githubusercontent.com/19359354/30536183-d65d6172-9c9f-11e7-92d2-81e5b34b019e.PNG)
+<img src="https://user-images.githubusercontent.com/19359354/30536183-d65d6172-9c9f-11e7-92d2-81e5b34b019e.PNG" width="250"/>
 
-리스트에서 클릭된 작업은 타이머에서 그 이름이 표시된다. <br>
-START 버튼을 누르면 타이머가 작동되고, 프로세스 바가 늘어난다. <br>
-STOP 버튼을 누르면 현재 작업은 취소되고, 포모도로가 작업을 시작하지 않았음으로 표시된다. 
+* 리스트에서 클릭된 작업은 타이머에서 그 이름이 표시된다.
+* START 버튼을 누르면 타이머가 작동되고, 프로세스 바가 늘어난다.
+* STOP 버튼을 누르면 현재 작업은 취소되고, 포모도로가 작업을 시작하지 않았음으로 표시된다. 
 
-![longtimeendnoti](https://user-images.githubusercontent.com/19359354/30536432-c34d69f0-9ca0-11e7-8d9c-ae674da5740b.PNG)
+<img src="https://user-images.githubusercontent.com/19359354/30536432-c34d69f0-9ca0-11e7-8d9c-ae674da5740b.PNG" width="250"/>
 
-작업이 시작되면 상태 알람 줄에 현재 남은 시간과 작업 이름이 표시된다.
-작업이 완료됐을 때 진동 또는 알람이 울리면서 작업이 완료되었음을 알린다.
+* 작업이 시작되면 상태 알람 줄에 현재 남은 시간과 작업 이름이 표시된다.
+* 작업이 완료됐을 때 진동 또는 알람이 울리면서 작업이 완료되었음을 알린다.
 
 ### (2) Short break time
-![breaktime](https://user-images.githubusercontent.com/19359354/30536320-535ed03e-9ca0-11e7-992d-8e9693a27878.PNG)<br>
-한 포모도로가 마무리되면 리스트에 완료됐음이 표시되고 휴식 시간이 시작된다.<br>
-버튼의 작동은 포모도로 세션 때와 동일하다.
+<img src="https://user-images.githubusercontent.com/19359354/30536320-535ed03e-9ca0-11e7-992d-8e9693a27878.PNG" width="250" />
+
+* 한 포모도로가 마무리되면 리스트에 완료됐음이 표시되고 휴식 시간이 시작된다.
+* 버튼의 작동은 포모도로 세션 때와 동일하다.
 
 ### (3) Long break time
-![longtimerun](https://user-images.githubusercontent.com/19359354/30536421-b7d0d4d6-9ca0-11e7-925f-206c6314a77e.PNG)
+<img src="https://user-images.githubusercontent.com/19359354/30536421-b7d0d4d6-9ca0-11e7-925f-206c6314a77e.PNG" width="250"/>
 
-포모도로 작업이 설정된 세션 반복 수만큼 도달하면 긴 쉬는 시간이 시작된다. 
+* 포모도로 작업이 설정된 세션 반복 수만큼 도달하면 긴 쉬는 시간이 시작된다. 
 
 
 ## Statistics
@@ -103,6 +104,19 @@ STOP 버튼을 누르면 현재 작업은 취소되고, 포모도로가 작업�
 시작 날짜를 달력 다이얼로그에서 선택하고, 마찬가지로 끝 날짜를 선택하면 그래프가 생성된다. 단, 시작 날짜와 끝 날짜의 차이는 1일 이상이어야 한다. (1일 보다 작을 시 토스트 메세지 출력)
 
 <img src="https://user-images.githubusercontent.com/19372511/30513331-4898a1da-9b3c-11e7-94a4-493633616d19.png" width="250" />
+
+## Setting
+<img src="https://user-images.githubusercontent.com/19471816/30535325-efe0d442-9c9c-11e7-812f-73020236eefc.PNG" width="250" />
+
+### (1) general: 각 타이머에 대한 전반적 설정이다.
+* work session duration: 작업 시간의 설정이다.
+* break duration: 휴식 시간의 설정이다.
+* long break duration: 설정해둔 수만큼의 세션이 지났을 때 갖는 긴 휴식 시간의 설정이다.
+* work sessions before a long break: 긴 휴식 시간을 갖기까지 보내는 세션 수의 설정이다.
+
+### (2) when a session is over: 타이머가 끝났을 때 알림 방식을 설정한다.
+* play sound when session ends: 폰 설정에서 소리가 켜져 있을 경우 소리 알림을 보낸다.
+* vibrate when session ends: 진동 알림을 보낸다.
 
 ## About
 <img src="https://user-images.githubusercontent.com/19372511/30513339-7f26da00-9b3c-11e7-9ffb-870fe12c4ecb.png" width="250" />
