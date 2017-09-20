@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.itti7.itimeu.ListItemFragment">
+    tools:context="com.itto3.itimeu.ListItemFragment">
 
     <GridLayout
         android:id="@+id/title_grid_layout"
