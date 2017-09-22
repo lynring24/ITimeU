@@ -12,7 +12,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
-import static android.content.Context.MODE_PRIVATE;
+
+import com.itto3.itimeu.data.SharedPreferenceUtil;
 
 public class SettingFragment extends Fragment {
 
@@ -58,10 +59,10 @@ public class SettingFragment extends Fragment {
         mvibrateOncb = mSettingView.findViewById(R.id.vibrate_check);
 
         //저장해둔 숫자 설정 불러오기
-        mworket.setText(String.valueOf(PrefUtil.get(getContext(),WORKTIME, 25)));
-        mbreaket.setText(String.valueOf(PrefUtil.get(getContext(),BREAKTIME, 5)));
-        mlongBreaket.setText(String.valueOf(PrefUtil.get(getContext(),LONGBREAKTIME, 20)));
-        msessionNumet.setText(String.valueOf(PrefUtil.get(getContext(),SESSION, 4)));
+        mworket.setText(String.valueOf(SharedPreferenceUtil.get(getContext(),WORKTIME, 25)));
+        mbreaket.setText(String.valueOf(SharedPreferenceUtil.get(getContext(),BREAKTIME, 5)));
+        mlongBreaket.setText(String.valueOf(SharedPreferenceUtil.get(getContext(),LONGBREAKTIME, 20)));
+        msessionNumet.setText(String.valueOf(SharedPreferenceUtil.get(getContext(),SESSION, 4)));
 
         //숫자-시크바 연동
         mworksb.setProgress(Integer.parseInt(mworket.getText().toString()));
@@ -70,8 +71,8 @@ public class SettingFragment extends Fragment {
         msessionNumsb.setProgress(Integer.parseInt(msessionNumet.getText().toString()));
 
         //체크박스 설정 불러오기
-        msoundOncb.setChecked(PrefUtil.get(getContext(),SOUNDON, true));
-        mvibrateOncb.setChecked(PrefUtil.get(getContext(),VIBRATEON, false));
+        msoundOncb.setChecked(SharedPreferenceUtil.get(getContext(),SOUNDON, true));
+        mvibrateOncb.setChecked(SharedPreferenceUtil.get(getContext(),VIBRATEON, false));
 
         mworksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -162,37 +163,37 @@ public class SettingFragment extends Fragment {
                 mworket.setText("1");
             else
                 mworket.setText(mworket.getText());
-            PrefUtil.save(getContext(), WORKTIME, Integer.valueOf(mworket.getText().toString()));
+            SharedPreferenceUtil.save(getContext(), WORKTIME, Integer.valueOf(mworket.getText().toString()));
         } else if (bar.equals(mbreaksb)) {
             temp = Integer.valueOf(mbreaket.getText().toString());
             if (temp < 1)
                 mbreaket.setText("1");
             else
                 mbreaket.setText(mbreaket.getText());
-            PrefUtil.save(getContext(), BREAKTIME, Integer.valueOf(mbreaket.getText().toString()));
+            SharedPreferenceUtil.save(getContext(), BREAKTIME, Integer.valueOf(mbreaket.getText().toString()));
         } else if (bar.equals(mlongBreaksb)) {
             temp = Integer.valueOf(mlongBreaket.getText().toString());
             if (temp < 1)
                 mlongBreaket.setText("1");
             else
                 mlongBreaket.setText(mlongBreaket.getText());
-            PrefUtil.save(getContext(), LONGBREAKTIME, Integer.valueOf(mlongBreaket.getText().toString()));
+            SharedPreferenceUtil.save(getContext(), LONGBREAKTIME, Integer.valueOf(mlongBreaket.getText().toString()));
         } else if (bar.equals(msessionNumsb)) {
             temp = Integer.valueOf(msessionNumet.getText().toString());
             if (temp < 1)
                 msessionNumet.setText("1");
             else
                 msessionNumet.setText(msessionNumet.getText());
-            PrefUtil.save(getContext(), SESSION, Integer.valueOf(msessionNumet.getText().toString()));
+            SharedPreferenceUtil.save(getContext(), SESSION, Integer.valueOf(msessionNumet.getText().toString()));
         }
     }
 
     private void saveCheckBox(CompoundButton cbox, boolean isChecked) {
         if (cbox.equals(msoundOncb)) {
-            PrefUtil.save(getContext(),SOUNDON, isChecked);
+            SharedPreferenceUtil.save(getContext(),SOUNDON, isChecked);
         }
         else if (cbox.equals(mvibrateOncb)) {
-            PrefUtil.save(getContext(),VIBRATEON, isChecked);
+            SharedPreferenceUtil.save(getContext(),VIBRATEON, isChecked);
         }
     }
 
