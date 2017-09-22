@@ -168,7 +168,6 @@ public class TimerService extends Service {
             Ringtone ring = RingtoneManager.getRingtone(getApplicationContext(), notification);
             ring.play();
         }
-
     }
 
     public class MyBinder extends Binder {

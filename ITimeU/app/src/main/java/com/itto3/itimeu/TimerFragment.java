@@ -57,7 +57,8 @@ public class TimerFragment extends Fragment {
     private int mId, mStatus, mUnit, mTotalUnit;
     private String mName;
 
-    public TimerFragment() {} // Required empty public constructor
+    public TimerFragment() {
+    } // Required empty public constructor
 
     BroadcastReceiver mReceiver;
 
@@ -224,7 +225,7 @@ public class TimerFragment extends Fragment {
                 /* set mStatus DB to DO(1)*/
                     TimerDbUtil.update(getContext(), ItemContract.ItemEntry.STATUS_DO, mId, false);
                     setTimerTimeName();
-                    progressBar.setMax(runTime * 60 + 2); // setMax by sec
+                    progressBar.setMax(runTime * 60 + 3); // setMax by sec
                     timerHandler = new TimerHandler();
                     mTimerService.setRunTimeTaskName(runTime, mItemNameText.getText().toString());
                     updateLeftTime();
