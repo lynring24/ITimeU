@@ -19,7 +19,8 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 
-import static com.itto3.itimeu.SettingFragment.SCREENON;
+import com.itto3.itimeu.data.SharedPreferenceUtil;
+
 import static com.itto3.itimeu.SettingFragment.SOUNDON;
 import static com.itto3.itimeu.SettingFragment.VIBRATEON;
 
@@ -35,9 +36,7 @@ public class TimerService extends Service {
 
     public static boolean mTimerServiceFinished = false;
 
-    public TimerService() {
-
-    }
+    public TimerService() {}
 
     public String getTime() {
         return mTimerSwitch ? mLeftTime : "00:00";
@@ -77,17 +76,13 @@ public class TimerService extends Service {
                         mTimerSwitch = false;
                         if(timer!=null)
                             timer.cancel();
-                        //여기쯤*********************
                         ringTimerEndAlarm();
-                        //*************************
                         mTimerServiceFinished =true;
 
                         Intent sendIntent = new Intent(strReceiver);  // notice the end of Timer to Fragment
                         sendBroadcast(sendIntent);
                     }
-
                 }
-
             };
             timer.start();
         }
@@ -105,7 +100,6 @@ public class TimerService extends Service {
         // The PendingIntent to launch our activity if the user selects this notification
         PendingIntent PendingContentIntent = PendingIntent.getActivity(this, 0,NotificationIntent, 0);
 
-
         // Set the info for the views that show in the notification panel.
         mNotificationBuilder = new NotificationCompat.Builder(TimerService.this)
                 .setSmallIcon(R.mipmap.ic_launcher)
@@ -121,11 +115,11 @@ public class TimerService extends Service {
 
     public void stopCountNotification() {
         mTimerSwitch = false;
+        mLeftTime="";
         if(timer!=null)
             timer.cancel();
         if(mNotificationManager!=null)
             mNotificationManager.cancel(NOTIFYID);
-
     }
 
     @Override
@@ -133,7 +127,6 @@ public class TimerService extends Service {
 
         super.onUnbind(intent);
         stopCountNotification();
-
         return true;
     }
 
@@ -159,8 +152,8 @@ public class TimerService extends Service {
     }
 
     private void ringTimerEndAlarm() {
-        boolean isVibrateOn = PrefUtil.get(this, VIBRATEON, false);
-        boolean isSoundOn = PrefUtil.get(this, SOUNDON, true);
+        boolean isVibrateOn = SharedPreferenceUtil.get(this, VIBRATEON, false);
+        boolean isSoundOn = SharedPreferenceUtil.get(this, SOUNDON, true);
 
         if (isVibrateOn) {
             if (Build.VERSION.SDK_INT >= 26) {
@@ -175,7 +168,6 @@ public class TimerService extends Service {
             Ringtone ring = RingtoneManager.getRingtone(getApplicationContext(), notification);
             ring.play();
         }
-
     }
 
     public class MyBinder extends Binder {

@@ -1,4 +1,4 @@
-package com.itto3.itimeu;
+package com.itto3.itimeu.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
  * Created by lynring24 on 2017-09-05.
  */
 
-public class PrefUtil {
+public class SharedPreferenceUtil {
     /**
     called to save, get, remove value int shared preferences by given key
     @param context : caller activity (usually main activity)

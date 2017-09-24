@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     String mListTag;
     String mStatisticsTag;
 
+    
     /** Getter/Setter of TimerTag */
     public void setTimerTag(String timerTag) {
         mTimerTag = timerTag;
