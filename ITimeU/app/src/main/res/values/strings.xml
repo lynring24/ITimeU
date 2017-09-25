@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">I Time U</string>
+    <string name="app_name" translatable="false">I Time U</string>
 
     <!-- setting name -->
     <string name="minutes">minutes</string>
@@ -16,33 +16,33 @@
     <!--  menubar name-->
     <string name="setting">setting</string>
     <string name="about">about</string>
-    <string name="timer">timer</string>
+    <string name="timer" translatable="false">timer</string>
     <string name="list">list</string>
     <string name="statistics">statistics</string>
 
     <!--  timer button string-->
-    <string name="time">00:25</string>
-    <string name="start">start</string>
-    <string name="stop">stop</string>
+    <string name="time" translatable="false">00:25</string>
+    <string name="start" translatable="false">start</string>
+    <string name="stop" translatable="false">stop</string>
     <string name="example">example</string>
 
     <!-- IntroSlide.java -->
-    <string name="intro_page1_title">Remember</string>
+    <string name="intro_page1_title" translatable="false">Remember</string>
     <string name="intro_page1_description">25, 5, 4, and 20</string>
-    <string name="intro_page2_title">25: Pomodoro</string>
+    <string name="intro_page2_title" translatable="false">25: Pomodoro</string>
     <string name="intro_page2_description">During 25 minutes,\ndo your task with no \'stop\'\nWe refer the unit to pomodoro</string>
-    <string name="intro_page3_title">5: Short break time</string>
+    <string name="intro_page3_title" translatable="false">5: Short break time</string>
     <string name="intro_page3_description">Take 5 minutes off\nafter one pomodoro is done</string>
-    <string name="intro_page4_title">4: Four pomodoro\n20: Long break time</string>
+    <string name="intro_page4_title" translatable="false">4: Four pomodoro\n20: Long break time</string>
     <string name="intro_page4_description">Take 20 minutes off\nafter every 4 pomodoro is done</string>
-    <string name="intro_page5_title">Good Luck</string>
+    <string name="intro_page5_title" translatable="false">Good Luck</string>
     <string name="intro_page5_description">We hope you achieve purpose\nwith I TIME U</string>
 
     <!-- EditorActivity.java -->
 
     <!-- editor view's title -->
-    <string name="editor_title_add">add</string>
-    <string name="editor_title_edit">edit</string>
+    <string name="editor_title_add" translatable="false">add</string>
+    <string name="editor_title_edit" translatable="false">edit</string>
 
     <!-- If name edit view is blank then -->
     <string name="input_name_toast">You should input your name</string>
@@ -59,6 +59,9 @@
 
     <!-- Reset total unit TextView's text-->
     <string name="reset_total_unit">1</string>
+
+    <!-- select date -->
+    <string name="editor_invalid_date">Selected date cannot be less than current date</string>
 
     <!-- Alert unsaved change message-->
     <string name="unsaved_change_msg">Unsaved change</string>
@@ -98,15 +101,15 @@
     <string name="input_name_hint">name (essential)</string>
     <string name="input_detail_hint">detail (optional)</string>
     <string name="unit_txt_view_editor">pomodoro</string>
-    <string name="default_total_unit_editor">1</string>
+    <string name="default_total_unit_editor" translatable="false">1</string>
     <string name="ok_btn">OK</string>
     <string name="editor_date_txt_view">date</string>
-    <string name="editor_name_count_default">0 / 15</string>
-    <string name="editor_detail_count_default">0 / 20</string>
+    <string name="editor_name_count_default" translatable="false">0 / 15</string>
+    <string name="editor_detail_count_default" translatable="false">0 / 20</string>
 
     <!-- item.xml -->
     <string name="item_status_imageview">show status of the item</string>
-    <string name="unit_divider">/</string>
+    <string name="unit_divider" translatable="false">/</string>
 
     <!-- activity_list.xml -->
     <string name="empty_title_str">The list is empty</string>
@@ -133,8 +136,8 @@
 
     <!-- activity_licenses.xml -->
     <string name="back">Back</string>
-    <string name="datepicker_name">Material Date Time Picker</string>
-    <string name="licenses_datepicker">Copyright (&#169;) 2015 Wouter Dullaert
+    <string name="datepicker_name" translatable="false">Material Date Time Picker</string>
+    <string name="licenses_datepicker" translatable="false">Copyright (&#169;) 2015 Wouter Dullaert
 
 
         Licensed under the Apache License, Version 2.0 (the "License");
@@ -148,11 +151,11 @@
         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
         See the License for the specific language governing permissions and
         limitations under the License.</string>
-    <string name="datepicker_link"><a href="https://github.com/wdullaer/MaterialDateTimePicker">
+    <string name="datepicker_link" translatable="false"><a href="https://github.com/wdullaer/MaterialDateTimePicker">
         MaterialDateTimePicker</a></string>
 
-    <string name="mp_chart_name">MP Andorid Chart</string>
-    <string name="licenses_mp_chart">Copyright (&#169;) 2016 Philipp Jahoda
+    <string name="mp_chart_name" translatable="false">MP Andorid Chart</string>
+    <string name="licenses_mp_chart" translatable="false">Copyright (&#169;) 2016 Philipp Jahoda
 
 
         Licensed under the Apache License, Version 2.0 (the "License");
@@ -166,11 +169,11 @@
         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
         See the License for the specific language governing permissions and
         limitations under the License.</string>
-    <string name="mp_chart_link"><a href="https://github.com/PhilJay/MPAndroidChart">
+    <string name="mp_chart_link" translatable="false"><a href="https://github.com/PhilJay/MPAndroidChart">
         MPAndroidChart</a></string>
 
-    <string name="app_intro_name">App Intro</string>
-    <string name="licenses_app_intro"> Copyright (&#169;) 2015 Paolo Rotolo
+    <string name="app_intro_name" translatable="false">App Intro</string>
+    <string name="licenses_app_intro" translatable="false"> Copyright (&#169;) 2015 Paolo Rotolo
    Copyright (&#169;) 2016 Maximilian Narr
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -184,20 +187,20 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.</string>
-    <string name="app_intro_link"><a href="https://github.com/apl-devs/AppIntro">
+    <string name="app_intro_link" translatable="false"><a href="https://github.com/apl-devs/AppIntro">
         AppIntro</a></string>
 
-    <string name="statistics_name">Images of statistics, timer</string>
-    <string name="licenses_statistics">Free for commercial use (Include link to authors website)</string>
-    <string name="statistics_link"><a href="https://makoto.dunked.com/">Mariano Tardon</a></string>
+    <string name="statistics_name" translatable="false">Images of statistics, timer</string>
+    <string name="licenses_statistics" translatable="false">Free for commercial use (Include link to authors website)</string>
+    <string name="statistics_link" translatable="false"><a href="https://makoto.dunked.com/">Mariano Tardon</a></string>
 
-    <string name="empty_image_name">Empty image</string>
-    <string name="licenses_empty_image">Free for commercial use (Include link to authors website)</string>
-    <string name="empty_image_link"><a href="https://www.iconfinder.com/webhostingmedia">David Cross</a></string>
+    <string name="empty_image_name" translatable="false">Empty image</string>
+    <string name="licenses_empty_image" translatable="false">Free for commercial use (Include link to authors website)</string>
+    <string name="empty_image_link" translatable="false"><a href="https://www.iconfinder.com/webhostingmedia">David Cross</a></string>
 
-    <string name="intro_image_name">Intro images</string>
-    <string name="licenses_intro_image">Free for commercial use (Include link to authors website)</string>
-    <string name="intro_image_link"><a href="https://www.iconfinder.com/Blinks">Sergey Vrenev</a></string>
+    <string name="intro_image_name" translatable="false">Intro images</string>
+    <string name="licenses_intro_image" translatable="false">Free for commercial use (Include link to authors website)</string>
+    <string name="intro_image_link" translatable="false"><a href="https://www.iconfinder.com/Blinks">Sergey Vrenev</a></string>
 
     <!-- arrays.xml : spinner items -->
     <string name="arrays_week">WEEK</string>
@@ -205,7 +208,7 @@
     <string name="arrays_custom">CUSTOM</string>
 
     <!-- fragment_statistics.xml -->
-    <string name="start_to_end">-</string>
+    <string name="start_to_end" translatable="false">-</string>
     <string name="result_txt_view">RESULT : </string>
     <string name="period_txt_view">PERIOD : </string>
 
