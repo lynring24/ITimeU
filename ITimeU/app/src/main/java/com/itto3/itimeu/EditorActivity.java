@@ -152,7 +152,6 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         toast = new SimpleToast(this);
 
         // Examine the intent that was used to launch this activity,
-        // Examine the intent that was used to launch this activity,
         // in order to figure out if we're creating a new item or editing an existing one.
         Intent intent = getIntent();
         mCurrentItemUri = intent.getData();
@@ -227,8 +226,17 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         // Set Date in List
         calendar.set(mYear, mMonth, mDay);
         Date date = calendar.getTime();
-        mDate = getDate(date);
-        mDateEditText.setText(mDate);
+        Date today = new Date();
+
+        if (date.compareTo(today) >= 0) {
+            mDate = getDate(date);
+            mDateEditText.setText(mDate);
+        }
+        else {
+            toast.showLongTimeToast(R.string.editor_invalid_date);
+            mDate = getDate(today);
+            mDateEditText.setText(mDate);
+        }
     }
 
     void dateSelection() {
@@ -246,6 +254,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
                     // Setting calender -> list's date
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(date);
+
                     mYear = calendar.get(Calendar.YEAR);
                     mMonth = calendar.get(Calendar.MONTH);
                     mDay = calendar.get(Calendar.DAY_OF_MONTH);
@@ -345,7 +354,7 @@ public class EditorActivity extends AppCompatActivity implements DatePickerDialo
         Button okButton = (Button) findViewById(R.id.add_ok_btn);
         Button cancelButton = (Button) findViewById(R.id.add_cancel_btn);
 
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             okButton.setBackgroundColor(Color.parseColor("#FF5722"));
             cancelButton.setBackgroundColor(Color.parseColor("#616161"));
         }

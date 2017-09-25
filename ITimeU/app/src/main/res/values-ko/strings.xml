@@ -75,4 +75,5 @@
     <string name="minutes">분</string>
     <string name="vibrate">진동 울리기</string>
     <string name="workTime">작업</string>
+    <string name="editor_invalid_date">현재 날짜보다 앞선 날짜를 선택할 수 없습니다</string>
 </resources>
