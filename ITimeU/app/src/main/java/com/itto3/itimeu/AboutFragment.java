@@ -17,7 +17,7 @@ import com.itto3.itimeu.about.SupportLanguageActivity;
 public class AboutFragment extends Fragment {
 
     // This application's Version
-    final static String APPLICATION_VERSION = "1.0.0";
+    final static String APPLICATION_VERSION = "1.0.1";
 
     // Mail receiver
     String[] emailTo = {"1117hyemin@gmail.com", "juneoh227@gmail.com"
