@@ -24,7 +24,7 @@
     <string name="time" translatable="false">00:25</string>
     <string name="start" translatable="false">start</string>
     <string name="stop" translatable="false">stop</string>
-    <string name="example">example</string>
+    <string name="example" translatable="false">example</string>
 
     <!-- IntroSlide.java -->
     <string name="intro_page1_title" translatable="false">Remember</string>

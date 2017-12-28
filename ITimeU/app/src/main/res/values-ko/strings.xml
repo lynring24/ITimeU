@@ -28,7 +28,7 @@
     <string name="empty_title_str">리스트가 비어있습니다</string>
     <string name="input_detail_hint">설명 (옵션)</string>
     <string name="input_name_hint">이름 (필수)</string>
-    <string name="input_name_toast">이름을 입력하세야 합니다</string>
+    <string name="input_name_toast">이름은 필수 입력 값입니다</string>
     <string name="intro_page1_description">25, 5, 4, 그리고 20</string>
     <string name="intro_page2_description">25분 동안,\n어떤 \'멈춤\'도 없이 할 일을 진행하세요\n우리는 이 단위를 포모도로라고 지칭합니다</string>
     <string name="intro_page3_description">하나의 포모도로를 완료한 후\n5분의 휴식시간을 가지세요</string>
@@ -42,7 +42,7 @@
     <string name="listitem_cannot_delete">이 아이템을 삭제할 수 없습니다</string>
     <string name="listitem_next_date_description">다음 날의 날짜를 받아온다</string>
     <string name="listitem_previous_date_description">이전 날의 날짜를 받아온다</string>
-    <string name="listitem_this_item_started">해당 할 일을 수정하거나 삭제할 수 없습니다. 할 일이 이미 진행중이므로 타이머를 먼저 멈춰주십시오</string>
+    <string name="listitem_this_item_started">해당 할 일을 수정하거나 삭제할 수 없습니다\n 할 일이 이미 진행중이므로 타이머를 먼저 멈춰주십시오</string>
     <string name="not_today">선택된 날짜가 오늘이 아닙니다</string>
     <string name="ok_btn">확인</string>
     <string name="period_txt_view">기간 :</string>
