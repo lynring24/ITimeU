@@ -112,6 +112,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         View mStatisticsView = inflater.inflate(R.layout.fragment_statistics, container, false);
         mStatisticsActivity = getActivity();
         mStatisticsContext = mStatisticsView.getContext();
+        toast = new SimpleToast(mStatisticsContext);
 
         String statisticsTag = getTag();
         ((MainActivity) getActivity()).setStatisticsTag(statisticsTag);
@@ -140,8 +141,6 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        toast = new SimpleToast(mStatisticsContext);
     }
 
     /**
