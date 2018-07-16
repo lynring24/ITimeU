@@ -73,6 +73,7 @@ public class SettingFragment extends Fragment {
 
         final EditText[] editTexts = {mworket, mbreaket, mlongBreaket, msessionNumet};
         final SeekBar[] seekBars = {mworksb, mbreaksb, mlongBreaksb, msessionNumsb};
+        final String[] constants = {WORKTIME, BREAKTIME, LONGBREAKTIME, SESSION};
 
         for (int i = 0; i < editTexts.length; i++) {
             final int finalI = i;
@@ -93,6 +94,8 @@ public class SettingFragment extends Fragment {
                         seekBars[finalI].setProgress(1);
                         editTexts[finalI].setText("1");
                     }
+                    SharedPreferenceUtil.save(getActivity(), constants[finalI],
+                            Integer.parseInt(editTexts[finalI].getText().toString()));
                 }
             });
         }
