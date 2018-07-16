@@ -201,7 +201,7 @@ public class TimerFragment extends Fragment {
         super.onResume();
         getActivity().registerReceiver(mReceiver, new IntentFilter(mTimerService.strReceiver));
         if (SharedPreferenceUtil.get(getContext(), CONTINUOUS_OPTION, false) &&
-                !isTaskComplete()) {
+                !isTaskComplete() && stateButton.getText().toString().equals("start")) {
             mTimerService.stopCountNotification();
             getActivity().stopService(intent); //stop service
             stopUpdateLeftTime();
