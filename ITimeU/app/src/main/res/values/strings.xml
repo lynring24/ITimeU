@@ -222,4 +222,7 @@
     <!-- activity_support_language.xml -->
     <string name="support_language_english">English</string>
     <string name="support_language_korean">한국어</string>
+    <string name="setting_advanced">Advanced</string>
+    <string name="setting_continuous_timer">Run the timer continuously</string>
+    <string name="setting_shutdown">Shut down this app when running another app</string>
 </resources>
