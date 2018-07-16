@@ -10,24 +10,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="60dp"
-        android:textSize="25sp"
+        android:text="@string/general"
         android:textColor="@color/colorAccent"
-        android:text="@string/general" />
+        android:textSize="25sp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
-        android:textSize="22sp"
-        android:text="@string/workTime" />
+        android:text="@string/workTime"
+        android:textSize="22sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
         android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="5dp">
 
         <SeekBar
@@ -45,31 +48,33 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.8"
             android:gravity="center"
-            android:editable="false"
+            android:inputType="numberSigned"
             android:text="25" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_weight="2"
-            android:textSize="17sp"
-            android:text="minutes" />
+            android:text="minutes"
+            android:textSize="17sp" />
 
     </LinearLayout>
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dip"
-        android:background="#C1C1C1"/>
+        android:background="#C1C1C1" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
-        android:textSize="22sp"
-        android:text="@string/breakTime" />
+        android:text="@string/breakTime"
+        android:textSize="22sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -81,8 +86,9 @@
             android:id="@+id/break_seek"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
             android:layout_weight="8"
             android:max="60"
             android:progress="5" />
@@ -93,31 +99,33 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.8"
             android:gravity="center"
-            android:editable="false"
+            android:inputType="numberSigned"
             android:text="5" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_weight="2"
-            android:textSize="17sp"
-            android:text="minutes" />
+            android:text="minutes"
+            android:textSize="17sp" />
 
     </LinearLayout>
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dip"
-        android:background="#C1C1C1"/>
+        android:background="#C1C1C1" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
-        android:textSize="22sp"
-        android:text="@string/longBreakTime" />
+        android:text="@string/longBreakTime"
+        android:textSize="22sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -130,6 +138,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_weight="8"
             android:max="90"
@@ -141,16 +150,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.8"
             android:gravity="center"
-            android:editable="false"
+            android:inputType="numberSigned"
             android:text="20" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_weight="2"
-            android:textSize="17sp"
-            android:text="minutes" />
+            android:text="minutes"
+            android:textSize="17sp" />
 
     </LinearLayout>
 
@@ -163,9 +173,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
-        android:textSize="22sp"
-        android:text="@string/sessionNumber" />
+        android:text="@string/sessionNumber"
+        android:textSize="22sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -177,8 +188,9 @@
             android:id="@+id/session_number_seek"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
             android:layout_weight="8"
             android:max="10"
             android:progress="4" />
@@ -189,16 +201,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.8"
             android:gravity="center"
-            android:editable="false"
+            android:inputType="numberSigned"
             android:text="4" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_weight="2"
-            android:textSize="17sp"
-            android:text="sessions" />
+            android:text="sessions"
+            android:textSize="17sp" />
 
     </LinearLayout>
 
@@ -211,31 +224,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="40dp"
-        android:textSize="25sp"
+        android:text="@string/sessionOver"
         android:textColor="@color/colorAccent"
-        android:text="@string/sessionOver" />
+        android:textSize="25sp" />
 
     <LinearLayout
-        android:layout_marginBottom="15dp"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="20dp">
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="8.5"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:textSize="22sp"
-            android:text="@string/playSound" />
+            android:layout_marginStart="30dp"
+            android:layout_weight="8.5"
+            android:text="@string/playSound"
+            android:textSize="22sp" />
 
         <CheckBox
             android:id="@+id/sound_check"
-            android:checked="true"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1.5"
-            android:layout_height="wrap_content" />
+            android:checked="true" />
 
     </LinearLayout>
 
@@ -245,23 +260,24 @@
         android:background="#C1C1C1" />
 
     <LinearLayout
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="8.5"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:textSize="22sp"
-            android:text="@string/vibrate" />
+            android:layout_marginStart="30dp"
+            android:layout_weight="8.5"
+            android:text="@string/vibrate"
+            android:textSize="22sp" />
 
         <CheckBox
             android:id="@+id/vibrate_check"
             android:layout_width="0dp"
-            android:layout_weight="1.5"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5" />
 
     </LinearLayout>
 

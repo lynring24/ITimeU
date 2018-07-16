@@ -11,14 +11,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp"
         android:layout_marginTop="30dp"
-        android:textColor="@color/colorAccent"
-        android:text="@string/general" />
+        android:text="@string/general"
+        android:textColor="@color/colorAccent" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp"
         android:layout_marginTop="10dp"
         android:text="@string/workTime" />
 
@@ -42,13 +44,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:editable="false"
+            android:inputType="numberSigned"
             android:text="25" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_weight="2"
             android:text="minutes" />
 
@@ -57,7 +60,7 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dip"
-        android:background="#C1C1C1"/>
+        android:background="#C1C1C1" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -86,13 +89,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:editable="false"
+            android:inputType="numberSigned"
             android:text="5" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_weight="2"
             android:text="minutes" />
 
@@ -101,12 +105,13 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dip"
-        android:background="#C1C1C1"/>
+        android:background="#C1C1C1" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp"
         android:layout_marginTop="10dp"
         android:text="@string/longBreakTime" />
 
@@ -130,13 +135,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:editable="false"
+            android:inputType="numberSigned"
             android:text="20" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_weight="2"
             android:text="minutes" />
 
@@ -151,6 +157,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp"
         android:layout_marginTop="10dp"
         android:text="@string/sessionNumber" />
 
@@ -174,13 +181,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:editable="false"
+            android:inputType="numberSigned"
             android:text="4" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_weight="2"
             android:text="sessions" />
 
@@ -194,30 +202,32 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="13dp"
-        android:layout_marginTop="40dp"
         android:layout_marginBottom="10dp"
-        android:textColor="@color/colorAccent"
-        android:text="@string/sessionOver" />
+        android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/sessionOver"
+        android:textColor="@color/colorAccent" />
 
     <LinearLayout
-        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp">
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="8.5"
             android:layout_height="wrap_content"
             android:layout_marginLeft="13dp"
+            android:layout_marginStart="13dp"
+            android:layout_weight="8.5"
             android:text="@string/playSound" />
 
         <CheckBox
             android:id="@+id/sound_check"
-            android:checked="true"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1.5"
-            android:layout_height="wrap_content" />
+            android:checked="true" />
 
     </LinearLayout>
 
@@ -227,23 +237,23 @@
         android:background="#C1C1C1" />
 
     <LinearLayout
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp">
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="8.5"
             android:layout_height="wrap_content"
             android:layout_marginLeft="13dp"
+            android:layout_weight="8.5"
             android:text="@string/vibrate" />
 
         <CheckBox
             android:id="@+id/vibrate_check"
             android:layout_width="0dp"
-            android:layout_weight="1.5"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5" />
 
     </LinearLayout>
 
