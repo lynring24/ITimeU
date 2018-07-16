@@ -32,6 +32,8 @@ public class TimerFragment extends Fragment {
     public static final String BREAKTIME = "breaktime";
     public static final String LONGBREAKTIME = "longbreaktime";
     public static final String SESSION = "session";
+    public static final String CONTINUOUS_OPTION = "continuous";
+    public static final String SHUTDOWN_OPTION = "shutdown";
 
     private TextView leftTime;
     private TextView mItemNameText;
@@ -122,6 +124,7 @@ public class TimerFragment extends Fragment {
 
         //after the unit values has been updated set false to ServiceFinished
         TimerService.mTimerServiceFinished = false;
+        onResume();
     }
 
     public void changeScreenToList() {
@@ -165,7 +168,7 @@ public class TimerFragment extends Fragment {
         super.onStart();
         intent = new Intent(getActivity(), TimerService.class);
 
-        if (TimerService.mTimerServiceFinished == true) {
+        if (TimerService.mTimerServiceFinished) {
             onUnitFinish();
         }
         getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -197,6 +200,20 @@ public class TimerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         getActivity().registerReceiver(mReceiver, new IntentFilter(mTimerService.strReceiver));
+        if (SharedPreferenceUtil.get(getContext(), CONTINUOUS_OPTION, false) &&
+                !isTaskComplete()) {
+            mTimerService.stopCountNotification();
+            getActivity().stopService(intent); //stop service
+            stopUpdateLeftTime();
+            progressBar.setProgress(0);
+            timerHandler.removeMessages(0);
+            progressBarValue = 0; //must be set 0
+            stateButton.setText(R.string.start);
+            /*set mStatus to TO DO(0)*/
+            TimerDbUtil.update(getContext(), ItemContract.ItemEntry.STATUS_TODO, mId, false);
+            setTimerTimeName();
+            stateButton.performClick();
+        }
     }
 
     public void setStatusToDo() {
@@ -219,10 +236,9 @@ public class TimerFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if (stateButton.getText().toString().equals("start")) { // checked
-
                 //mUnit will be intialize when list item is clicked
                 if (mServiceBound) {
-                /* set mStatus DB to DO(1)*/
+                    /* set mStatus DB to DO(1)*/
                     TimerDbUtil.update(getContext(), ItemContract.ItemEntry.STATUS_DO, mId, false);
                     setTimerTimeName();
                     progressBar.setMax(runTime * 60 + 3); // setMax by sec
@@ -245,6 +261,7 @@ public class TimerFragment extends Fragment {
             }
         }
     };
+
 
     public void updateLeftTime() {
         mReadThread = new Thread(new Runnable() {
