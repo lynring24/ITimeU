@@ -29,12 +29,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@color/accent"
+                android:padding="12dp"/>
+
             <TextView
                 android:id="@+id/date_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@color/colorAccent"
+                android:background="?attr/selectableItemBackground"
                 android:drawablePadding="10dp"
                 android:padding="12dp"
                 android:textAlignment="center"
@@ -46,7 +52,7 @@
                 android:id="@+id/listitem_previous_date_imgbtn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/listitem_previous_date_description"
                 android:paddingRight="12dp"
                 android:src="@drawable/ic_date_left" />
@@ -56,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/listitem_next_date_description"
                 android:paddingLeft="12dp"
                 android:src="@drawable/ic_date_right" />
@@ -70,10 +76,10 @@
         android:layout_below="@id/title_grid_layout"
         android:divider="@android:color/transparent"
         android:dividerHeight="4dp"
+        android:paddingBottom="48dp"
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="48dp">
+        android:paddingTop="20dp">
 
     </ListView>
 

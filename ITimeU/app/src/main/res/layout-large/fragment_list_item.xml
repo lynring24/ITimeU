@@ -29,24 +29,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:background="@color/accent"
+                android:padding="12dp"/>
+
             <TextView
                 android:id="@+id/date_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@color/colorAccent"
-                android:drawablePadding="10dp"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="8dp"
                 android:padding="16dp"
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textColor="#ffffff"
                 android:textSize="20sp" />
 
+
             <ImageButton
                 android:id="@+id/listitem_previous_date_imgbtn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/listitem_previous_date_description"
                 android:minWidth="80dp"
                 android:paddingRight="20dp"
@@ -58,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/listitem_next_date_description"
                 android:minWidth="80dp"
                 android:paddingLeft="20dp"
