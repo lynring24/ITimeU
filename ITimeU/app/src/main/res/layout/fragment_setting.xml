@@ -299,31 +299,5 @@
                 android:layout_weight="1.5" />
 
         </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dip"
-            android:background="#C1C1C1" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="5dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="13dp"
-                android:layout_marginStart="13dp"
-                android:layout_weight="8.5"
-                android:text="@string/setting_shutdown" />
-
-            <CheckBox
-                android:id="@+id/setting_shutdown_check"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5" />
-        </LinearLayout>
     </LinearLayout>
 </ScrollView>
