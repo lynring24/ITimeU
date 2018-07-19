@@ -25,7 +25,7 @@ public class SettingFragment extends Fragment {
 
     private SeekBar mworksb, mbreaksb, mlongBreaksb, msessionNumsb; //시크바
     private EditText mworket, mbreaket, mlongBreaket, msessionNumet; //에디트텍스트 뷰
-    private CheckBox msoundOncb, mvibrateOncb, continuousCheckbox, shutdownCheckbox; //체크박스
+    private CheckBox msoundOncb, mvibrateOncb, continuousCheckbox; //체크박스
 
     public static final String WORKTIME = "worktime";
     public static final String BREAKTIME = "breaktime";
@@ -35,7 +35,6 @@ public class SettingFragment extends Fragment {
     public static final String SOUNDON = "sound";
     public static final String VIBRATEON = "vibrate";
     public static final String CONTINUOUS_OPTION = "continuous";
-    public static final String SHUTDOWN_OPTION = "shutdown";
 
     //설정 저장에 필요한 상수(이름)
 
@@ -63,7 +62,6 @@ public class SettingFragment extends Fragment {
         msoundOncb = mSettingView.findViewById(R.id.sound_check);
         mvibrateOncb = mSettingView.findViewById(R.id.vibrate_check);
         continuousCheckbox = mSettingView.findViewById(R.id.setting_continuous_timer_check);
-        shutdownCheckbox = mSettingView.findViewById(R.id.setting_shutdown_check);
 
         //저장해둔 숫자 설정 불러오기
         mworket.setText(String.valueOf(SharedPreferenceUtil.get(getContext(), WORKTIME, 25)));
@@ -110,7 +108,6 @@ public class SettingFragment extends Fragment {
         msoundOncb.setChecked(SharedPreferenceUtil.get(getContext(), SOUNDON, true));
         mvibrateOncb.setChecked(SharedPreferenceUtil.get(getContext(), VIBRATEON, false));
         continuousCheckbox.setChecked(SharedPreferenceUtil.get(getContext(), CONTINUOUS_OPTION, false));
-        shutdownCheckbox.setChecked(SharedPreferenceUtil.get(getContext(), SHUTDOWN_OPTION, false));
 
         mworksb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -164,7 +161,7 @@ public class SettingFragment extends Fragment {
             }
         }); //세션 수 시크바 리스너
 
-        CheckBox[] checkboxes = {msoundOncb, mvibrateOncb, continuousCheckbox, shutdownCheckbox};
+        CheckBox[] checkboxes = {msoundOncb, mvibrateOncb, continuousCheckbox};
         for (CheckBox checkbox : checkboxes) {
             checkbox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -235,8 +232,6 @@ public class SettingFragment extends Fragment {
             SharedPreferenceUtil.save(getContext(), VIBRATEON, isChecked);
         } else if (cbox.equals(continuousCheckbox)) {
             SharedPreferenceUtil.save(getContext(), CONTINUOUS_OPTION, isChecked);
-        } else if (cbox.equals(shutdownCheckbox)) {
-            SharedPreferenceUtil.save(getContext(), SHUTDOWN_OPTION, isChecked);
         }
     }
 }

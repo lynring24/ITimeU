@@ -33,7 +33,6 @@ public class TimerFragment extends Fragment {
     public static final String LONGBREAKTIME = "longbreaktime";
     public static final String SESSION = "session";
     public static final String CONTINUOUS_OPTION = "continuous";
-    public static final String SHUTDOWN_OPTION = "shutdown";
 
     private TextView leftTime;
     private TextView mItemNameText;
